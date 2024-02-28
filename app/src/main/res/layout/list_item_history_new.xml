@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+
+        app:cardBackgroundColor="@color/white"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="10dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1. Exavator 911 SLE CAT 320GC / PC 200"
+                android:fontFamily="@font/poppins_medium"
+                android:textSize="12dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/graytextdark"
+                android:text="Jumlah Kerusakan Terkonfirmasi : 3 (Buah) "
+                android:fontFamily="@font/poppins_medium"
+                android:textSize="8dp"/>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="1.5"
+                    android:text="Jenis Kerusakan  : "
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="0.5"
+                    android:text="Backward Alarm, Pengganjal Ban, Coolant asd fkjasdklfjlaksjdf sdkjfaksdf"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="1.5"
+                    android:text="Foto Terlampir  : "
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/bluedarklight"
+                    android:layout_weight="0.5"
+                    android:text="(3  buah)"
+
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/graytextdark"
+                android:layout_weight="1"
+                android:text="Lokasi Unit :  KNE (Wil I)"
+                android:fontFamily="@font/poppins_medium"
+                android:textSize="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"
+                    android:text="Detail"
+                    android:backgroundTint="@color/bluelightbutton"
+                    android:layout_weight="0.1"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"
+                    android:backgroundTint="@color/yellowbutton"
+                    android:text="Perbaikan 0 / 3"
+                    android:layout_weight="0.1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="Last Update : 08:35, 23 Agus 2024"
+                    android:fontFamily="@font/poppins_italic"
+                    android:textColor="@color/greytext"
+                    android:textSize="7dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

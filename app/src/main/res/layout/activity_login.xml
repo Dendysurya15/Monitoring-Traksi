@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+
+        android:id="@+id/cardImage">
+
+
+        <LinearLayout
+            android:id="@+id/ivBgTopMain"
+            android:layout_width="match_parent"
+            android:layout_weight="0.6"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:alpha="0.7"
+            android:gravity="center|bottom"
+
+            android:background="@drawable/homepage_container"
+            tools:ignore="ContentDescription" >
+
+             <com.google.android.material.card.MaterialCardView
+                 android:layout_width="wrap_content"
+                 android:elevation="50dp"
+                 android:layout_marginBottom="20dp"
+                 app:cardCornerRadius="25dp"
+                 android:layout_height="wrap_content">
+
+                 <LinearLayout
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content">
+                     <ImageView
+                         android:layout_width="40dp"
+                         android:layout_height="40dp"
+                        android:layout_marginVertical="5dp"
+                         android:layout_marginStart="20dp"
+                         android:src="@drawable/cbi_logo"
+                         />
+
+                     <TextView
+                         android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         android:fontFamily="@font/poppins_semibold"
+                         android:textColor="@color/bluedark"
+                         android:textSize="17dp"
+                         android:layout_marginEnd="20dp"
+                         android:layout_marginStart="5dp"
+                         android:gravity="center"
+                         android:text="Monitoring Traksi"/>
+                 </LinearLayout>
+             </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="0.3"
+            android:layout_marginHorizontal="35dp"
+            android:layout_marginVertical="20dp"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textSize="23dp"
+
+                android:layout_weight="1"
+                android:gravity="start|bottom"
+                android:text="Autentikasi Sistem"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_italic"
+                android:textColor="@color/graytextdark"
+                android:textSize="11dp"
+                android:layout_weight="1"
+                android:text="Harap memasukkan username dan password dengan benar ! Apabila terdapat kendala mohon hubungi pihak berwenang atau pihak pengembang aplikasi. "/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:gravity="start|center_vertical"
+                android:layout_weight="1"
+
+                android:text="Email"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fieldEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:hint="Enter Email Here"
+                app:boxStrokeColor="@color/bluedark"
+                app:cursorColor="@color/bluedark"
+                app:hintTextColor="@color/bluedark"
+                android:layout_weight="1"
+
+                tools:ignore="HardcodedText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/idEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:inputType="textEmailAddress"
+                    android:textSize="15sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:gravity="start|center_vertical"
+                android:layout_weight="1"
+                android:text="Password"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fieldPassword"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:hint="Enter Password Here"
+                app:boxStrokeColor="@color/bluedark"
+                app:cursorColor="@color/bluedark"
+                app:hintTextColor="@color/bluedark"
+                android:layout_weight="1"
+
+                tools:ignore="HardcodedText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/idPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:inputType="textPassword"
+                    android:textSize="15sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/mcbRemember"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:buttonTint="@color/graytextdark"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="start|center_vertical"
+                    android:text="Remember Me"
+                    android:textColor="@color/bluedark"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/tvForgotLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="end|center_vertical"
+                    android:fontFamily="@font/poppins_semibold"
+
+                    android:text="Forgot Password?"
+                    android:textColor="@color/colorRedDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/mbLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.6"
+                android:text="Masuk"
+                android:textSize="15dp"
+                android:layout_gravity="end"
+                android:fontFamily="@font/poppins_semibold"
+                app:backgroundTint="@color/bluedark"
+                app:cornerRadius="15dp"
+                app:elevation="50dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/app_version"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/loadingLogin"
+        layout="@layout/loading_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

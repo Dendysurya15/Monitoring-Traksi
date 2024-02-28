@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.DetailMonitoringUnitActivity">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteX="1dp"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="0dp"
+        android:id="@+id/navbar"
+        app:cardElevation="50dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" android:weightSum="3">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="25dp"
+                android:layout_weight="0.5"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/baseline_arrow_back_24"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:layout_weight="2"
+                >
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Detail Informasi Monitoring Unit"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="@color/bluedark"
+                    android:textSize="13dp"
+
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/poppins_lightitalic"
+                    android:textSize="9dp"
+
+                    android:text="Tanggal periksa : 12:39, 24 Februari 2023"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/navbar"
+        android:background="@color/graylight"
+        android:id="@+id/cardDetail"
+        >
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="20dp"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_weight="0.5"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+                <TextView
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Jenis Unit : "
+                    android:textSize="8dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/poppins_medium"
+
+                    tools:ignore="MissingConstraints" />
+                <TextView
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kode Unit :  "
+                    android:layout_marginBottom="5dp"
+                    android:textSize="8dp"
+                    android:fontFamily="@font/poppins_medium"
+
+                    tools:ignore="MissingConstraints" />
+                <TextView
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aset : "
+                    android:textSize="8dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/poppins_medium"
+
+                    tools:ignore="MissingConstraints" />
+                <TextView
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No Unit :  "
+                    android:textSize="8dp"
+                    android:fontFamily="@font/poppins_medium"
+
+                    tools:ignore="MissingConstraints" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_weight="0.5"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+                <TextView
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nama Operator : "
+                    android:layout_marginBottom="5dp"
+                    android:textSize="8dp"
+                    android:fontFamily="@font/poppins_medium"
+
+                    tools:ignore="MissingConstraints" />
+                <TextView
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lokasi Unit : "
+                    android:layout_marginBottom="5dp"
+                    android:textSize="8dp"
+                    android:fontFamily="@font/poppins_medium"
+
+                    tools:ignore="MissingConstraints" />
+                <TextView
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Unit Kerja : "
+                    android:textSize="8dp"
+                    android:fontFamily="@font/poppins_medium"
+
+                    tools:ignore="MissingConstraints" />
+            </LinearLayout>
+<!--            <TextView-->
+<!--                android:text="Selamat datang !"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:paddingTop="20dp"-->
+<!--                android:textSize="12dp"-->
+<!--                android:textColor="@color/graytextdark"-->
+<!--                android:fontFamily="@font/poppins_italic"-->
+<!--                android:layout_height="wrap_content"/>-->
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/titleList"
+        app:layout_constraintTop_toBottomOf="@id/cardDetail"
+        android:textSize="15dp"
+        android:fontFamily="@font/poppins_medium"
+        android:paddingStart="25dp"
+        android:paddingTop="15dp"
+        android:text="List Kerusakan Unit"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvListData"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="5dp"
+
+        app:layout_constraintTop_toBottomOf="@+id/titleList"
+        tools:layout_editor_absoluteX="10dp"
+        tools:listitem="@layout/list_item_kerusakan_per_unit" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
