@@ -1,3 +1,67 @@
 <resources>
     <string name="app_name">Monitoring Traksi</string>
+    <string name="welcome_back">Selamat Datang</string>
+    <string name="sign_continue">Masuk untuk melanjutkan</string>
+    <string name="forgot_password">Lupa kata sandi?</string>
+    <string name="login">Masuk</string>
+    <string name="dont_have_account">Tidak memiliki akun?</string>
+    <string name="create_new_account">Buat akun baru</string>
+    <string name="username">Username</string>
+    <string name="password">Kata sandi</string>
+    <string name="success">Sukses</string>
+    <string name="desc_success">Berhasil menyimpan data</string>
+    <string name="yes">Ya</string>
+    <string name="cancel">Batal</string>
+    <string name="caution">Peringatan</string>
+    <string name="failed">Gagal</string>
+    <string name="desc_failed">Gagal menyimpan data</string>
+    <string name="desc_save_data">Apakah yakin ingin menyimpan data?</string>
+    <string name="try_again">Coba lagi</string>
+    <string name="desc_failed_download">Gagal mengunduh data</string>
+    <string name="desc_under_development">Fitur dalam proses pengembangan</string>
+    <string name="menu1">Laporan Harian</string>
+    <string name="menu2">Unggah Data</string>
+    <string name="menu3">Sinkronisasi</string>
+    <string name="menu4" translatable="false">Dashboard GIS</string>
+    <string name="save">Simpan</string>
+    <string name="information">Informasi</string>
+    <string name="unit">Satuan</string>
+    <string name="progress">Hasil</string>
+    <string name="target" translatable="false">Target</string>
+    <string name="job_type">Jenis Pekerjaan</string>
+    <string name="date">Tanggal</string>
+    <string name="last_update1">Tidak ada data</string>
+    <string name="success_login">Login berhasil</string>
+    <string name="error_volley1">Data error, hubungi pengembang</string>
+    <string name="error_volley2">Terjadi kesalahan koneksi</string>
+    <string name="error_volley3">Silahkan hubungkan perangkat anda ke jaringan untuk melanjutkan</string>
+    <string name="subtitle_prompt">Gunakan sidik jari untuk melanjutkan</string>
+    <string name="desc_confirm1">Apakah anda yakin menutup aplikasi?</string>
+    <string name="desc_confirm2">Apakah anda yakin mengunduh data?</string>
+    <string name="desc_confirm3">Apakah anda yakin ingin keluar?</string>
+    <string name="desc_confirm4">Apakah anda yakin ingin membatalkan?</string>
+    <string name="desc_confirm5">Apakah anda yakin ingin menghapus data?</string>
+    <string name="desc_confirm6">Apakah anda yakin ingin mengunggah data?</string>
+    <string name="desc_confirm7">Apakah anda kembali ke halaman utama?</string>
+    <string name="failed_login">Login gagal</string>
+    <string name="desc_check_account">Mohon cek kembali username dan password anda</string>
+    <string name="remember_me">Ingat saya</string>
+    <string name="desc_info1">Sedang memperbarui data</string>
+    <string name="desc_info2">Data sudah terbaru</string>
+    <string name="desc_info3">Berhasil memperbarui data</string>
+    <string name="desc_info4">Anda sudah mengisi laporan harian</string>
+    <string name="desc_info5">Lengkapi formulir terlebih dahulu</string>
+    <string name="desc_info6">Berhasil mengunggah data</string>
+    <string name="desc_info7">Sedang mengunggah data</string>
+    <string name="split_upload">Unggah</string>
+    <string name="split_data" translatable="false">Data</string>
+    <string name="desc_failed_delete">Gagal menghapus data</string>
+    <string name="desc_success_delete">Berhasil menghapus data</string>
+    <string name="recorded">tercatat</string>
+    <string name="uploaded">terunggah</string>
+    <string name="due_today">Sampai hari ini</string>
+    <string name="sort_by">Sortir by</string>
+    <string name="latest">Terbaru</string>
+    <string name="history">Histori</string>
+    <string name="last_update2">Terakhir Diperbarui</string>
 </resources>

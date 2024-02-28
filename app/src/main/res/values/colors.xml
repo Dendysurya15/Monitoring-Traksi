@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bluedark">#003077</color>
     <color name="greenbutton">#7cbc2c</color>
+    <color name="greendarkerbutton">#007730</color>
     <color name="greytext">#A4A4A4</color>
     <color name="yellowbutton">#C4C818</color>
     <color name="bluelightbutton">#2194FF</color>

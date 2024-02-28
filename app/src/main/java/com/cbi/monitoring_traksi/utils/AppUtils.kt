@@ -7,16 +7,25 @@ import android.net.NetworkInfo
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.EditorInfo
+import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import com.cbi.monitoring_traksi.R
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import eightbitlab.com.blurview.BlurView
 import eightbitlab.com.blurview.RenderScriptBlur
 import kotlinx.android.synthetic.main.loading_view.view.blurLoadView
 import kotlinx.android.synthetic.main.loading_view.view.lottieLoadAnimate
 import kotlinx.android.synthetic.main.loading_view.view.overlayLoadView
+import java.util.Locale
+import java.util.concurrent.Executors
 
 object AppUtils {
 
@@ -52,11 +61,79 @@ object AppUtils {
             .setFrameClearDrawable(windowBackground)
             .setBlurRadius(1f)
     }
+
+    fun setupInputLayout(
+        context: Context,
+        layout: TextInputLayout,
+//        hintResId: Int,
+//        iconResId: Int,
+        inputType: Int = InputType.TYPE_TEXT_VARIATION_PERSON_NAME or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
+        imeType: Int = EditorInfo.IME_ACTION_NEXT
+    ) {
+//        layout.hint = context.getString(hintResId)
+        layout.editText?.inputType = inputType
+        layout.editText?.imeOptions = imeType
+    }
+
     fun showLoadingLayout(context: Context, window: Window, loadingView: View) {
         loadingView.lottieLoadAnimate.visibility = View.VISIBLE
         loadingView.overlayLoadView.visibility = View.VISIBLE
         loadingView.overlayLoadView.setOnTouchListener { _, _ -> true }
         blurViewLayout(context, window, loadingView.blurLoadView)
+    }
+
+    fun checkBiometricSupport(context: Context): Boolean {
+        when (BiometricManager.from(context).canAuthenticate()) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                return BiometricManager.from(context)
+                    .canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+                return false
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
+                return false
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                return false
+            }
+
+            else -> {
+                return false
+            }
+        }
+    }
+    fun showBiometricPrompt(context: Context, nameUser: String, successCallback: () -> Unit) {
+        val executor = Executors.newSingleThreadExecutor()
+
+        val biometricPrompt = BiometricPrompt(
+            context as AppCompatActivity,
+            executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    successCallback.invoke()
+                }
+            })
+
+        val textWelcome = context.getString(R.string.welcome_back)
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle(
+                "${
+                    textWelcome.substring(0, 1)
+                        .toUpperCase(Locale.getDefault()) + textWelcome.substring(1).toLowerCase(
+                        Locale.getDefault()
+                    )
+                } $nameUser."
+            )
+            .setSubtitle(context.getString(R.string.subtitle_prompt))
+            .setNegativeButtonText(context.getString(R.string.cancel))
+            .build()
+
+        biometricPrompt.authenticate(promptInfo)
     }
     fun checkConnectionDevice(context: Context): Boolean {
         val connectivityManager: ConnectivityManager =

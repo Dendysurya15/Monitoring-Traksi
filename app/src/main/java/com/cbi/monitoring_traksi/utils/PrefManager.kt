@@ -29,6 +29,13 @@ class PrefManager(_context: Context) {
             editor.commit()
         }
 
+    var remember: Boolean
+        get() = pref.getBoolean(REMEMBERME, false)
+        set(rememberMe) {
+            editor.putBoolean(REMEMBERME, rememberMe)
+            editor.commit()
+        }
+
     var isFirstTimeLaunch: Boolean
         get() = pref.getBoolean(IS_FIRST_TIME_LAUNCH, true)
         set(isFirstTime) {
@@ -211,6 +218,8 @@ class PrefManager(_context: Context) {
         private const val LOGIN = "Login"
         private const val SESSION = "Session"
 
+
+        const val REMEMBERME = "remember_me"
         const val LOC_NOTIF_TAG = "loc_notif_act"
         const val NOTIF_TAG = "notif_act"
         const val WIDGET_TAG = "widget_act"

@@ -66,22 +66,23 @@ class LoginRepository(private val context: Context, private val window: Window, 
                                     jObj.getString(AppUtils.TAG_LOKASIKERJA)
                                 prefManager.jabatan = jObj.getString(AppUtils.TAG_JABATAN)
                                 prefManager.nohp = jObj.getString(AppUtils.TAG_NOHP)
+                                Log.d("masuk sini",jObj.getString(AppUtils.TAG_EMAIL))
                                 prefManager.email = jObj.getString(AppUtils.TAG_EMAIL)
                                 prefManager.lokasi = jObj.getString(AppUtils.TAG_LOKASI)
                                 prefManager.akses = jObj.getString(AppUtils.TAG_AKSES)
                                 prefManager.password = jObj.getString(AppUtils.TAG_PASSWORD)
                                 prefManager.login = (prefManager.login + 1)
                                 prefManager.afdeling = jObj.getString(AppUtils.TAG_AFDELING)
-                                if (prefManager.reg!!.isEmpty() || prefManager.dataReg!!.isEmpty()) {
-                                    Log.d("masuk sini","reg gak empty gan ")
-                                    callback(LoginModel(success = true, statusCode = 2, message = "Login berhasil."))
-
-
-
-                                } else {
-                                    Log.d("masuk sini","reg empty gan ")
-                                    callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
-                                }
+//                                if (prefManager.reg!!.isEmpty() || prefManager.dataReg!!.isEmpty()) {
+//                                    Log.d("masuk sini","reg gak empty gan ")
+//                                    callback(LoginModel(success = true, statusCode = 2, message = "Login berhasil."))
+//
+//
+//
+//                                } else {
+//                                    Log.d("masuk sini","reg empty gan ")
+                                callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
+//                                }
                             } else {
                                 callback(LoginModel(success = false, statusCode = 0, message = jObj.getString(AppUtils.TAG_MESSAGE)))
                             }

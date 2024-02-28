@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
             val intent: Intent
 
-            intent = Intent(this, TambahFormMonitoringActivity::class.java)
+            intent = Intent(this, FormTambahMonitoringActivity::class.java)
 
             startActivity(intent)
             finishAffinity()

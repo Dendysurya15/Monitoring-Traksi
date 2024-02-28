@@ -152,6 +152,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:orientation="horizontal">
 
                 <CheckBox
@@ -183,18 +184,39 @@
 
 
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/mbLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.6"
-                android:text="Masuk"
-                android:textSize="15dp"
-                android:layout_gravity="end"
-                android:fontFamily="@font/poppins_semibold"
-                app:backgroundTint="@color/bluedark"
-                app:cornerRadius="15dp"
-                app:elevation="50dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:gravity="end"
+                android:layout_height="wrap_content">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mbLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Masuk"
+                    android:textSize="15dp"
+                    android:layout_gravity="end"
+                    android:fontFamily="@font/poppins_semibold"
+                    app:backgroundTint="@color/bluedark"
+                    app:cornerRadius="10dp"
+                    app:elevation="50dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mbFinger"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="7dp"
+                    android:layout_marginEnd="3dp"
+                    android:backgroundTint="@color/greendarkerbutton"
+                    app:icon="@drawable/baseline_fingerprint_24"
+                    app:iconSize="40dp"
+                    app:cornerRadius="10dp"
+                    app:iconPadding="0dp"
+                    app:elevation="10dp" />
+            </LinearLayout>
+
+
+
 
             <TextView
                 android:layout_width="match_parent"
