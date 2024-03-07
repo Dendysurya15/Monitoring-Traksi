@@ -124,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:hint="Enter Username Here"
+
                 app:boxStrokeColor="@color/bluedark"
                 app:cursorColor="@color/bluedark"
                 app:hintTextColor="@color/bluedark"
@@ -137,7 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:inputType="textPersonName"
+                    android:textColor="@color/black"
                     android:textSize="10dp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -157,26 +157,39 @@
 
                 android:textSize="11dp"/>
 
+
             <com.google.android.material.textfield.TextInputLayout
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
 
-                android:hint="Enter Username Here"
+                android:ems="10"
+                android:hint="Edit text here"
                 app:boxStrokeColor="@color/bluedark"
                 app:cursorColor="@color/bluedark"
+                app:endIconMode="dropdown_menu"
                 app:hintTextColor="@color/bluedark"
-                android:layout_weight="0.5"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
 
                 tools:ignore="HardcodedText">
 
-                <com.google.android.material.textfield.TextInputEditText
-
+                <AutoCompleteTextView
+                    android:id="@+id/etJenisUnit"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_regular"
-                    android:inputType="textPersonName"
-                    android:textSize="10dp" />
+                    android:inputType="none"
+
+                    android:layout_height="wrap_content"/>
+<!--                <com.google.android.material.textfield.TextInputEditText-->
+
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/poppins_regular"-->
+<!--                    android:inputType="textPersonName"-->
+<!--                    android:textSize="10dp" />-->
 
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
