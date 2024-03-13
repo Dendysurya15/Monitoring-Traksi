@@ -8,6 +8,7 @@ import android.text.InputType
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -16,10 +17,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.JenisUnitModel
 import com.cbi.monitoring_traksi.data.model.KodeUnitModel
+import com.cbi.monitoring_traksi.data.repository.UnitRepository
 import com.cbi.monitoring_traksi.ui.viewModel.UnitViewModel
+import com.cbi.monitoring_traksi.utils.AlertDialogUtility
+import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.PrefManager
 import kotlinx.android.synthetic.main.activity_form_informasi_unit.etJenisUnit
+import kotlinx.android.synthetic.main.activity_form_informasi_unit.etKodeUnit
 import kotlinx.android.synthetic.main.activity_form_informasi_unit.etTanggalPeriksa
+import kotlinx.android.synthetic.main.activity_form_informasi_unit.etTypeUnit
+import kotlinx.android.synthetic.main.activity_form_informasi_unit.etUnitKerja
 import kotlinx.android.synthetic.main.activity_form_informasi_unit.mbPrevForm1
 import kotlinx.android.synthetic.main.activity_form_saat_engine_hidup.mbSaveMonitoringUnit
 import kotlinx.android.synthetic.main.activity_form_tambah_monitoring.FormLayout1
@@ -31,16 +38,20 @@ import kotlinx.android.synthetic.main.activity_form_tambah_monitoring.FormLayout
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.log
 
 class FormTambahMonitoringActivity : AppCompatActivity() {
 
     private var prefManager: PrefManager? = null
     private lateinit var unitViewModel: UnitViewModel
 
+//    private var namaUnitArray: Array<String>? = null
+
+    private var adapterJenisUnitItems: ArrayAdapter<String>? = null
     private val formLayouts: Array<View> by lazy {
         arrayOf(FormLayout1, FormLayout2, FormLayout3, FormLayout4, FormLayout5, FormLayout6)
     }
-    @SuppressLint("DiscouragedApi")
+    @SuppressLint("DiscouragedApi", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_form_tambah_monitoring)
@@ -50,45 +61,82 @@ class FormTambahMonitoringActivity : AppCompatActivity() {
         val currentDate = getCurrentDate()
         etTanggalPeriksa.setText(currentDate)
 
-        
-        val listArray = arrayOf("nais","naisbro")
-        val adapterItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listArray)
-        etJenisUnit.setAdapter(adapterItems)
-
+        initViewModel()
         prefManager = PrefManager(this)
-        unitViewModel = ViewModelProvider(this)[UnitViewModel::class.java]
+        unitViewModel.loadDataJenisUnit()
+        val dataMapJenisUnitArray = intent.getSerializableExtra("dataMapJenisUnitArray") as? Array<Map<String, Any>>
+        val dataMapUnitKerjaArray = intent.getSerializableExtra("dataMapUnitKerjaArray") as? Array<Map<String, Any>>
+        val dataMapKodeUnitArray = intent.getSerializableExtra("dataMapKodeUnitArray") as? Array<Map<String, Any>>
 
-//        unitViewModel.jnsUnitData.observe(this) { jnsUnitData ->
-////            AppUtils.closeLoadingLayout(loadingReg)
-//
-////            val idRegArr = jnsUnitData.map { it.id }.toTypedArray()
-////            val dataRegArr = jnsUnitData.map { it.data }.toTypedArray()
-//            val jenisUnitArr = jnsUnitData.map { it.nama_unit }.toTypedArray()
-//
-//
-//            Log.d("testing",jenisUnitArr.contentToString())
+        //halaman pengisian informasi unit
+        dataMapJenisUnitArray?.let { data ->
+            val namaUnitList = data.map { it["nama_unit"] as? String }.filterNotNull()
+            val idUnitList = data.map { it["id"] as? Int }.filterNotNull()
+            val idNamaUnitArray = idUnitList.toTypedArray()
+            val namaUnitArray = namaUnitList.toTypedArray()
 
-//            val adapterItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, regArr)
-//            val ddChooseReg = findViewById<AutoCompleteTextView>(R.id.ddChooseReg)
-//            AppUtils.getSetDropdownHeight(window, ddChooseReg)
-//            ddChooseReg.setAdapter(adapterItems)
+            adapterJenisUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line,
+                namaUnitArray
+            )
+            etJenisUnit.setAdapter(adapterJenisUnitItems)
 
-//            ddChooseReg.setOnTouchListener { _, event ->
-//                if (event.action == MotionEvent.ACTION_UP) {
-//                    ddChooseReg.showDropDown()
-//                }
-//                false
-//            }
+            etJenisUnit.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    etJenisUnit.showDropDown()
+                }
+                false
+            }
 
-//            ddChooseReg.setOnItemClickListener { parent, _, position, _ ->
-//                reg = parent.getItemAtPosition(position).toString()
-//                dataReg = dataRegArr[position]
-//                idReg = idRegArr[position]
-//            }
-//        }
+            etJenisUnit.setOnItemClickListener { parent, _, position, _ ->
+                AppUtils.hideKeyboard(this)
+                val pilJenisUnit = parent.getItemAtPosition(position).toString()
+                val idPilJenisUnit = idNamaUnitArray[position]
+
+                // Filter dataMapUnitKerjaArray based on the selected ID
+                val filteredUnitKerjaList = dataMapUnitKerjaArray?.filter {
+                    it["id_jenis_unit"] == idPilJenisUnit
+                }
+                val namaUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["nama_unit_kerja"] as? String }?.toTypedArray()
+                val idUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
+
+                etUnitKerja.setText("")
+                etKodeUnit.setText("")
+                etTypeUnit.setText("")
+
+                // Populate the ArrayAdapter for etUnitKerja with the new data
+                namaUnitKerjaArray?.let { unitKerjaArray ->
+                    val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArray)
+                    etUnitKerja.setAdapter(adapterUnitKerjaItems)
 
 
+                    etUnitKerja.setOnItemClickListener { _, _, position, _ ->
+                        val pilUnitKerja = adapterUnitKerjaItems.getItem(position).toString()
+                        val idPilUnitKerja = idUnitKerjaArray?.get(position)
 
+
+                        val filteredKodeUnitList = dataMapKodeUnitArray?.filter {
+                            it["id_unit_kerja"] == idPilUnitKerja
+                        }
+                        val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["nama_kode"] as? String }?.toTypedArray()
+                        val typeUnitArray = filteredKodeUnitList?.mapNotNull { it["type_unit"] as? String }?.toTypedArray()
+                        etKodeUnit.setText("")
+                        etTypeUnit.setText("")
+
+                        namaKodeUnitArray?.let { unitKerjaArray ->
+                            val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArray)
+                            etKodeUnit.setAdapter(adapterKodeUnitItems)
+
+                            etKodeUnit.setOnItemClickListener { _, _, position, _ ->
+                                val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
+                                etTypeUnit.setText(typeUnitArray?.get(position))
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
 
         //handle next button each page
         for (i in 0 until formLayouts.size - 1) {
@@ -126,6 +174,14 @@ class FormTambahMonitoringActivity : AppCompatActivity() {
         if (nextFormIndex in 1..formLayouts.size) {
             formLayouts[nextFormIndex - 1].visibility = View.VISIBLE
         }
+
+    }
+
+    private fun initViewModel() {
+        unitViewModel = ViewModelProvider(
+            this,
+            UnitViewModel.Factory(application, UnitRepository(this))
+        )[UnitViewModel::class.java]
 
     }
 

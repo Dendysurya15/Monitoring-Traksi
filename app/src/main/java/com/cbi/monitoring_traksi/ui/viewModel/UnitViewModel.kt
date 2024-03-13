@@ -10,16 +10,34 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.cbi.monitoring_traksi.data.model.JenisUnitModel
 import com.cbi.monitoring_traksi.data.model.KodeUnitModel
+import com.cbi.monitoring_traksi.data.model.UnitKerjaModel
 import com.cbi.monitoring_traksi.data.repository.UnitRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class UnitViewModel(application: Application, private val traksiUnitRepository: UnitRepository) : AndroidViewModel(application) {
+    class UnitViewModel(application: Application, private val traksiUnitRepository: UnitRepository) : AndroidViewModel(application) {
 
     private val _insertResultJnsUnit = MutableLiveData<Boolean>()
     val insertResultJnsUnit: LiveData<Boolean> get() = _insertResultJnsUnit
 
     private val _insertResultKodeUnit = MutableLiveData<Boolean>()
     val insertResultKodeUnit: LiveData<Boolean> get() = _insertResultKodeUnit
+
+    private val _insertResultUnitKerja = MutableLiveData<Boolean>()
+    val insertResultUnitKerja: LiveData<Boolean> get() = _insertResultUnitKerja
+
+    private val _dataJenisUnit = MutableLiveData<List<JenisUnitModel>>()
+
+    private val _dataKodeUnit = MutableLiveData<List<KodeUnitModel>>()
+
+    private val _dataUnitKerja = MutableLiveData<List<UnitKerjaModel>>()
+
+    val dataJenisUnitList: LiveData<List<JenisUnitModel>> get() = _dataJenisUnit
+
+    val dataKodeUnitList: LiveData<List<KodeUnitModel>> get() = _dataKodeUnit
+
+    val dataUnitkerjaList: LiveData<List<UnitKerjaModel>> get() = _dataUnitKerja
 
     fun insertDataJenisUnit(
         id: Int,
@@ -44,19 +62,17 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
 
     fun insertDataKodeUnit(
          id: Int,
-         nama: String,
-         unit_kerja: String,
+         nama_kode: String,
          type_unit: String,
-         id_jenis_unit: Int
+         id_unit_kerja: Int
         ) {
         viewModelScope.launch {
             try {
                 val dataKodeUnit = KodeUnitModel(
                     id,
-                    nama,
-                    unit_kerja,
+                    nama_kode,
                     type_unit,
-                    id_jenis_unit
+                    id_unit_kerja
                 )
                 val isInserted = traksiUnitRepository.insertDataKodeUnit(dataKodeUnit)
                 Log.d("testing","isInserted gan")
@@ -68,6 +84,30 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         }
     }
 
+    fun insertDataUnitKerja(
+        id: Int,
+        nama_unit_kerja: String,
+        id_jenis_unit: Int
+    ) {
+        viewModelScope.launch {
+            try {
+                val dataUnitKerja = UnitKerjaModel(
+                    id,
+                    nama_unit_kerja,
+                    id_jenis_unit
+                )
+                val isInserted = traksiUnitRepository.insertDataUnitKerja(dataUnitKerja)
+                Log.d("testing","isInserted gan")
+                _insertResultUnitKerja.value = isInserted
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _insertResultUnitKerja.value = false
+            }
+        }
+    }
+
+
+
     fun deleteDataJenisUnit() {
         viewModelScope.launch {
             traksiUnitRepository.deleteDataJenisUnit()
@@ -77,6 +117,39 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
     fun deleteDataKodeUnit() {
         viewModelScope.launch {
             traksiUnitRepository.deleteDataKodeUnit()
+        }
+    }
+
+    fun deleteDataUnitKerja() {
+        viewModelScope.launch {
+            traksiUnitRepository.deleteDataUnitKerja()
+        }
+    }
+
+    fun loadDataJenisUnit() {
+        viewModelScope.launch {
+            val dataUnit = withContext(Dispatchers.IO) {
+                traksiUnitRepository.fetchAllJenisUnit()
+            }
+            _dataJenisUnit.value = dataUnit
+        }
+    }
+
+    fun loadDataUnitKerja() {
+        viewModelScope.launch {
+            val dataUnit = withContext(Dispatchers.IO) {
+                traksiUnitRepository.fetchAllUnitKerja()
+            }
+            _dataUnitKerja.value = dataUnit
+        }
+    }
+
+    fun loadDataKodeUnit() {
+        viewModelScope.launch {
+            val dataUnit = withContext(Dispatchers.IO) {
+                traksiUnitRepository.fetchAllKodeUnit()
+            }
+            _dataKodeUnit.value = dataUnit
         }
     }
 

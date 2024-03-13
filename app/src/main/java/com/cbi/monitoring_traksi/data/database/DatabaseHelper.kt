@@ -13,6 +13,7 @@ class DatabaseHelper(context: Context):
 
         const val DB_TAB_JENIS_UNIT = "jenis_unit"
         const val DB_TAB_KODE_UNIT = "kode_unit"
+        const val DB_TAB_UNIT_KERJA = "unit_kerja"
         const val DB_TAB_LAPORAN_KERUSAKAN = "laporan_kerusakan"
 
         const val DB_ID = "id"
@@ -21,9 +22,12 @@ class DatabaseHelper(context: Context):
         const val DB_NAMA_UNIT = "nama_unit"
 
         //kode_unit
-        const val DB_NAMA = "nama"
-        const val DB_UNIT_KERJA = "unit_kerja"
+        const val DB_NAMA_KODE = "nama_kode"
         const val DB_TYPE_UNIT = "type_unit"
+        const val DB_ID_UNIT_KERJA = "id_unit_kerja"
+
+        //unit_kerja
+        const val DB_NAMA_UNIT_KERJA = "nama_unit_kerja"
         const val DB_ID_JENIS_UNIT = "id_jenis_unit"
 
         //laporan_kerusakan
@@ -45,9 +49,13 @@ class DatabaseHelper(context: Context):
 
     private val createTableKodeUnit = "CREATE TABLE IF NOT EXISTS $DB_TAB_KODE_UNIT (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_NAMA VARCHAR, " +
-            "$DB_UNIT_KERJA VARCHAR, " +
+            "$DB_NAMA_KODE VARCHAR, " +
             "$DB_TYPE_UNIT VARCHAR, " +
+            "$DB_ID_UNIT_KERJA INTEGER)"
+
+    private val createTableUnitKerja = "CREATE TABLE IF NOT EXISTS $DB_TAB_UNIT_KERJA (" +
+            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$DB_NAMA_UNIT_KERJA VARCHAR, " +
             "$DB_ID_JENIS_UNIT INTEGER)"
 
     private val createTableLaporanKerusakan = "CREATE TABLE IF NOT EXISTS $DB_TAB_LAPORAN_KERUSAKAN (" +
@@ -65,6 +73,7 @@ class DatabaseHelper(context: Context):
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createTableJenisUnit)
         db.execSQL(createTableKodeUnit)
+        db.execSQL(createTableUnitKerja)
         db.execSQL(createTableLaporanKerusakan)
     }
 

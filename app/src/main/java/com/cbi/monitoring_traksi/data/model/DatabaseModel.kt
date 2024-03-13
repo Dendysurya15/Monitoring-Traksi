@@ -9,9 +9,14 @@ data class DataJenisUnit(
 
 data class DataKodeUnit(
     @Ignore val id: Int,
-    val nama: String,
-    val unit_kerja: String,
+    val nama_kode: String,
     val type_unit: String,
+    val id_unit_kerja: Int,
+)
+
+data class DataUnitKerja(
+    @Ignore val id: Int,
+    val nama_unit_kerja: String,
     val id_jenis_unit: Int,
 )
 

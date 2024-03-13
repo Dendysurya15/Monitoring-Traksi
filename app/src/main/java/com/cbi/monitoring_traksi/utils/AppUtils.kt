@@ -1,6 +1,7 @@
 package com.cbi.monitoring_traksi.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -14,8 +15,11 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -45,7 +49,7 @@ object AppUtils {
     const val mainServer = "https://srs-ssms.com/"
     const val serverMp = "https://mobilepro.srs-ssms.com/"
     const val serverPs = "https://palmsentry.srs-ssms.com/"
-    const val serverListJenisAndKodeUnit = "https://srs-ssms.com/aplikasi_traksi/getListJenisAndKodeUnit.php"
+    const val serverListDBServer = "https://srs-ssms.com/aplikasi_traksi/getListAllTraksi.php"
     const val TAG_SUCCESS = "success"
     const val TAG_MESSAGE = "message"
 
@@ -76,18 +80,22 @@ object AppUtils {
             .setBlurRadius(1f)
     }
 
-    fun setupInputLayout(
-        context: Context,
-        layout: TextInputLayout,
-//        hintResId: Int,
-//        iconResId: Int,
-        inputType: Int = InputType.TYPE_TEXT_VARIATION_PERSON_NAME or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
-        imeType: Int = EditorInfo.IME_ACTION_NEXT
-    ) {
-//        layout.hint = context.getString(hintResId)
-        layout.editText?.inputType = inputType
-        layout.editText?.imeOptions = imeType
+    fun getSetDropdownHeight(window: Window, view: AutoCompleteTextView) {
+        val rootView = window.decorView.rootView
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val screenHeight = rootView.height
+                val editTextHeight = view.height
+                val editTextY = IntArray(2)
+                view.getLocationOnScreen(editTextY)
+                view.dropDownHeight = (screenHeight - editTextY[1] - editTextHeight) - 150
+
+                rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
     }
+
+
 
     fun showLoadingLayout(context: Context, window: Window, loadingView: View) {
         loadingView.lottieLoadAnimate.visibility = View.VISIBLE
@@ -121,7 +129,7 @@ object AppUtils {
         }
     }
 
-    fun synchronizeDBJnsDanKodeUnit(
+    fun synchronizeDBSqlite(
         context: Context,
         prefManager: PrefManager,
         unitViewModel: UnitViewModel,
@@ -139,22 +147,24 @@ object AppUtils {
             Log.d("testing","sudah pernah update")
         }
 
-
         val strReq: StringRequest =
             @SuppressLint("SetTextI18n")
             object : StringRequest(
                 Method.POST,
-                serverListJenisAndKodeUnit,
+                serverListDBServer,
                 Response.Listener { response ->
                     try {
+
                         val jObj = JSONObject(response)
 
                         val jenisUnitsArray = jObj.getJSONArray("jenis_unit")
                         val kodeUnitsArray = jObj.getJSONArray("kode_unit")
+                        val unitKerjasArray = jObj.getJSONArray("unit_kerja")
 
 
                         unitViewModel.deleteDataJenisUnit()
                         unitViewModel.deleteDataKodeUnit()
+                        unitViewModel.deleteDataUnitKerja()
                         for (i in 0 until jenisUnitsArray.length()) {
                             val jenisUnitObject = jenisUnitsArray.getJSONObject(i)
                             val idJenisUnit = jenisUnitObject.getInt("id")
@@ -164,23 +174,36 @@ object AppUtils {
                                 id = idJenisUnit,
                                 nama_unit = namaJenisUnit,
                             )
+                            Log.d("testing","sudah insert gan Jenis Unit")
                         }
 
                         for (i in 0 until kodeUnitsArray.length()) {
                             val kodeUnitObject = kodeUnitsArray.getJSONObject(i)
                             val idKodeUnit = kodeUnitObject.getInt("id")
-                            val nama = kodeUnitObject.getString("nama")
-                            val unit_kerja = kodeUnitObject.getString("unit_kerja")
+                            val nama_kode = kodeUnitObject.getString("nama_kode")
                             val type_unit = kodeUnitObject.getString("type_unit")
-                            val id_jenis_unit = kodeUnitObject.getInt("id_jenis_unit")
-
+                            val id_unit_kerja = kodeUnitObject.getInt("id_unit_kerja")
 
 
                             unitViewModel.insertDataKodeUnit(
                                 id = idKodeUnit,
-                                nama = nama,
-                                unit_kerja = unit_kerja,
+                                nama_kode = nama_kode,
                                 type_unit = type_unit,
+                                id_unit_kerja = id_unit_kerja,
+                            )
+                            Log.d("testing","sudah insert gan Kode Unit")
+
+                        }
+
+                        for (i in 0 until unitKerjasArray.length()) {
+                            val unitKerjaObject = unitKerjasArray.getJSONObject(i)
+                            val idUnitKerja = unitKerjaObject.getInt("id")
+                            val nama_unit_kerja = unitKerjaObject.getString("nama_unit_kerja")
+                            val id_jenis_unit = unitKerjaObject.getInt("id_jenis_unit")
+
+                            unitViewModel.insertDataUnitKerja(
+                                id = idUnitKerja,
+                                nama_unit_kerja = nama_unit_kerja,
                                 id_jenis_unit = id_jenis_unit,
                             )
                         }
@@ -216,17 +239,33 @@ object AppUtils {
                             }
                         }
 
+                        unitViewModel.insertResultUnitKerja.observe(
+                            context as LifecycleOwner
+                        ) { isSuccess ->
+
+                            if (isSuccess) {
+                                Log.d("testing", "Sukses insert data Unit Kerja !")
+                                closeLoadingLayout(loaderView)
+                                successArrayInsert.add(true)
+                            } else {
+                                successArrayInsert.add(false)
+                                Log.d("testing", "Terjadi kesalahan, mengunduh data Unit Kerja")
+
+                            }
+                        }
+
                         val allSuccess = successArrayInsert.all { it }
                         if (allSuccess) {
                             prefManager.isFirstTimeLaunch = false
                             AlertDialogUtility.alertDialog(
                                 context,
                                 "Sukses",
-                                "nais",
+                                "Berhasil Mengunduh Data",
                                 "success.json"
                             )
                         } else {
                             closeLoadingLayout(loaderView)
+
                             Log.d("testing", "At least one operation insert is failed.")
                         }
 //
@@ -247,7 +286,7 @@ object AppUtils {
                             context.getString(R.string.desc_failed_download),
                             "error.json"
                         ) {
-                            synchronizeDBJnsDanKodeUnit(
+                            synchronizeDBSqlite(
                                 context,
                                 prefManager,
                                 unitViewModel,
@@ -270,7 +309,7 @@ object AppUtils {
                         context.getString(R.string.desc_failed_download),
                         "error.json"
                     ) {
-                        synchronizeDBJnsDanKodeUnit(
+                        synchronizeDBSqlite(
                             context,
                             prefManager,
                             unitViewModel,
@@ -292,6 +331,12 @@ object AppUtils {
     }
 
 
+    fun hideKeyboard(activity: Activity) {
+        val inputMethodManager =
+            activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view = activity.currentFocus ?: return
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
     fun dialogErrorDownload(
         context: Context,
         window: Window,

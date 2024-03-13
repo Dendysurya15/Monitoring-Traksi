@@ -40,13 +40,9 @@ class LoginRepository(private val context: Context, private val window: Window, 
         val url = AppUtils.serverMp + "config/apk-login.php"
 
 
-
         if (email == prefManager.email && password == prefManager.password) {
             callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
-
-            Log.d("masuk sini", "masuk berhasil gan")
         } else {
-            Log.d("masuk sini","Masuk else ")
             AppUtils.showLoadingLayout(context, window, loadingLayout)
             @Suppress("UNUSED_ANONYMOUS_PARAMETER") val strReq: StringRequest =
                 @SuppressLint("SuspiciousIndentation")
