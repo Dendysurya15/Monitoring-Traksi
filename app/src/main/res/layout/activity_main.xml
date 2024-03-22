@@ -57,7 +57,7 @@
                     android:fontFamily="@font/poppins_lightitalic"
                     android:textSize="12dp"
 
-                    android:text="v 2.19283" android:layout_weight="1"/>
+                    android:text="@string/app_version" android:layout_weight="1"/>
 
             </LinearLayout>
 
@@ -123,7 +123,7 @@
                 android:backgroundTint="@color/white"
                 android:layout_marginBottom="20dp"
 
-                 />
+                />
 
         </LinearLayout>
     </LinearLayout>

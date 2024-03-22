@@ -70,6 +70,95 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/navbar"
+        android:background="@color/graylight"
+        android:id="@+id/formTitle"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/titleform1"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:textSize="15dp"/>
+    </LinearLayout>
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/formTitle"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content" >
+
+            <include
+                android:id="@+id/pertanyaan1_1"
+                layout="@layout/layout_pertanyaan"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="30dp"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+
+
+
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:id="@+id/row_first_form"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/formTitle"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:paddingTop="20dp"-->
+<!--        tools:ignore="MissingConstraints">-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:paddingHorizontal="15dp"-->
+<!--            android:layout_weight="1"-->
+<!--            >-->
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Periksa dan kelilingi Unit, bila ada kelainan (kendor, bocor, dsb nya). segera atasi dan bila tidak  bisa segera laporkan kepada atasan atau ke bagian Workshop"-->
+<!--                android:fontFamily="@font/poppins_medium"-->
+<!--                android:textStyle="italic"-->
+<!--                android:layout_marginBottom="15dp"-->
+<!--                android:textSize="10dp"/>-->
+
+
+<!--            <include-->
+<!--                android:id="@+id/etHasilPeriksa"-->
+<!--                layout="@layout/layout_dropdown_hasil_periksa"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"/>-->
+
+<!--            <include-->
+<!--                android:id="@+id/layout_komentar_foto"-->
+<!--                android:visibility="gone"-->
+<!--                layout="@layout/layout_komentar_dan_foto"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"/>-->
+<!--        </LinearLayout>-->
+
+<!--    </LinearLayout>-->
+
     <com.google.android.material.button.MaterialButton
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

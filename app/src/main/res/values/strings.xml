@@ -64,4 +64,63 @@
     <string name="latest">Terbaru</string>
     <string name="history">Histori</string>
     <string name="last_update2">Terakhir Diperbarui</string>
+
+    <string name="titleform1">PERIKSA DAN KELILINGI UNIT</string>
+    <string name="titleform2">PERIKSA DAN DITAMBAH BILA KURANG</string>
+    <string name="titleform3">PERIKSA DAN BERSIHKAN</string>
+    <string name="titleform4">PERIKSA,SETEL DAN LUMASI (LUBRICATE)</string>
+    <string name="titleform5">PERIKSA BAGIAN BERIKUT SAAT ENGINE HIDUP</string>
+
+
+    <string name="form_1_1">Periksa dan kelilingi Unit, bila ada kelainan (kendor, bocor, dsb nya). segera atasi dan bila tidak  bisa segera laporkan kepada atasan atau ke bagian Workshop</string>
+
+    <string name="form_2_1">2.1 Oil Engine (Oli Mesin)</string>
+    <string name="form_2_2">2.2 Coolent (Air Radiator)</string>
+    <string name="form_2_3">2.3 Fuel Tank (Tangki Bahan Bakar)</string>
+    <string name="form_2_4">2.4 Brake Fluid (Minyak Rem)</string>
+    <string name="form_2_5">2.5 Accu (Air Aki)</string>
+    <string name="form_2_6">2.6 Drive Shaft Boots (Karet Shaft Depan)</string>
+    <string name="form_2_7">2.7 Tire atau Ban (Tekanan Udara dan Kondisi)</string>
+    <string name="form_2_8">2.8 Oil Steering (Oil Power Steering)</string>
+
+    <string name="form_3_1">3.1 Fuel Tank dan tutup Fuel Tank (Tangki Bahan Bakar)</string>
+    <string name="form_3_2">3.2 Sirip Sirip Radiator (Core)</string>
+    <string name="form_3_3">3.3 Fuse (Sekring)</string>
+    <string name="form_3_4">3.4 Suspensi (Shock Braker/Stabilizer/Spring)</string>
+    <string name="form_3_5">3.5 Kaca Spion</string>
+    <string name="form_3_6">3.6 Winshield Wiper (Pembersih Kaca Depan)</string>
+    <string name="form_3_7">3.7 Pintu Kabin (kanan dan kiri)</string>
+    <string name="form_3_8">3.8 Accu (Baterai dan Terminal Baterai)</string>
+    <string name="form_3_9">3.9 Baut Roda</string>
+    <string name="form_3_10">3.10 Safety Belt / Sabuk Pengaman</string>
+    <string name="form_3_11">3.11 Kemudi</string>
+    <string name="form_3_12">3.12 Klakson</string>
+    <string name="form_3_13">3.13 Parking Brake (Rem Tangan)</string>
+    <string name="form_3_14">3.14 Rem kaki</string>
+    <string name="form_3_15">3.15 Backward Alarm (alarm mundur)</string>
+    <string name="form_3_16">3.16 Lampu (mundur, rem, sign, utama)</string>
+    <string name="form_3_17">3.17 STNK / Buku KIR / SIM / SIO</string>
+    <string name="form_3_18">3.18 Segitiga Pengaman</string>
+    <string name="form_3_19">3.19 Apar</string>
+    <string name="form_3_20">3.20 P3K</string>
+    <string name="form_3_21">3.21 Pengganjal Ban</string>
+    <string name="form_3_22">3.22 Drive Shaft PTO (Khusus Dump Truck)</string>
+    <string name="form_3_23">3.23 Air pada Water Separator dan Fuel Tank</string>
+    <string name="form_3_24">3.24 Body Unit</string>
+
+    <string name="form_4_1">4.1 Proveler Shaft dan Universal Joint Depan (Khusus type 4 WD)</string>
+    <string name="form_4_2">4.2 Proveler Shaft dan Universal Joint Belakang</string>
+    <string name="form_4_3">4.3 Tie Rod</string>
+    <string name="form_4_4">4.4 Front Spring dan Nepple Grease</string>
+    <string name="form_4_5">4.5 Rear Spring dan Nepple Grease</string>
+    <string name="form_4_6">4.6 Dump dan Nepple Grease (Khusus Dump Truck)</string>
+    <string name="form_4_7">4.7 V-Belt (Tali Kipas)</string>
+    <string name="form_4_8">4.8 Bushing Fin Cylinder Dump (Khusus Dump Truck)</string>
+
+    <string name="form_5_1">1. Semua Alat Ukur/Alat Kontrol Pada Layar Monitor</string>
+    <string name="form_5_2">2. Semua Tombol / Knob/ Switch</string>
+    <string name="form_5_3">3. Semua Tuas (hidraulic) / Lever / Pedal Pengontrol</string>
+    <string name="form_5_4">4. Asap mesin dan suara yang tidak normal ?</string>
+
+
 </resources>

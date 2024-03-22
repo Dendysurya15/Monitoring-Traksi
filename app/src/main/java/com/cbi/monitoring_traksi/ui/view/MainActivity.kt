@@ -44,8 +44,6 @@ class MainActivity : AppCompatActivity() {
         loadingMain.visibility = View.VISIBLE
         AppUtils.showLoadingLayout(this, window, loadingMain)
 
-        Log.d("testing", completedObserversCount.toString())
-
         prefManager = PrefManager(this)
         if (prefManager!!.isFirstTimeLaunch) {
             handleSynchronizeData()
@@ -64,62 +62,9 @@ class MainActivity : AppCompatActivity() {
 
         mbTambahMonitoring.setOnClickListener {
 
-            //fetch data arrayAdapter untuk halaman selanjutnya/form
-            unitViewModel.loadDataJenisUnit()
-            unitViewModel.dataJenisUnitList.observe(this){data->
-                data.forEach { record ->
-                    val recordMap = mutableMapOf<String, Any>()
-                    recordMap["id"] = record.id
-                    recordMap["nama_unit"] = record.nama_unit
-
-                    dataJenisUnitList.add(recordMap)
-                }
-
-                dataMapJenisUnitArray = dataJenisUnitList.toTypedArray()
-
-
-                checkObserversCompletedAndMoveActivity()
-            }
-
-            unitViewModel.loadDataUnitKerja()
-            unitViewModel.dataUnitkerjaList.observe(this) { data ->
-                data.forEach { record ->
-                    val recordMap = mutableMapOf<String, Any>()
-
-                    // Populate the map with keys and values
-                    recordMap["id"] = record.id
-                    recordMap["nama_unit_kerja"] = record.nama_unit_kerja
-                    recordMap["id_jenis_unit"] = record.id_jenis_unit
-
-                    dataUnitKerjaList.add(recordMap)
-                }
-
-                dataMapUnitKerjaArray = dataUnitKerjaList.toTypedArray()
-
-
-
-                checkObserversCompletedAndMoveActivity()
-            }
-
-            unitViewModel.loadDataKodeUnit()
-            unitViewModel.dataKodeUnitList.observe(this) { data ->
-
-                data.forEach { record ->
-                    val recordMap = mutableMapOf<String, Any>()
-
-                    // Populate the map with keys and values
-                    recordMap["id"] = record.id
-                    recordMap["nama_kode"] = record.nama_kode
-                    recordMap["type_unit"] = record.type_unit
-                    recordMap["id_unit_kerja"] = record.id_unit_kerja
-
-                    dataKodeUnitList.add(recordMap)
-                }
-
-                dataMapKodeUnitArray = dataKodeUnitList.toTypedArray()
-                checkObserversCompletedAndMoveActivity()
-            }
-
+            val intent = Intent(this, FormTambahMonitoringActivity::class.java)
+            startActivity(intent)
+            finishAffinity()
         }
 
         iblogout.setOnClickListener {
@@ -153,21 +98,21 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-    private fun checkObserversCompletedAndMoveActivity() {
-
-        completedObserversCount++
-
-        if (completedObserversCount == 3) {
-
-            val intent = Intent(this, FormTambahMonitoringActivity::class.java)
-            intent.putExtra("dataMapJenisUnitArray", dataMapJenisUnitArray)
-            intent.putExtra("dataMapUnitKerjaArray", dataMapUnitKerjaArray)
-            intent.putExtra("dataMapKodeUnitArray", dataMapKodeUnitArray)
-
-            startActivity(intent)
-            finishAffinity()
-        }
-    }
+//    private fun checkObserversCompletedAndMoveActivity() {
+//
+//        completedObserversCount++
+//
+//        if (completedObserversCount == 3) {
+//
+//            val intent = Intent(this, FormTambahMonitoringActivity::class.java)
+//            intent.putExtra("dataMapJenisUnitArray", dataMapJenisUnitArray)
+//            intent.putExtra("dataMapUnitKerjaArray", dataMapUnitKerjaArray)
+//            intent.putExtra("dataMapKodeUnitArray", dataMapKodeUnitArray)
+//
+//            startActivity(intent)
+//            finishAffinity()
+//        }
+//    }
     private fun initViewModel() {
         unitViewModel = ViewModelProvider(
             this,

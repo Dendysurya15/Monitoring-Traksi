@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content" >
+            <ImageView
+                android:id="@+id/ibAddFoto"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:padding="10dp"
+                app:tint="@color/black"
+                android:src="@drawable/ic_add_image"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:paddingLeft="5dp"
+                android:text="Upload Foto (*)"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+
+                android:visibility="gone"
+                android:textColor="@color/colorRedDark"
+                android:text="Hapus Foto"
+                />
+        </LinearLayout>
+
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hintEnabled="false"
+        app:boxStrokeColor="@color/bluedark"
+        app:cursorColor="@color/bluedark"
+        app:hintTextColor="@color/bluedark"
+        android:layout_weight="0.5"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etKomentar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_regular"
+            android:inputType="textMultiLine"
+            android:gravity="top|left"
+            android:overScrollMode="always"
+            android:scrollbarStyle="insideInset"
+            android:scrollbars="vertical"
+            android:hint="Penjelasan kerusakan tulis disini"
+            android:textSize="10dp"  />
+
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>

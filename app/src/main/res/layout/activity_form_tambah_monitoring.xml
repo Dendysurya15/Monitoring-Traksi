@@ -14,35 +14,42 @@
 
     <include
         android:id="@+id/FormLayout2"
-        layout="@layout/activity_form_1_sebelum_engine_hidup"
+        layout="@layout/activity_form_1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
     <include
         android:id="@+id/FormLayout3"
-        layout="@layout/activity_form_2_sebelum_engine_hidup"
+        layout="@layout/activity_form_2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
     <include
         android:id="@+id/FormLayout4"
-        layout="@layout/activity_form_3_sebelum_engine_hidup"
+        layout="@layout/activity_form_3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
     <include
         android:id="@+id/FormLayout5"
-        layout="@layout/activity_form_4_sebelum_engine_hidup"
+        layout="@layout/activity_form_4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
     <include
         android:id="@+id/FormLayout6"
-        layout="@layout/activity_form_saat_engine_hidup"
+        layout="@layout/activity_form_5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
+
+    <include
+        android:id="@+id/loadingFetchingData"
+        layout="@layout/loading_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
