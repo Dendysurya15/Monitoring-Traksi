@@ -14,12 +14,16 @@ class DatabaseHelper(context: Context):
         const val DB_TAB_JENIS_UNIT = "jenis_unit"
         const val DB_TAB_KODE_UNIT = "kode_unit"
         const val DB_TAB_UNIT_KERJA = "unit_kerja"
-        const val DB_TAB_LAPORAN_KERUSAKAN = "laporan_kerusakan"
+        const val DB_TAB_LIST_PERTANYAAN = "list_pertanyaan"
+        const val DB_TAB_LAPORAN_P2H = "laporan_p2h"
+        const val DB_TAB_DATA = "data"
 
         const val DB_ID = "id"
-        //jenisUnit
 
+        //jenisUnit
         const val DB_NAMA_UNIT = "nama_unit"
+        const val DB_JENIS = "jenis"
+        const val DB_LIST_PERTANYAAN = "list_pertanyaan"
 
         //kode_unit
         const val DB_NAMA_KODE = "nama_kode"
@@ -30,22 +34,33 @@ class DatabaseHelper(context: Context):
         const val DB_NAMA_UNIT_KERJA = "nama_unit_kerja"
         const val DB_ID_JENIS_UNIT = "id_jenis_unit"
 
-        //laporan_kerusakan
-        const val DB_TANGGAL_PEMBUATAN = "tanggal_pembuatan"
-        const val DB_UNIT = "unit"
-        const val DB_LOKASI_UNIT = "lokasi_unit"
-        const val DB_NAMA_OPERATOR = "nama_operator"
-        const val DB_NAMA_POLISI = "nomor_polisi"
-        const val DB_KERUSAKAN = "kerusakan"
-        const val DB_FOTO = "foto"
-        const val DB_KOMENTAR = "komentar"
-        const val DB_APP_VER = "app_version"
+        //list pertanyaan
+        const val DB_NAMA_PERTANYAAN = "nama_pertanyaan"
+        const val DB_KONDISI_MESIN = "kondisi_mesin"
 
+        //data_laporan
+        const val DB_ID_LAPORAN = "id_laporan"
+        const val DB_ID_PERTANYAAN = "id_pertanyaaan"
+        const val DB_KONDISI = "kondisi"
+        const val DB_KOMENTAR = "komentar"
+        const val DB_FOTO = "foto"
+
+        //laporan_p2h
+        const val DB_ID_KODE_UNIT = "id_kode_unit"
+        const val DB_TANGGAL_UPLOAD = "tanggal_upload"
+        const val DB_LAT = "lat"
+        const val DB_LON = "lon"
+        const val DB_ID_USER = "id_user"
+        const val DB_FOTO_UNIT = "foto_unit"
+        const val DB_STATUS_PEMERIKSAAN = "status"
+        const val DB_APP_VERSION = "app_version"
     }
 
     private val createTableJenisUnit = "CREATE TABLE IF NOT EXISTS $DB_TAB_JENIS_UNIT (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_NAMA_UNIT VARCHAR)"
+            "$DB_NAMA_UNIT VARCHAR, " +
+            "$DB_JENIS VARCHAR, " +
+            "$DB_LIST_PERTANYAAN VARCHAR)"
 
     private val createTableKodeUnit = "CREATE TABLE IF NOT EXISTS $DB_TAB_KODE_UNIT (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -58,23 +73,38 @@ class DatabaseHelper(context: Context):
             "$DB_NAMA_UNIT_KERJA VARCHAR, " +
             "$DB_ID_JENIS_UNIT INTEGER)"
 
-    private val createTableLaporanKerusakan = "CREATE TABLE IF NOT EXISTS $DB_TAB_LAPORAN_KERUSAKAN (" +
+    private val createTableItemPertanyaan = "CREATE TABLE IF NOT EXISTS $DB_TAB_LIST_PERTANYAAN (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_TANGGAL_PEMBUATAN VARCHAR, " +
-            "$DB_UNIT INTEGER, " +
-            "$DB_LOKASI_UNIT VARCHAR, " +
-            "$DB_NAMA_OPERATOR VARCHAR, " +
-            "$DB_NAMA_POLISI VARCHAR, " +
-            "$DB_KERUSAKAN VARCHAR, " +
-            "$DB_FOTO VARCHAR, " +
+            "$DB_NAMA_PERTANYAAN VARCHAR, " +
+            "$DB_KONDISI_MESIN VARCHAR)"
+
+    private val createTableData = "CREATE TABLE IF NOT EXISTS $DB_TAB_DATA (" +
+            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$DB_ID_LAPORAN INTEGER, " +
+            "$DB_ID_PERTANYAAN VARCHAR, " +
+            "$DB_KONDISI VARCHAR, " +
             "$DB_KOMENTAR VARCHAR, " +
-            "$DB_APP_VER VARCHAR)"
+            "$DB_FOTO VARCHAR)"
+
+
+    private val createTableLaporanP2H = "CREATE TABLE IF NOT EXISTS $DB_TAB_LAPORAN_P2H (" +
+            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$DB_ID_KODE_UNIT INTEGER, " +
+            "$DB_TANGGAL_UPLOAD VARCHAR, " +
+            "$DB_LAT VARCHAR, " +
+            "$DB_LON VARCHAR, " +
+            "$DB_ID_USER INTEGER, " +
+            "$DB_FOTO_UNIT VARCHAR, " +
+            "$DB_STATUS_PEMERIKSAAN VARCHAR, " +
+            "$DB_APP_VERSION VARCHAR)"
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createTableJenisUnit)
         db.execSQL(createTableKodeUnit)
         db.execSQL(createTableUnitKerja)
-        db.execSQL(createTableLaporanKerusakan)
+        db.execSQL(createTableItemPertanyaan)
+        db.execSQL(createTableData)
+        db.execSQL(createTableLaporanP2H)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

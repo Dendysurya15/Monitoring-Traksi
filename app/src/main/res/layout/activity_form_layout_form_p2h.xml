@@ -3,14 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/parentFormP2H"
     android:layout_height="match_parent"
-    tools:context=".ui.view.FormTambahMonitoringActivity">
+    tools:context=".ui.view.FormLaporanP2HLayoutPertanyaanActivity">
+
+
     <include
         android:id="@+id/FormLayout1"
         layout="@layout/activity_form_informasi_unit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible" />
+
+    <include
+
+        layout="@layout/activity_form_base_layout_pertanyaan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <include
+
+        layout="@layout/activity_form_base_layout_pertanyaan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <include
+
+        layout="@layout/activity_form_base_layout_pertanyaan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
 
     <include
         android:id="@+id/FormLayout2"

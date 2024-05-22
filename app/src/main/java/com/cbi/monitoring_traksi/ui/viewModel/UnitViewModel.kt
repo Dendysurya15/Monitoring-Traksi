@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.cbi.monitoring_traksi.data.model.JenisUnitModel
 import com.cbi.monitoring_traksi.data.model.KodeUnitModel
+import com.cbi.monitoring_traksi.data.model.ItemPertanyaanModel
 import com.cbi.monitoring_traksi.data.model.UnitKerjaModel
 import com.cbi.monitoring_traksi.data.repository.UnitRepository
 import kotlinx.coroutines.Dispatchers
@@ -27,11 +28,16 @@ import kotlinx.coroutines.withContext
     private val _insertResultUnitKerja = MutableLiveData<Boolean>()
     val insertResultUnitKerja: LiveData<Boolean> get() = _insertResultUnitKerja
 
+    private val _insertResultPertanyaan = MutableLiveData<Boolean>()
+    val insertResultPertanyaan: LiveData<Boolean> get() = _insertResultPertanyaan
+
     private val _dataJenisUnit = MutableLiveData<List<JenisUnitModel>>()
 
     private val _dataKodeUnit = MutableLiveData<List<KodeUnitModel>>()
 
     private val _dataUnitKerja = MutableLiveData<List<UnitKerjaModel>>()
+
+    private val _dataPertanyaan = MutableLiveData<List<ItemPertanyaanModel>>()
 
     val dataJenisUnitList: LiveData<List<JenisUnitModel>> get() = _dataJenisUnit
 
@@ -39,23 +45,54 @@ import kotlinx.coroutines.withContext
 
     val dataUnitkerjaList: LiveData<List<UnitKerjaModel>> get() = _dataUnitKerja
 
+    val pertanyaanBasedOnJenisUnitList: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
+
+    val dataPertanyaanlist: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
+
     fun insertDataJenisUnit(
         id: Int,
         nama_unit: String,
-
+        jenis: String,
+        list_pertanyaan: String,
     ) {
         viewModelScope.launch {
             try {
                 val dataJenisUnit = JenisUnitModel(
                     id,
                     nama_unit,
+                    jenis,
+                    list_pertanyaan ,
                 )
                 val isInserted = traksiUnitRepository.insertDataJenisUnit(dataJenisUnit)
-                Log.d("testing","isInserted gan")
+
                 _insertResultJnsUnit.value = isInserted
             } catch (e: Exception) {
                 e.printStackTrace()
                 _insertResultJnsUnit.value = false
+            }
+        }
+    }
+
+
+    fun insertDataPertanyaan(
+        id: Int,
+        nama_pertanyaan: String,
+        kondisi_mesin: String,
+
+        ) {
+        viewModelScope.launch {
+            try {
+                val dataPertanyaan = ItemPertanyaanModel(
+                    id,
+                    nama_pertanyaan,
+                    kondisi_mesin ,
+                )
+                val isInserted = traksiUnitRepository.insertDataPertanyaan(dataPertanyaan)
+
+                _insertResultPertanyaan.value = isInserted
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _insertResultPertanyaan.value = false
             }
         }
     }
@@ -75,7 +112,7 @@ import kotlinx.coroutines.withContext
                     id_unit_kerja
                 )
                 val isInserted = traksiUnitRepository.insertDataKodeUnit(dataKodeUnit)
-                Log.d("testing","isInserted gan")
+
                 _insertResultKodeUnit.value = isInserted
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -97,7 +134,7 @@ import kotlinx.coroutines.withContext
                     id_jenis_unit
                 )
                 val isInserted = traksiUnitRepository.insertDataUnitKerja(dataUnitKerja)
-                Log.d("testing","isInserted gan")
+
                 _insertResultUnitKerja.value = isInserted
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -111,6 +148,13 @@ import kotlinx.coroutines.withContext
     fun deleteDataJenisUnit() {
         viewModelScope.launch {
             traksiUnitRepository.deleteDataJenisUnit()
+        }
+    }
+
+
+    fun deleteDataPertanyaan(){
+        viewModelScope.launch {
+            traksiUnitRepository.deleteDataPertanyaan()
         }
     }
 
@@ -135,6 +179,15 @@ import kotlinx.coroutines.withContext
         }
     }
 
+    fun loadDataListPertanyaanBasedOnJenisUnit(arrayHere: Array<String>){
+        viewModelScope.launch {
+            val dataUnit = withContext(Dispatchers.IO) {
+                traksiUnitRepository.fetchAllListPertanyaanBasedOnJenisUnit(arrayHere)
+            }
+            _dataPertanyaan.value = dataUnit
+        }
+    }
+
     fun loadDataUnitKerja() {
         viewModelScope.launch {
             val dataUnit = withContext(Dispatchers.IO) {
@@ -143,6 +196,9 @@ import kotlinx.coroutines.withContext
             _dataUnitKerja.value = dataUnit
         }
     }
+
+
+
 
     fun loadDataKodeUnit() {
         viewModelScope.launch {
@@ -153,8 +209,18 @@ import kotlinx.coroutines.withContext
         }
     }
 
+//        fun loadDataPertanyan() {
+//            viewModelScope.launch {
+//                val dataUnit = withContext(Dispatchers.IO) {
+//                    traksiUnitRepository.fetchAllPertanyaan()
+//                }
+//                _dataPertanyaan.value = dataUnit
+//            }
+//        }
+//
 
-    @Suppress("UNCHECKED_CAST")
+
+        @Suppress("UNCHECKED_CAST")
     class Factory(private val application: Application, private val traksiUnitRepository: UnitRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(UnitViewModel::class.java)) {

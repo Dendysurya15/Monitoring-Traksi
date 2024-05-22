@@ -20,8 +20,9 @@
             >
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text=""
+                android:layout_height="wrap_content"
+
+                android:visibility="gone"
                 android:id="@+id/textPertanyaan"
                 android:fontFamily="@font/poppins_medium"
                 android:textStyle="italic"
@@ -29,6 +30,7 @@
 
             <include
                 android:id="@+id/etHasilPeriksa"
+                android:visibility="gone"
                 layout="@layout/layout_dropdown_hasil_periksa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

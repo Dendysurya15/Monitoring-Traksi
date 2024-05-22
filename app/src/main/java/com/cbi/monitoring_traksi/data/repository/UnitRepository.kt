@@ -1,20 +1,14 @@
 package com.cbi.monitoring_traksi.data.repository
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.cbi.monitoring_traksi.data.database.DatabaseHelper
 import com.cbi.monitoring_traksi.data.model.JenisUnitModel
 import com.cbi.monitoring_traksi.data.model.KodeUnitModel
+import com.cbi.monitoring_traksi.data.model.ItemPertanyaanModel
 import com.cbi.monitoring_traksi.data.model.UnitKerjaModel
-import com.cbi.monitoring_traksi.utils.AppUtils
-import org.json.JSONException
-import org.json.JSONObject
 
 class UnitRepository(context: Context)  {
 
@@ -24,9 +18,24 @@ class UnitRepository(context: Context)  {
         val values = ContentValues().apply {
             put(DatabaseHelper.DB_ID, dataUnit.id)
             put(DatabaseHelper.DB_NAMA_UNIT, dataUnit.nama_unit)
+            put(DatabaseHelper.DB_JENIS, dataUnit.jenis)
+            put(DatabaseHelper.DB_LIST_PERTANYAAN, dataUnit.list_pertanyaan)
         }
         val rowsAffected = db.insert(DatabaseHelper.DB_TAB_JENIS_UNIT, null, values)
-//        db.close()
+        db.close()
+
+        return rowsAffected > 0
+    }
+
+    fun insertDataPertanyaan(dataUnit: ItemPertanyaanModel): Boolean {
+        val db = databaseHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHelper.DB_ID, dataUnit.id)
+            put(DatabaseHelper.DB_NAMA_PERTANYAAN, dataUnit.nama_pertanyaan)
+            put(DatabaseHelper.DB_KONDISI_MESIN, dataUnit.kondisi_mesin)
+        }
+        val rowsAffected = db.insert(DatabaseHelper.DB_TAB_LIST_PERTANYAAN, null, values)
+        db.close()
 
         return rowsAffected > 0
     }
@@ -41,7 +50,7 @@ class UnitRepository(context: Context)  {
             put(DatabaseHelper.DB_ID_UNIT_KERJA, dataUnit.id_unit_kerja)
         }
         val rowsAffected = db.insert(DatabaseHelper.DB_TAB_KODE_UNIT, null, values)
-//        db.close()
+        db.close()
 
         return rowsAffected > 0
     }
@@ -78,6 +87,13 @@ class UnitRepository(context: Context)  {
         db.close()
     }
 
+    fun deleteDataPertanyaan() {
+        val db = databaseHelper.writableDatabase
+        db.delete(DatabaseHelper.DB_TAB_LIST_PERTANYAAN, null, null)
+        db.close()
+    }
+
+
     @SuppressLint("Range")
     fun fetchAllJenisUnit(): List<JenisUnitModel> {
         val datasJenisUnitList = mutableListOf<JenisUnitModel>()
@@ -88,9 +104,13 @@ class UnitRepository(context: Context)  {
             while (it.moveToNext()) {
                 val id = it.getInt(it.getColumnIndex("id"))
                 val nama_unit = it.getString(it.getColumnIndex("nama_unit"))
+                val jenis = it.getString(it.getColumnIndex("jenis"))
+                val list_pertanyaan = it.getString(it.getColumnIndex("list_pertanyaan"))
                 val dataUnit = JenisUnitModel(
                     id,
-                    nama_unit
+                    nama_unit,
+                    jenis,
+                    list_pertanyaan
                 )
                 datasJenisUnitList.add(dataUnit)
             }
@@ -101,6 +121,67 @@ class UnitRepository(context: Context)  {
         return datasJenisUnitList
     }
 
+    @SuppressLint("Range")
+    fun fetchAllListPertanyaanBasedOnJenisUnit(arrayHere: Array<String>): List<ItemPertanyaanModel> {
+        val listPertanyaanArr = mutableListOf<ItemPertanyaanModel>()
+
+        val db = databaseHelper.readableDatabase
+        val selectionArgs = Array(arrayHere.size) { "?" }.joinToString(",")
+
+        val selection = "id IN ($selectionArgs)"
+        val cursor = db.query(
+            DatabaseHelper.DB_TAB_LIST_PERTANYAAN,
+            null,
+            selection,
+            arrayHere,
+            null,
+            null,
+            null
+        )
+
+        cursor.use {
+            while (it.moveToNext()) {
+                val id = it.getInt(it.getColumnIndex("id"))
+                val namaPertanyaan = it.getString(it.getColumnIndex("nama_pertanyaan"))
+                val kondisiMesin = it.getString(it.getColumnIndex("kondisi_mesin"))
+                val dataPertanyaan = ItemPertanyaanModel(
+                    id,
+                    namaPertanyaan,
+                    kondisiMesin,
+                )
+                listPertanyaanArr.add(dataPertanyaan)
+            }
+        }
+
+        db.close()
+
+        return listPertanyaanArr
+    }
+
+//    @SuppressLint("Range")
+//    fun fetchAllPertanyaan(): List<ItemPertanyaanModel> {
+//        val datasPertanyaanList = mutableListOf<ItemPertanyaanModel>()
+//        val db = databaseHelper.readableDatabase
+//        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHelper.DB_TAB_PERTANYAAN}", null)
+//
+//        cursor.use {
+//            while (it.moveToNext()) {
+//                val id = it.getInt(it.getColumnIndex("id"))
+//                val nama_pertanyaan = it.getString(it.getColumnIndex("nama_pertanyaan"))
+//                val form_page = it.getInt(it.getColumnIndex("form_page"))
+//                val dataUnit = ItemPertanyaanModel(
+//                    id,
+//                    nama_pertanyaan,
+//                    form_page ,
+//                )
+//                datasPertanyaanList.add(dataUnit)
+//            }
+//        }
+//
+//        db.close()
+//
+//        return datasPertanyaanList
+//    }
 
     @SuppressLint("Range")
     fun fetchAllUnitKerja(): List<UnitKerjaModel> {

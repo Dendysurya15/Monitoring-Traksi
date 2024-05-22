@@ -157,22 +157,31 @@ object AppUtils {
 
                         val jObj = JSONObject(response)
 
+                        Log.d("testing",jObj.toString())
+
+
                         val jenisUnitsArray = jObj.getJSONArray("jenis_unit")
                         val kodeUnitsArray = jObj.getJSONArray("kode_unit")
                         val unitKerjasArray = jObj.getJSONArray("unit_kerja")
+                        val itemPertanyaansArray = jObj.getJSONArray("list_pertanyaan")
 
 
                         unitViewModel.deleteDataJenisUnit()
                         unitViewModel.deleteDataKodeUnit()
                         unitViewModel.deleteDataUnitKerja()
+                        unitViewModel.deleteDataPertanyaan()
                         for (i in 0 until jenisUnitsArray.length()) {
                             val jenisUnitObject = jenisUnitsArray.getJSONObject(i)
                             val idJenisUnit = jenisUnitObject.getInt("id")
                             val namaJenisUnit = jenisUnitObject.getString("nama_unit")
+                            val jenisUnit = jenisUnitObject.getString("jenis")
+                            val listPertanyaan= jenisUnitObject.getString("list_pertanyaan")
 
                             unitViewModel.insertDataJenisUnit(
                                 id = idJenisUnit,
                                 nama_unit = namaJenisUnit,
+                                jenis = jenisUnit,
+                                list_pertanyaan =  listPertanyaan
                             )
                             Log.d("testing","sudah insert gan Jenis Unit")
                         }
@@ -206,6 +215,20 @@ object AppUtils {
                                 nama_unit_kerja = nama_unit_kerja,
                                 id_jenis_unit = id_jenis_unit,
                             )
+                        }
+
+                        for (i in 0 until itemPertanyaansArray.length()) {
+                            val pertanyaanObject = itemPertanyaansArray.getJSONObject(i)
+                            val idPertanyaan = pertanyaanObject.getInt("id")
+                            val nama_pertanyaan = pertanyaanObject.getString("nama_pertanyaan")
+                            val kondisi_mesin = pertanyaanObject.getString("kondisi_mesin")
+
+                            unitViewModel.insertDataPertanyaan(
+                                id = idPertanyaan,
+                                nama_pertanyaan = nama_pertanyaan,
+                                kondisi_mesin = kondisi_mesin,
+                            )
+
                         }
 
                         val successArrayInsert = mutableListOf<Boolean>()
@@ -250,6 +273,22 @@ object AppUtils {
                             } else {
                                 successArrayInsert.add(false)
                                 Log.d("testing", "Terjadi kesalahan, mengunduh data Unit Kerja")
+
+                            }
+                        }
+
+                        unitViewModel.insertResultPertanyaan.observe(
+                            context as LifecycleOwner
+                        ) { isSuccess ->
+
+                            if (isSuccess) {
+                                Log.d("testing", "Sukses insert data pertanyaan !")
+                                closeLoadingLayout(loaderView)
+                                successArrayInsert.add(true)
+//
+                            } else {
+                                successArrayInsert.add(false)
+                                Log.d("testing", "Terjadi kesalahan, mengunduh data pertanyaan")
 
                             }
                         }
@@ -552,5 +591,19 @@ object AppUtils {
                 onDataChange.invoke(editable?.toString() ?: "")
             }
         })
+    }
+
+    fun handleListPertanyaanDropdownArray(jsonString: String): ArrayList<String> {
+        val jsonObject = JSONObject(jsonString)
+        val values = ArrayList<String>()
+
+        val keys = jsonObject.keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            val value = jsonObject.getString(key)
+            values.add(value)
+        }
+
+        return values
     }
 }

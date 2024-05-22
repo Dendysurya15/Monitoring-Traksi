@@ -16,10 +16,10 @@
         android:theme="@style/Theme.MonitoringTraksi"
         tools:targetApi="34">
         <activity
-            android:name=".ui.view.FormTambahMonitoringActivity"
+            android:name=".ui.view.FormLaporanP2HLayoutPertanyaanActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.view.TambahFormMonitoringActivity"
+            android:name=".ui.view.FormLaporanP2HInfoUnitActivity"
             android:exported="false" />
         <activity
             android:name=".ui.view.DetailMonitoringUnitActivity"

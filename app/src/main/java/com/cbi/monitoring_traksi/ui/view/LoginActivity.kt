@@ -45,6 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
 
         prefManager = PrefManager(this)
+
         if (AppUtils.checkBiometricSupport(this) && prefManager!!.name.toString().isNotEmpty()) {
             mbFinger.visibility = View.VISIBLE
             biometricPrompt()

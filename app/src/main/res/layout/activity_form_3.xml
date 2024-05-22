@@ -100,197 +100,197 @@
     android:orientation="vertical"
     android:layout_height="wrap_content" >
 
-    <include
-        android:id="@+id/pertanyaan3_1"
-        layout="@layout/layout_pertanyaan"
-        android:layout_width="match_parent"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_1"-->
+<!--        layout="@layout/layout_pertanyaan"-->
+<!--        android:layout_width="match_parent"-->
 
-        android:layout_height="wrap_content"/>
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_2"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_1"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_2"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_1"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_3"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_2"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_3"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_2"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_4"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_3"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_4"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_3"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_5"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_4"
-        layout="@layout/layout_pertanyaan"
-        android:layout_width="match_parent"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_5"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_4"-->
+<!--        layout="@layout/layout_pertanyaan"-->
+<!--        android:layout_width="match_parent"-->
 
-        android:layout_height="wrap_content"/>
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_6"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_5"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_6"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_5"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_7"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_6"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_7"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_6"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_8"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_7"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_8"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_7"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_9"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_8"
-        layout="@layout/layout_pertanyaan"
-        android:layout_width="match_parent"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_9"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_8"-->
+<!--        layout="@layout/layout_pertanyaan"-->
+<!--        android:layout_width="match_parent"-->
 
-        android:layout_height="wrap_content"/>
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_10"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_9"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_10"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_9"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_11"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_10"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_11"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_10"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_12"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_11"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_12"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_11"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
 
-    <include
-        android:id="@+id/pertanyaan3_13"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_12"
-        layout="@layout/layout_pertanyaan"
-        android:layout_width="match_parent"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_13"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_12"-->
+<!--        layout="@layout/layout_pertanyaan"-->
+<!--        android:layout_width="match_parent"-->
 
-        android:layout_height="wrap_content"/>
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_14"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_13"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_14"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_13"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_15"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_14"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_15"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_14"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_16"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_15"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_16"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_15"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_17"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_16"
-        layout="@layout/layout_pertanyaan"
-        android:layout_width="match_parent"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_17"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_16"-->
+<!--        layout="@layout/layout_pertanyaan"-->
+<!--        android:layout_width="match_parent"-->
 
-        android:layout_height="wrap_content"/>
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_18"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_17"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_18"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_17"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_19"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_18"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_19"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_18"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_20"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_19"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_20"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_19"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_21"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_20"
-        layout="@layout/layout_pertanyaan"
-        android:layout_width="match_parent"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_21"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_20"-->
+<!--        layout="@layout/layout_pertanyaan"-->
+<!--        android:layout_width="match_parent"-->
 
-        android:layout_height="wrap_content"/>
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_22"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_21"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_22"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_21"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_23"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_22"
-        layout="@layout/layout_pertanyaan"
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_23"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_22"-->
+<!--        layout="@layout/layout_pertanyaan"-->
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <include
-        android:id="@+id/pertanyaan3_24"
-        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_23"
-        layout="@layout/layout_pertanyaan"
-        android:layout_marginBottom="190dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--    <include-->
+<!--        android:id="@+id/pertanyaan3_24"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/pertanyaan3_23"-->
+<!--        layout="@layout/layout_pertanyaan"-->
+<!--        android:layout_marginBottom="190dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 </LinearLayout>
     </ScrollView>
 

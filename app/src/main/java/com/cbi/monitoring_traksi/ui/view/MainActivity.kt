@@ -3,10 +3,7 @@ package com.cbi.monitoring_traksi.ui.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import com.cbi.monitoring_traksi.R
@@ -15,11 +12,6 @@ import com.cbi.monitoring_traksi.ui.viewModel.UnitViewModel
 import com.cbi.monitoring_traksi.utils.AlertDialogUtility
 import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.PrefManager
-import kotlinx.android.synthetic.main.activity_form_informasi_unit.etJenisUnit
-import kotlinx.android.synthetic.main.activity_login.idEmail
-import kotlinx.android.synthetic.main.activity_login.idPassword
-import kotlinx.android.synthetic.main.activity_login.loadingLogin
-import kotlinx.android.synthetic.main.activity_login.mbLogin
 import kotlinx.android.synthetic.main.activity_main.iblogout
 import kotlinx.android.synthetic.main.activity_main.loadingMain
 import kotlinx.android.synthetic.main.activity_main.mbTambahMonitoring
@@ -52,7 +44,6 @@ class MainActivity : AppCompatActivity() {
             AppUtils.closeLoadingLayout(loadingMain)
 
         }
-
         clickAny()
     }
 
@@ -62,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         mbTambahMonitoring.setOnClickListener {
 
-            val intent = Intent(this, FormTambahMonitoringActivity::class.java)
+            val intent = Intent(this, FormLaporanP2HLayoutPertanyaanActivity::class.java)
             startActivity(intent)
             finishAffinity()
         }
@@ -104,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 //
 //        if (completedObserversCount == 3) {
 //
-//            val intent = Intent(this, FormTambahMonitoringActivity::class.java)
+//            val intent = Intent(this, FormLaporanP2HLayoutPertanyaanActivity::class.java)
 //            intent.putExtra("dataMapJenisUnitArray", dataMapJenisUnitArray)
 //            intent.putExtra("dataMapUnitKerjaArray", dataMapUnitKerjaArray)
 //            intent.putExtra("dataMapKodeUnitArray", dataMapKodeUnitArray)

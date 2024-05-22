@@ -4,8 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
-
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -17,7 +15,7 @@
         app:cardCornerRadius="0dp"
         android:id="@+id/navbar"
         app:cardElevation="50dp"
-      >
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,7 +23,7 @@
             android:orientation="horizontal" android:weightSum="3">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/mbPrevForm6"
+                android:id="@+id/mbPrevForm2"
                 android:layout_weight="0.5"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
@@ -48,7 +46,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Tambah Catatan Perawatan"
+                    android:text="Tambah Laporan Baru P2H"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="@color/bluedark"
                     android:textSize="13dp"
@@ -61,7 +59,7 @@
                     android:fontFamily="@font/poppins_lightitalic"
                     android:textSize="9dp"
 
-                    android:text="Page Periksa Saat Engine / Unit Hidup ( 1 / 1 )"
+                    android:text="Daftar Form Pertanyaan P2H"
                     android:layout_weight="1"/>
 
             </LinearLayout>
@@ -69,12 +67,12 @@
         </LinearLayout>
 
 
+
     </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:layout_constraintTop_toBottomOf="@id/navbar"
         android:background="@color/graylight"
         android:id="@+id/formTitle"
@@ -83,55 +81,84 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/titleform5"
+            android:text="Teliti Kembali"
             android:fontFamily="@font/poppins_semibold"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
             android:textSize="15dp"/>
     </LinearLayout>
 
+
+
     <ScrollView
         android:layout_width="match_parent"
         app:layout_constraintTop_toBottomOf="@id/formTitle"
         android:layout_height="wrap_content">
 
+
         <LinearLayout
+            android:id="@+id/linScrollViewPage1"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content" >
-<!--            <include-->
-<!--                android:id="@+id/pertanyaan5_1"-->
-<!--                layout="@layout/layout_pertanyaan"-->
-<!--                android:layout_width="match_parent"-->
 
-<!--                android:layout_height="wrap_content"/>-->
-
-<!--            <include-->
-<!--                android:id="@+id/pertanyaan5_2"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/pertanyaan5_1"-->
-<!--                layout="@layout/layout_pertanyaan"-->
-
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"/>-->
-
-<!--            <include-->
-<!--                android:id="@+id/pertanyaan5_3"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/pertanyaan5_2"-->
-<!--                layout="@layout/layout_pertanyaan"-->
-
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"/>-->
-
-<!--            <include-->
-<!--                android:id="@+id/pertanyaan5_4"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/pertanyaan5_3"-->
-<!--                layout="@layout/layout_pertanyaan"-->
-<!--                android:layout_marginBottom="190dp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"/>-->
+            <!--            <include-->
+            <!--                android:id="@+id/pertanyaan1_1"-->
+            <!--                layout="@layout/layout_pertanyaan"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_marginBottom="30dp"-->
+            <!--                android:layout_height="wrap_content"/>-->
         </LinearLayout>
+
     </ScrollView>
 
+
+
+
+
+
+
+
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:id="@+id/row_first_form"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/formTitle"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:paddingTop="20dp"-->
+    <!--        tools:ignore="MissingConstraints">-->
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:orientation="vertical"-->
+    <!--            android:paddingHorizontal="15dp"-->
+    <!--            android:layout_weight="1"-->
+    <!--            >-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="match_parent"-->
+    <!--                android:text="Periksa dan kelilingi Unit, bila ada kelainan (kendor, bocor, dsb nya). segera atasi dan bila tidak  bisa segera laporkan kepada atasan atau ke bagian Workshop"-->
+    <!--                android:fontFamily="@font/poppins_medium"-->
+    <!--                android:textStyle="italic"-->
+    <!--                android:layout_marginBottom="15dp"-->
+    <!--                android:textSize="10dp"/>-->
+
+
+    <!--            <include-->
+    <!--                android:id="@+id/etHasilPeriksa"-->
+    <!--                layout="@layout/layout_dropdown_hasil_periksa"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"/>-->
+
+    <!--            <include-->
+    <!--                android:id="@+id/layout_komentar_foto"-->
+    <!--                android:visibility="gone"-->
+    <!--                layout="@layout/layout_komentar_dan_foto"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"/>-->
+    <!--        </LinearLayout>-->
+
+    <!--    </LinearLayout>-->
 
     <com.google.android.material.button.MaterialButton
         app:layout_constraintBottom_toBottomOf="parent"
@@ -140,14 +167,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1.6"
-        android:text="Save"
+        android:text="Next"
         android:textSize="15sp"
         android:layout_gravity="end"
         android:fontFamily="@font/poppins_semibold"
-        app:backgroundTint="@color/greendarkerbutton"
+        app:backgroundTint="@color/bluedark"
         app:cornerRadius="10dp"
         app:elevation="10dp"
-        android:id="@+id/mbSaveMonitoringUnit"
+        android:id="@+id/mbNextForm2"
         tools:ignore="MissingConstraints" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

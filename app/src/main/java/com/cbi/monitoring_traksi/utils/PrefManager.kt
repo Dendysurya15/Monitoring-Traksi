@@ -240,6 +240,7 @@ class PrefManager(_context: Context) {
 
         //DATA BLOK
         const val AFDELING = "afdeling"
+
     }
 
     init {

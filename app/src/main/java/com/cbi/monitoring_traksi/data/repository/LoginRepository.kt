@@ -80,15 +80,19 @@ class LoginRepository(private val context: Context, private val window: Window, 
                                 callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
 //                                }
                             } else {
+                                Log.d("testing","gak tau error apa")
                                 callback(LoginModel(success = false, statusCode = 0, message = jObj.getString(AppUtils.TAG_MESSAGE)))
                             }
                             loadingLayout.visibility = View.GONE
                         } catch (e: JSONException) {
+                            Log.d("testing","error gan")
                             callback(LoginModel(success = false, statusCode = 0, message = "Data error, hubungi pengembang: $e"))
                             loadingLayout.visibility = View.GONE
                         }
                     },
                     Response.ErrorListener { error ->
+
+                        Log.d("testing","terjadi kesalahan koneksi gan")
                         callback(LoginModel(success = false, statusCode = 0, message = "Terjadi kesalahan koneksi"))
                         loadingLayout.visibility = View.GONE
                     }) {
