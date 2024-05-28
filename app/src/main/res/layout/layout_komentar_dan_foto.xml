@@ -16,11 +16,10 @@
             android:orientation="horizontal"
             android:layout_height="wrap_content" >
             <ImageView
-                android:id="@+id/ibAddFoto"
-                android:layout_width="50dp"
+                android:id="@+id/ivAddFotoPerPertanyaan"
+                android:layout_width="55dp"
                 android:layout_height="70dp"
                 android:padding="10dp"
-                app:tint="@color/black"
                 android:src="@drawable/ic_add_image"
                 />
 
@@ -31,6 +30,17 @@
                 android:textStyle="italic"
                 android:paddingLeft="5dp"
                 android:text="Upload Foto (*)"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:visibility="gone"
+                android:id="@+id/idStatusSuccessTeruploadPerPertanyaan"
+                android:textColor="@color/greendarkerbutton"
+                android:paddingLeft="5dp"
+                android:text="Sudah Terupload (*)"
                 />
             <TextView
                 android:layout_width="wrap_content"

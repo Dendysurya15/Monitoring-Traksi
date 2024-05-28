@@ -1,10 +1,19 @@
 package com.cbi.monitoring_traksi.ui.view
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.repository.UnitRepository
@@ -27,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private var dataMapUnitKerjaArray: Array<Map<String, Any>>? = null
     private var dataMapKodeUnitArray: Array<Map<String, Any>>? = null
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,11 +49,11 @@ class MainActivity : AppCompatActivity() {
         prefManager = PrefManager(this)
         if (prefManager!!.isFirstTimeLaunch) {
             handleSynchronizeData()
-
         } else {
             AppUtils.closeLoadingLayout(loadingMain)
-
         }
+
+        AppUtils.checkGeneralPermissions(this, this)
         clickAny()
     }
 
@@ -52,10 +62,14 @@ class MainActivity : AppCompatActivity() {
 
 
         mbTambahMonitoring.setOnClickListener {
+            try {
+                val intent = Intent(this, FormLaporP2HActivity::class.java)
+                startActivity(intent)
+                finishAffinity()
 
-            val intent = Intent(this, FormLaporanP2HLayoutPertanyaanActivity::class.java)
-            startActivity(intent)
-            finishAffinity()
+            } catch (e: Exception) {
+                Log.e("testing", "Error occurred: ${e.message}")
+            }
         }
 
         iblogout.setOnClickListener {
@@ -80,6 +94,7 @@ class MainActivity : AppCompatActivity() {
                 unitViewModel.deleteDataJenisUnit()
                 unitViewModel.deleteDataKodeUnit()
                 unitViewModel.deleteDataUnitKerja()
+                unitViewModel.deleteDataPertanyaan()
 
 
                 val intent = Intent(this, SplashScreenActivity::class.java)
@@ -89,27 +104,12 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-//    private fun checkObserversCompletedAndMoveActivity() {
-//
-//        completedObserversCount++
-//
-//        if (completedObserversCount == 3) {
-//
-//            val intent = Intent(this, FormLaporanP2HLayoutPertanyaanActivity::class.java)
-//            intent.putExtra("dataMapJenisUnitArray", dataMapJenisUnitArray)
-//            intent.putExtra("dataMapUnitKerjaArray", dataMapUnitKerjaArray)
-//            intent.putExtra("dataMapKodeUnitArray", dataMapKodeUnitArray)
-//
-//            startActivity(intent)
-//            finishAffinity()
-//        }
-//    }
+
     private fun initViewModel() {
         unitViewModel = ViewModelProvider(
             this,
             UnitViewModel.Factory(application, UnitRepository(this))
         )[UnitViewModel::class.java]
-
     }
 
     private fun handleSynchronizeData(arg: String? = "") {
@@ -163,5 +163,52 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        when (requestCode) {
+//            100 -> {
+//                // If not granted camera permission
+//                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//                    prefManager!!.isCameraAllowed = true
+//                }else{
+//                    prefManager!!.isCameraAllowed = false
+//                }
+//                return
+//            }
+//            // Add more cases if you have multiple permission requests in your app
+//        }
+//    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            100 -> {
+                val permissionsMap = permissions.mapIndexed { index, permission ->
+                    permission to (grantResults[index] == PackageManager.PERMISSION_GRANTED)
+                }.toMap()
+
+                val cameraGranted = permissionsMap[android.Manifest.permission.CAMERA] ?: false
+                val readGranted = permissionsMap[android.Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+                val writeGranted = permissionsMap[android.Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
+
+                prefManager?.isCameraAllowed = cameraGranted
+
+                if (!cameraGranted || !readGranted || !writeGranted) {
+                    Log.e("testing", "Necessary permissions were not granted")
+                } else {
+                    // All permissions granted, proceed with your logic
+                }
+            }
+        }
     }
 }

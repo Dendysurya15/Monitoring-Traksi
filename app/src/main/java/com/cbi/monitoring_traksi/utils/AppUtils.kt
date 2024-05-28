@@ -1,12 +1,15 @@
 package com.cbi.monitoring_traksi.utils
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
@@ -20,20 +23,31 @@ import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.cbi.monitoring_traksi.R
+import com.cbi.monitoring_traksi.ui.view.MainActivity
 import com.cbi.monitoring_traksi.ui.viewModel.UnitViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import eightbitlab.com.blurview.BlurView
 import eightbitlab.com.blurview.RenderScriptBlur
+import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.loading_view.view.blurLoadView
 import kotlinx.android.synthetic.main.loading_view.view.lottieLoadAnimate
 import kotlinx.android.synthetic.main.loading_view.view.overlayLoadView
@@ -129,6 +143,72 @@ object AppUtils {
         }
     }
 
+//    fun checkCameraPermissions(context: Context?) {
+//        if (ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.CAMERA)
+//            != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            // Permission is not granted
+//            ActivityCompat.requestPermissions(
+//                (context as Activity?)!!, arrayOf<String>(android.Manifest.permission.CAMERA),
+//                100
+//            )
+//        }
+//    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun checkGeneralPermissions(context: Context, activity: Activity) {
+        Dexter.withContext(context)
+            .withPermissions(
+                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_SETTINGS,
+                Manifest.permission.WRITE_SECURE_SETTINGS,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.INTERNET,
+                Manifest.permission.READ_PHONE_STATE
+            ).withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: List<PermissionRequest>,
+                    token: PermissionToken
+                ) {
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        activity,
+                        Manifest.permission.CAMERA
+                    )
+                }
+            }).check()
+
+    }
+    fun checkPermissionsCamera(context: Context?) {
+        val permissions = arrayOf(
+            android.Manifest.permission.CAMERA,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(context!!, it) != PackageManager.PERMISSION_GRANTED
+        }.toTypedArray()
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                context as Activity, permissionsToRequest, 100
+            )
+        }
+    }
+
+    fun splitStringWatermark(input: String, chunkSize: Int): String {
+        return if (input.length > chunkSize) {
+            val regex = "(.{$chunkSize})"
+            input.replace(Regex(regex), "$1-\n")
+        } else {
+            input
+        }
+    }
     fun synchronizeDBSqlite(
         context: Context,
         prefManager: PrefManager,

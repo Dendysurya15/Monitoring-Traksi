@@ -11,6 +11,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.cbi.monitoring_traksi.R
+import com.cbi.monitoring_traksi.ui.view.MainActivity
 import kotlinx.android.synthetic.main.alert_dialog_view.view.llButtonDialog
 import kotlinx.android.synthetic.main.alert_dialog_view.view.lottieDialog
 import kotlinx.android.synthetic.main.alert_dialog_view.view.mbCancelDialog
@@ -48,6 +49,9 @@ class AlertDialogUtility {
                 alertDialog.show()
                 Handler(Looper.getMainLooper()).postDelayed({
                     alertDialog.dismiss()
+//                    AppUtils.checkCameraPermissions(context as MainActivity)
+//                    AppUtils.checkReadAndWriteExternalCameraPermissions(context as MainActivity)
+
                 }, 2000)
             }
         }

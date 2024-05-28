@@ -64,6 +64,13 @@ class PrefManager(_context: Context) {
             editor.commit()
         }
 
+    var isCameraAllowed: Boolean
+        get() = pref.getBoolean("isCameraAllowed", true)
+        set(cameraAllowed) {
+            editor.putBoolean("isCameraAllowed", cameraAllowed)
+            editor.commit()
+        }
+
     var idReg: Int
         get() = pref.getInt("id_reg", 0)
         set(idRegCount) {

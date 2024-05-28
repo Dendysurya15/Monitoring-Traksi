@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/parentFormP2H"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.FormLaporP2HActivity">
+
+
+    <include
+        android:id="@+id/id_layout_activity_informasi_unit"
+        layout="@layout/activity_form_p2h_layout_informasi_unit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/activity_form_p2h_layout_pertanyaan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/loadingFetchingData"
+        layout="@layout/loading_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/id_take_foto_layout"
+        layout="@layout/camera_view_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/id_editable_foto_layout"
+        layout="@layout/edit_foto_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

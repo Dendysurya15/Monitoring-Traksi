@@ -7,6 +7,6 @@ import com.cbi.monitoring_traksi.R
 class DetailMonitoringUnitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail_monitoring_unit)
+        setContentView(R.layout.activity_history_form_p2h)
     }
 }

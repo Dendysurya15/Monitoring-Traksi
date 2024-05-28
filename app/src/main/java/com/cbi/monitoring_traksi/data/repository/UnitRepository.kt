@@ -116,7 +116,7 @@ class UnitRepository(context: Context)  {
             }
         }
 
-        db.close()
+//        db.close()
 
         return datasJenisUnitList
     }
@@ -153,7 +153,7 @@ class UnitRepository(context: Context)  {
             }
         }
 
-        db.close()
+//        db.close()
 
         return listPertanyaanArr
     }
@@ -203,7 +203,7 @@ class UnitRepository(context: Context)  {
             }
         }
 
-        db.close()
+//        db.close()
 
         return datasUnitKerjaList
     }
@@ -230,7 +230,7 @@ class UnitRepository(context: Context)  {
             }
         }
 
-        db.close()
+//        db.close()
 
         return datasKodeUnitList
     }
