@@ -39,14 +39,15 @@ class DatabaseHelper(context: Context):
         const val DB_KONDISI_MESIN = "kondisi_mesin"
 
         //data_laporan
+        const val DB_CREATED_AT = "created_at"
         const val DB_ID_LAPORAN = "id_laporan"
         const val DB_ID_PERTANYAAN = "id_pertanyaaan"
         const val DB_KONDISI = "kondisi"
         const val DB_KOMENTAR = "komentar"
         const val DB_FOTO = "foto"
 
+
         //laporan_p2h
-        const val DB_ID_KODE_UNIT = "id_kode_unit"
         const val DB_TANGGAL_UPLOAD = "tanggal_upload"
         const val DB_LAT = "lat"
         const val DB_LON = "lon"
@@ -80,6 +81,7 @@ class DatabaseHelper(context: Context):
 
     private val createTableData = "CREATE TABLE IF NOT EXISTS $DB_TAB_DATA (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$DB_CREATED_AT VARCHAR, " +
             "$DB_ID_LAPORAN INTEGER, " +
             "$DB_ID_PERTANYAAN VARCHAR, " +
             "$DB_KONDISI VARCHAR, " +
@@ -89,7 +91,7 @@ class DatabaseHelper(context: Context):
 
     private val createTableLaporanP2H = "CREATE TABLE IF NOT EXISTS $DB_TAB_LAPORAN_P2H (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_ID_KODE_UNIT INTEGER, " +
+            "$DB_ID_JENIS_UNIT INTEGER, " +
             "$DB_TANGGAL_UPLOAD VARCHAR, " +
             "$DB_LAT VARCHAR, " +
             "$DB_LON VARCHAR, " +

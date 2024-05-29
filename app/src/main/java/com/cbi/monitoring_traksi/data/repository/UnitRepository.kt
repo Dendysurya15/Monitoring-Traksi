@@ -5,9 +5,11 @@ import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import com.cbi.monitoring_traksi.data.database.DatabaseHelper
+import com.cbi.monitoring_traksi.data.model.DataLaporanModel
 import com.cbi.monitoring_traksi.data.model.JenisUnitModel
 import com.cbi.monitoring_traksi.data.model.KodeUnitModel
 import com.cbi.monitoring_traksi.data.model.ItemPertanyaanModel
+import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.data.model.UnitKerjaModel
 
 class UnitRepository(context: Context)  {
@@ -68,6 +70,51 @@ class UnitRepository(context: Context)  {
         return rowsAffected > 0
     }
 
+    fun insertToTableData(data: DataLaporanModel): Boolean {
+        val db = databaseHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHelper.DB_CREATED_AT, data.created_at)
+            put(DatabaseHelper.DB_ID_LAPORAN, data.id_laporan)
+            put(DatabaseHelper.DB_ID_PERTANYAAN, data.id_pertanyaan)
+            put(DatabaseHelper.DB_KONDISI, data.kondisi)
+            put(DatabaseHelper.DB_KOMENTAR ,data.komentar)
+            put(DatabaseHelper.DB_FOTO ,data.foto)
+        }
+        val rowsAffected = db.insert(DatabaseHelper.DB_TAB_DATA, null, values)
+
+        return rowsAffected > 0
+    }
+
+    fun insertLaporP2HToSQL(data: LaporP2HModel): Boolean {
+        val db = databaseHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHelper.DB_ID_JENIS_UNIT, data.id_jenis_unit)
+            put(DatabaseHelper.DB_TANGGAL_UPLOAD, data.tanggal_upload)
+            put(DatabaseHelper.DB_LAT, data.lat)
+            put(DatabaseHelper.DB_LON, data.lon)
+            put(DatabaseHelper.DB_ID_USER, data.id_user)
+            put(DatabaseHelper.DB_FOTO_UNIT, data.foto_unit)
+            put(DatabaseHelper.DB_STATUS_PEMERIKSAAN, data.status_pemeriksaan)
+            put(DatabaseHelper.DB_APP_VERSION, data.app_version)
+        }
+        val rowsAffected = db.insert(DatabaseHelper.DB_TAB_LAPORAN_P2H, null, values)
+//        db.close()
+
+        return rowsAffected > 0
+    }
+
+    fun fetchLastIdlaporanP2H(): Int {
+        var id_last_insert_laporanp2h = 0
+        val db = databaseHelper.readableDatabase
+        val query = "SELECT MAX(id) FROM ${DatabaseHelper.DB_TAB_LAPORAN_P2H}" // Adjust 'id' to your primary key column name
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            id_last_insert_laporanp2h = cursor.getInt(0)
+        }
+
+        return id_last_insert_laporanp2h
+    }
 
     fun deleteDataJenisUnit() {
         val db = databaseHelper.writableDatabase
@@ -158,30 +205,7 @@ class UnitRepository(context: Context)  {
         return listPertanyaanArr
     }
 
-//    @SuppressLint("Range")
-//    fun fetchAllPertanyaan(): List<ItemPertanyaanModel> {
-//        val datasPertanyaanList = mutableListOf<ItemPertanyaanModel>()
-//        val db = databaseHelper.readableDatabase
-//        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHelper.DB_TAB_PERTANYAAN}", null)
-//
-//        cursor.use {
-//            while (it.moveToNext()) {
-//                val id = it.getInt(it.getColumnIndex("id"))
-//                val nama_pertanyaan = it.getString(it.getColumnIndex("nama_pertanyaan"))
-//                val form_page = it.getInt(it.getColumnIndex("form_page"))
-//                val dataUnit = ItemPertanyaanModel(
-//                    id,
-//                    nama_pertanyaan,
-//                    form_page ,
-//                )
-//                datasPertanyaanList.add(dataUnit)
-//            }
-//        }
-//
-//        db.close()
-//
-//        return datasPertanyaanList
-//    }
+
 
     @SuppressLint("Range")
     fun fetchAllUnitKerja(): List<UnitKerjaModel> {

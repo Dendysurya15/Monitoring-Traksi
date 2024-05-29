@@ -7,10 +7,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.media.Image
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.provider.Settings
 import android.text.InputType
 import android.util.Log
@@ -22,30 +28,39 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target
+import com.cbi.monitoring_traksi.BuildConfig
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.repository.CameraRepository
 import com.cbi.monitoring_traksi.data.repository.UnitRepository
 import com.cbi.monitoring_traksi.ui.viewModel.CameraViewModel
+import com.cbi.monitoring_traksi.ui.viewModel.LocationViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.UnitViewModel
+import com.cbi.monitoring_traksi.utils.AlertDialogUtility
 import com.cbi.monitoring_traksi.utils.AppUtils
 //import com.cbi.monitoring_traksi.utils.AppUtils.checkCameraPermissions
 import com.cbi.monitoring_traksi.utils.AppUtils.checkPermissionsCamera
 import com.cbi.monitoring_traksi.utils.AppUtils.handleListPertanyaanDropdownArray
 import com.cbi.monitoring_traksi.utils.PrefManager
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etJenisUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etKodeUnit
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etNamaOperator
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTanggalPeriksa
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTypeUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etUnitKerja
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.ivSignLocation
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.view.id_layout_foto_unit
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
@@ -53,6 +68,8 @@ import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_take_foto_layo
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.loadingFetchingData
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.parentFormP2H
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.view.id_layout_activity_informasi_unit
+import kotlinx.android.synthetic.main.activity_main.parentMainHalamanUtama
+
 import kotlinx.android.synthetic.main.edit_foto_layout.view.closeZoom
 import kotlinx.android.synthetic.main.edit_foto_layout.view.deletePhoto
 import kotlinx.android.synthetic.main.edit_foto_layout.view.retakePhoto
@@ -67,6 +84,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.log
 
 
 open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCallback  {
@@ -89,6 +108,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private var dataMapPertanyaanArray: Array<Map<String, Any>>? = null
     private var adapterJenisUnitItems: ArrayAdapter<String>? = null
     private lateinit var cameraViewModel: CameraViewModel
+    private lateinit var locationViewModel: LocationViewModel
+    private var lat: Double? = null
+    private var lon: Double? = null
     val viewsArray = ArrayList<View>()
     var pertanyaanPerJenisUnit: MutableMap<String, Array<String>> = mutableMapOf()
     lateinit var ListPertanyaanStr: Array<String>
@@ -96,13 +118,30 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private val formLayoutInfoUnit: Array<View> by lazy {
         arrayOf(id_layout_activity_informasi_unit)
     }
+
+    val arrInsertedDataTable =  mutableMapOf<Int, Map<String, Any>>()
+    val globalJenisUnitMap: MutableMap<Int, String> = mutableMapOf()
     val formLayoutsPertanyaan = mutableListOf<View>()
 
     val listNamaFoto = mutableMapOf<String, String>()
     val listFileFoto = mutableMapOf<String, File>()
 
+    private var accuracyRange = 0
+    private var fixAccuracy = 0
+    private var minAccuracyGPS = 10
+    private var minRangeAct = 50
+
     //for photos
     private var zoomOpen = false
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                locationViewModel.startLocationUpdates()
+            } else {
+                showSnackbar("Location permission denied.")
+            }
+        }
 
     @SuppressLint("DiscouragedApi", "ClickableViewAccessibility", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -384,6 +423,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
 
 
+
         etTanggalPeriksa.isEnabled = false
         etTanggalPeriksa.inputType = InputType.TYPE_NULL
         val currentDate = getCurrentDate()
@@ -457,6 +497,21 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 //        }
     }
 
+    private fun showSnackbar(message: String) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
+    }
+    private fun requestLocationPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        ) {
+            showSnackbar("Location permission is required for this app.")
+        } else {
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
     private fun takeCameraNow(id_foto: String, imageView: ImageView){
         if (listNamaFoto.containsKey(id_foto)){
             zoomOpen = true
@@ -520,68 +575,180 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     }
 
     private fun handleClicksForm(){
-
+        arrInsertedDataTable.clear()
         formLayoutsPertanyaan.forEachIndexed { index, layout ->
             val materialButtonNext = layout.findViewById<MaterialButton>(R.id.mbButtonNext)
             val materialButtonPrev = layout.findViewById<MaterialButton>(R.id.mbButtonPrev)
             val mbSaveFormP2H = layout.findViewById<MaterialButton>(R.id.mbSaveFormP2H)
 
 
-//            val containerPertanyaan = layout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
-//            val selectedValues = mutableListOf<String>()
-//            for (i in 1 until containerPertanyaan.childCount) {
-//                val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
-//                val etTemplateDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown)
-//                val selectedValue = etTemplateDropdown.text.toString()
-//
-//                Log.d("testing", selectedValue.toString())
-//            }
-
-
             materialButtonNext.setOnClickListener {
-//                logDropdownValues(layout as ConstraintLayout)
                 toggleFormVisibility(index + 1)
             }
 
             materialButtonPrev.setOnClickListener {
-//                logDropdownValues(layout as ConstraintLayout)
                 toggleFormVisibility(index - 1)
             }
 
+
             mbSaveFormP2H.setOnClickListener {
+                AlertDialogUtility.withTwoActions(
+                    this,
+                    "Ya",
+                    "Peringatan",
+                    "Apakah anda yakin menyimpan data?",
+                    "warning.json"
+                ) {
+                    val jenisunit = getIdFromJenisUnit(etJenisUnit.text.toString())!!.toInt()
+                    val app_version = BuildConfig.VERSION_NAME
 
 
-                val jawabanUserPerPage = mutableMapOf<Int, MutableMap<String, MutableMap<String, String>>>()
+                    unitViewModel.pushDataToLaporanP2hSQL(
+                        tanggal_upload = getCurrentDate(true),
+                        id_jenis_unit = jenisunit,
+                        lat = lat.toString(),
+                        lon = lon.toString(),
+                        id_user = prefManager!!.userid!!.toInt(),
+                        status = "pending",
+                        foto_unit =  "",
+                        app_version = app_version
+                    )
 
-                formLayoutsPertanyaan.forEachIndexed { index, layout ->
-                    val containerPertanyaan = layout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
-                    val selectedValuesMap = mutableMapOf<String, MutableMap<String, String>>()
-
-                    for (i in 1 until containerPertanyaan.childCount) {
-                        val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
-                        val idPertanyaan = layoutPertanyaan.id.toString()
-                        val etTemplateDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown)
-                        val gasTerus = layoutPertanyaan.layout_komentar_foto.etKomentar.text.toString()
-                        val selectedValue = etTemplateDropdown.text.toString()
-
-                        val valueMap = mutableMapOf<String, String>()
-                        valueMap["jawabanhasilPeriksa"] = selectedValue
-                        valueMap["komentarHasilPeriksa"] = gasTerus
-                        valueMap["namaFoto"] = listNamaFoto[idPertanyaan] ?: ""
-                        selectedValuesMap[idPertanyaan] = valueMap
+                    var lastIdLaporP2H = 0
+                    unitViewModel.fetchLastIdLaporanP2HSQL()
+                    unitViewModel.last_id_laporp2h.observe(this){
+                        lastIdLaporP2H = it
                     }
 
-                    jawabanUserPerPage[index] = selectedValuesMap
+                    val hasilPeriksa = mutableMapOf<Int, MutableMap<String, MutableMap<String, String>>>()
+
+                    formLayoutsPertanyaan.forEachIndexed { index, layout ->
+                        val containerPertanyaan = layout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
+                        val selectedValuesMap = mutableMapOf<String, MutableMap<String, String>>()
+
+                        for (i in 1 until containerPertanyaan.childCount) {
+                            val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
+                            val idPertanyaan = layoutPertanyaan.id.toString()
+                            val etTemplateDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown)
+                            val gasTerus = layoutPertanyaan.layout_komentar_foto.etKomentar.text.toString()
+                            val selectedValue = etTemplateDropdown.text.toString()
+
+                            val valueMap = mutableMapOf<String, String>()
+                            valueMap["jawabanHasilPeriksa"] = selectedValue
+                            valueMap["komentarHasilPeriksa"] = gasTerus
+                            valueMap["namaFoto"] = listNamaFoto[idPertanyaan] ?: ""
+                            selectedValuesMap[idPertanyaan] = valueMap
+                        }
+
+                        hasilPeriksa[index] = selectedValuesMap
+                    }
+
+
+                    hasilPeriksa.forEach { (index, pertanyaanMap) ->
+                        pertanyaanMap.forEach { (idPertanyaan, valueMap) ->
+                            unitViewModel.pushToTableData(
+                                created_at = getCurrentDate(true),
+                                id_laporan = lastIdLaporP2H,
+                                id_pertanyaan = idPertanyaan.toInt(),
+                                kondisi = valueMap["jawabanHasilPeriksa"].toString(),
+                                komentar = valueMap["komentarHasilPeriksa"].toString(),
+                                foto = valueMap["namaFoto"].toString(),
+                            )
+
+                            unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->
+                                    val resultMap = mapOf(
+                                        "is_inserted" to isInserted,
+                                        "id_laporan" to lastIdLaporP2H,
+                                        "id_pertanyaan" to  idPertanyaan.toInt(),
+                                        "kondisi" to valueMap["jawabanHasilPeriksa"].toString(),
+                                        "komentar" to valueMap["komentarHasilPeriksa"].toString(),
+                                        "foto" to valueMap["namaFoto"].toString(),
+                                    )
+                                    arrInsertedDataTable[idPertanyaan.toInt()] = resultMap
+                            }
+
+                        }
+                    }
+
+
+                    val hasFalse = arrInsertedDataTable.any { (_, value) ->
+                        value["is_inserted"] == false
+                    }
+
+                    if (hasFalse) {
+                        retryInsertDataLaporanPertanyaan(arrInsertedDataTable, 3)
+                    }else{
+
+                        AlertDialogUtility.alertDialogAction(
+                            this,
+                            "Sukses",
+                            "Data berhasil disimpan!",
+                            "success.json"
+                        ) {
+                            AppUtils.showLoadingLayout(this, window, loadingFetchingData)
+                            val intent = Intent(this, MainActivity
+                            ::class.java)
+                            startActivity(intent)
+                        }
+                    }
+
+
+
                 }
 
 
 
-            }
 
+
+            }
         }
 
     }
 
+    private fun retryInsertDataLaporanPertanyaan(
+        arrInsertedDataTable: MutableMap<Int, Map<String, Any>>,
+        retryCount: Int
+    ) {
+        if (retryCount == 0) return
+
+        val filteredMap = arrInsertedDataTable.filterValues { it["is_inserted"] == false }
+
+        if (filteredMap.isEmpty()) {
+            return
+        }
+
+        filteredMap.forEach { (id, data) ->
+            val id_laporan = data["id_laporan"]
+            val idPertanyaan = data["id_pertanyaan"]
+            val kondisi = data["kondisi"]
+            val komentar = data["komentar"]
+            val foto = data["foto"]
+
+            unitViewModel.pushToTableData(
+                created_at = getCurrentDate(true),
+                id_laporan = id_laporan as Int,
+                id_pertanyaan = idPertanyaan as Int,
+                kondisi = kondisi as String,
+                komentar = komentar as String,
+                foto = foto as String,
+            )
+
+            unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->
+                val updatedData = data.toMutableMap()
+                updatedData["is_inserted"] = isInserted
+                arrInsertedDataTable[id] = updatedData
+
+                // Check if all entries are now inserted
+                if (arrInsertedDataTable.all { it.value["is_inserted"] == true }) {
+                } else if (id == filteredMap.keys.last()) {
+                    retryInsertDataLaporanPertanyaan(arrInsertedDataTable, retryCount - 1)
+                }
+            }
+        }
+    }
+    private fun getIdFromJenisUnit(jenisunit: String): Int? {
+        return globalJenisUnitMap.entries.find { it.value == jenisunit }?.key
+    }
     private fun checkDataAvailability(){
 
         if (dataMapUnitKerjaArray != null && dataMapJenisUnitArray != null && dataMapKodeUnitArray != null ) {
@@ -593,9 +760,18 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private fun setupDropdown(){
         dataMapJenisUnitArray?.let { data ->
 
+            globalJenisUnitMap.clear()
+
             val namaUnitList = data.map { it["nama_unit"] as? String }.filterNotNull()
             val idUnitList = data.map { it["id"] as? Int }.filterNotNull()
             val listPertanyaanJenisUnit = data.map { it["list_pertanyaan"] as? String }.filterNotNull()
+
+
+
+            for (i in idUnitList.indices) {
+                globalJenisUnitMap[idUnitList[i]] = namaUnitList[i]
+            }
+
 
             val idNamaUnitArray = idUnitList.toTypedArray()
             val namaUnitArray = namaUnitList.toTypedArray()
@@ -640,11 +816,17 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         val idPilUnitKerja = idUnitKerjaArray?.get(position)
 
 
+
+
                         val filteredKodeUnitList = dataMapKodeUnitArray?.filter {
                             it["id_unit_kerja"] == idPilUnitKerja
                         }
+
                         val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["nama_kode"] as? String }?.toTypedArray()
                         val typeUnitArray = filteredKodeUnitList?.mapNotNull { it["type_unit"] as? String }?.toTypedArray()
+                        val idKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
+
+
                         etKodeUnit.setText("")
                         etTypeUnit.setText("")
 
@@ -654,7 +836,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                             etKodeUnit.setAdapter(adapterKodeUnitItems)
 
                             etKodeUnit.setOnItemClickListener { _, _, position, _ ->
+
+
                                 val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
+
                                 etTypeUnit.setText(typeUnitArray?.get(position))
 
                             }
@@ -675,7 +860,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         formLayoutsPertanyaan.forEach { it.visibility = View.GONE }
 
         if (nextFormIndex >= 0 && nextFormIndex < formLayoutsPertanyaan.size) {
-
+            Log.d("testing", nextFormIndex.toString())
             formLayoutsPertanyaan[nextFormIndex].visibility = View.VISIBLE
             currentFormIndex = nextFormIndex
 
@@ -683,7 +868,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }else if(nextFormIndex == -1){
             formLayoutInfoUnit[0].visibility = View.VISIBLE
         }else{
-            displayToasty(this, "gak ada lagi bang")
+            displayToasty(this, "Terjadi error untuk load page ini")
         }
 
 
@@ -705,6 +890,11 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             this,
             CameraViewModel.Factory(cameraRepository)
         )[CameraViewModel::class.java]
+
+        locationViewModel = ViewModelProvider(
+            this,
+            LocationViewModel.Factory(application, ivSignLocation, this)
+        )[LocationViewModel::class.java]
     }
 
     private fun showAlertDialog(title: String, message: String) {
@@ -717,9 +907,13 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             .show()
     }
 
-    private fun getCurrentDate(): String {
+    private fun getCurrentDate(fullTime: Boolean = false): String {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dateFormat = if (fullTime) {
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        } else {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        }
         return dateFormat.format(calendar.time)
     }
 
@@ -745,6 +939,36 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
 
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        locationViewModel.locationPermissions.observe(this) { isLocationEnabled ->
+            if (!isLocationEnabled) {
+                requestLocationPermission()
+            } else {
+                locationViewModel.startLocationUpdates()
+            }
+        }
+
+        locationViewModel.locationData.observe(this) { location ->
+            lat = location.latitude
+            lon = location.longitude
+        }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationViewModel.stopLocationUpdates()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        locationViewModel.stopLocationUpdates()
+
+
     }
 
     override fun onPhotoTaken(photoFile: File, fname: String, resultCode: String) {

@@ -8,16 +8,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.cbi.monitoring_traksi.data.model.DataLaporanModel
 import com.cbi.monitoring_traksi.data.model.JenisUnitModel
 import com.cbi.monitoring_traksi.data.model.KodeUnitModel
 import com.cbi.monitoring_traksi.data.model.ItemPertanyaanModel
+import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.data.model.UnitKerjaModel
 import com.cbi.monitoring_traksi.data.repository.UnitRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Date
 
-    class UnitViewModel(application: Application, private val traksiUnitRepository: UnitRepository) : AndroidViewModel(application) {
+class UnitViewModel(application: Application, private val traksiUnitRepository: UnitRepository) : AndroidViewModel(application) {
 
     private val _insertResultJnsUnit = MutableLiveData<Boolean>()
     val insertResultJnsUnit: LiveData<Boolean> get() = _insertResultJnsUnit
@@ -28,7 +31,17 @@ import kotlinx.coroutines.withContext
     private val _insertResultUnitKerja = MutableLiveData<Boolean>()
     val insertResultUnitKerja: LiveData<Boolean> get() = _insertResultUnitKerja
 
+    private val _insertResultLaporP2H = MutableLiveData<Boolean>()
+    val insertResultLaporP2H: LiveData<Boolean> get() = _insertResultLaporP2H
+
+    private val _insertQueryKeTableDataResult = MutableLiveData<Boolean>()
+    val insertQueryKeTableData: LiveData<Boolean> get() = _insertQueryKeTableDataResult
+
     private val _insertResultPertanyaan = MutableLiveData<Boolean>()
+
+    private val _last_id_laporp2h = MutableLiveData<Int>()
+
+    val last_id_laporp2h: LiveData<Int> get() = _last_id_laporp2h
     val insertResultPertanyaan: LiveData<Boolean> get() = _insertResultPertanyaan
 
     private val _dataJenisUnit = MutableLiveData<List<JenisUnitModel>>()
@@ -39,6 +52,8 @@ import kotlinx.coroutines.withContext
 
     private val _dataPertanyaan = MutableLiveData<List<ItemPertanyaanModel>>()
 
+        private val _dataLaporan = MutableLiveData<List<DataLaporanModel>>()
+
     val dataJenisUnitList: LiveData<List<JenisUnitModel>> get() = _dataJenisUnit
 
     val dataKodeUnitList: LiveData<List<KodeUnitModel>> get() = _dataKodeUnit
@@ -46,6 +61,7 @@ import kotlinx.coroutines.withContext
     val dataUnitkerjaList: LiveData<List<UnitKerjaModel>> get() = _dataUnitKerja
 
     val pertanyaanBasedOnJenisUnitList: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
+        val saveToSQL: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
 
     val dataPertanyaanlist: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
 
@@ -185,6 +201,81 @@ import kotlinx.coroutines.withContext
                 traksiUnitRepository.fetchAllListPertanyaanBasedOnJenisUnit(arrayHere)
             }
             _dataPertanyaan.value = dataUnit
+        }
+    }
+
+    fun fetchLastIdLaporanP2HSQL() {
+        viewModelScope.launch {
+            try {
+                _last_id_laporp2h.value = traksiUnitRepository.fetchLastIdlaporanP2H()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _last_id_laporp2h.value = 0
+            }
+        }
+    }
+        fun pushDataToLaporanP2hSQL(
+            id: Int? = 0,
+            id_jenis_unit: Int,
+            tanggal_upload: String,
+            lat: String,
+            lon: String,
+            id_user : Int,
+            foto_unit : String,
+            status : String,
+            app_version : String,
+        ) {
+            viewModelScope.launch {
+                try {
+                    val dataSubmitLaporan = LaporP2HModel(
+                        id!!,
+                        id_jenis_unit,
+                        tanggal_upload,
+                        lat,
+                        lon,
+                        id_user,
+                        foto_unit,
+                        status,
+                        app_version,
+                    )
+                    val isInserted = traksiUnitRepository.insertLaporP2HToSQL(dataSubmitLaporan)
+
+                    _insertResultLaporP2H.value = isInserted
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _insertResultLaporP2H.value = false
+                }
+            }
+        }
+
+    fun     pushToTableData(
+        id: Int? = 0,
+        created_at : String,
+        id_laporan : Int,
+        id_pertanyaan : Int,
+        kondisi : String,
+        komentar : String,
+        foto : String,
+    ) {
+        viewModelScope.launch {
+            try {
+                val dataSubmit = DataLaporanModel(
+                    id!!,
+                    created_at,
+                    id_laporan,
+                    id_pertanyaan,
+                    kondisi,
+                    komentar,
+                    foto
+                )
+
+                val isInserted = traksiUnitRepository.insertToTableData(dataSubmit)
+
+                _insertQueryKeTableDataResult.value = isInserted
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _insertQueryKeTableDataResult.value = false
+            }
         }
     }
 

@@ -78,8 +78,13 @@ object AppUtils {
     const val TAG_LOKASI = "lokasi_kerja"
     const val TAG_AKSES = "akses_level"
     const val TAG_AFDELING = "afdeling"
+    const val REQUEST_CHECK_SETTINGS = 0x1
 
-
+    const val UPDATE_INTERVAL_IN_MILLISECONDS: Long = 10000
+    const val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+        UPDATE_INTERVAL_IN_MILLISECONDS / 2
+    const val LOG_LOC = "locationLog"
+    const val LOG_PS = "palmSentryLog"
     fun closeLoadingLayout(loaderView: View) {
         Handler(Looper.getMainLooper()).postDelayed({
             loaderView.visibility = View.GONE
