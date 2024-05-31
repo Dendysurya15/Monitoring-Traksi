@@ -172,6 +172,7 @@ class UnitRepository(context: Context)  {
     fun fetchAllListPertanyaanBasedOnJenisUnit(arrayHere: Array<String>): List<ItemPertanyaanModel> {
         val listPertanyaanArr = mutableListOf<ItemPertanyaanModel>()
 
+
         val db = databaseHelper.readableDatabase
         val selectionArgs = Array(arrayHere.size) { "?" }.joinToString(",")
 
@@ -203,6 +204,7 @@ class UnitRepository(context: Context)  {
 //        db.close()
 
         return listPertanyaanArr
+
     }
 
 

@@ -7,16 +7,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.hardware.Sensor
-import android.hardware.SensorManager
-import android.media.Image
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.provider.Settings
 import android.text.InputType
 import android.util.Log
@@ -33,11 +25,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.Target
 import com.cbi.monitoring_traksi.BuildConfig
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.repository.CameraRepository
@@ -49,14 +37,14 @@ import com.cbi.monitoring_traksi.utils.AlertDialogUtility
 import com.cbi.monitoring_traksi.utils.AppUtils
 //import com.cbi.monitoring_traksi.utils.AppUtils.checkCameraPermissions
 import com.cbi.monitoring_traksi.utils.AppUtils.checkPermissionsCamera
-import com.cbi.monitoring_traksi.utils.AppUtils.handleListPertanyaanDropdownArray
+import com.cbi.monitoring_traksi.utils.AppUtils.closeLoadingLayout
+import com.cbi.monitoring_traksi.utils.AppUtils.handleStringtoJsonObjectPertanyaan
 import com.cbi.monitoring_traksi.utils.PrefManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etJenisUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etKodeUnit
-import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etNamaOperator
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTanggalPeriksa
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTypeUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etUnitKerja
@@ -68,7 +56,6 @@ import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_take_foto_layo
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.loadingFetchingData
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.parentFormP2H
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.view.id_layout_activity_informasi_unit
-import kotlinx.android.synthetic.main.activity_main.parentMainHalamanUtama
 
 import kotlinx.android.synthetic.main.edit_foto_layout.view.closeZoom
 import kotlinx.android.synthetic.main.edit_foto_layout.view.deletePhoto
@@ -79,13 +66,15 @@ import kotlinx.android.synthetic.main.layout_komentar_dan_foto.view.etKomentar
 import kotlinx.android.synthetic.main.layout_komentar_dan_foto.view.ivAddFotoPerPertanyaan
 import kotlinx.android.synthetic.main.layout_pertanyaan.view.etHasilPeriksa
 import kotlinx.android.synthetic.main.layout_pertanyaan.view.layout_komentar_foto
-import org.w3c.dom.Text
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.ceil
-import kotlin.math.log
 
 
 open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCallback  {
@@ -121,8 +110,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     val arrInsertedDataTable =  mutableMapOf<Int, Map<String, Any>>()
     val globalJenisUnitMap: MutableMap<Int, String> = mutableMapOf()
+    val globalPertanyaanAllJenisUnitMapping = mutableMapOf<Int, MutableList<MutableMap<String, Any>>>()
     val formLayoutsPertanyaan = mutableListOf<View>()
+    private var pertanyaanListGlobal: MutableList<MutableMap<String, Any>> = mutableListOf()
 
+    private var globalListPilJenisUnit: MutableMap<Int, String> = mutableMapOf()
+    private var globalListPilUnitKerja: MutableMap<Int, String> = mutableMapOf()
     val listNamaFoto = mutableMapOf<String, String>()
     val listFileFoto = mutableMapOf<String, File>()
 
@@ -216,212 +209,25 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
         }
 
-        unitViewModel.pertanyaanBasedOnJenisUnitList.observe(this) { data ->
-            if (data != null) {
-                pertanyaanList.clear()
-                pertanyaanPerPage.clear()
-                pertanyaanPerPage2.clear()
+        unitViewModel.pertanyaanBasedOnJenisUnitList.observe(this) { itemMap ->
 
-                data.forEach { record ->
+            itemMap.forEach { (id, records) ->
+                val pertanyaanList = mutableListOf<MutableMap<String, Any>>()
+
+                records.forEach { record ->
                     val recordMap = mutableMapOf<String, Any>()
                     recordMap["id"] = record.id
                     recordMap["nama_pertanyaan"] = record.nama_pertanyaan
                     recordMap["kondisi_mesin"] = record.kondisi_mesin
 
                     pertanyaanList.add(recordMap)
-                }
 
-                dataMapListPertanyaanArray = pertanyaanList.toTypedArray()
-
-                val pertanyaanMap = pertanyaanList.groupBy { it["kondisi_mesin"] }
-
-                val matiList = pertanyaanMap["mati"] ?: emptyList()
-                val hidupList = pertanyaanMap["hidup"] ?: emptyList()
-
-                val mergedList = mutableListOf<Pair<Int, String>>()
-                mergedList.addAll(matiList.map { it["id"] as Int to it["nama_pertanyaan"] as String })
-
-
-                mergedList.addAll(hidupList.map { it["id"] as Int to it["nama_pertanyaan"] as String })
-
-
-                val mergedArray = mergedList.toTypedArray()
-
-
-                val sortedArray = (matiList + hidupList).toTypedArray()
-
-                val sortedPertanyaanNames2 = pertanyaanList.map { "${it["id"]} => ${it["nama_pertanyaan"]}" }
-
-
-                val sortedPertanyaanNames = sortedArray.map { it["nama_pertanyaan"] }
-                val sortedPertanyaanNamesArray = sortedPertanyaanNames.toTypedArray()
-
-                val minBatch = 10
-                var batchCount = 0
-                var remainingQuestions = sortedPertanyaanNamesArray.size
-
-                while (remainingQuestions > 0) {
-                    remainingQuestions -= minBatch
-                    batchCount++
-                }
-
-                var resetCount = 1
-                var inc = 0
-
-
-                for (item in mergedArray) {
-                    // Store to new array with key inc
-                    if (resetCount > minBatch) {
-                        resetCount = 1
-                        inc++
-                    }
-
-                    if (!pertanyaanPerPage.containsKey(inc)) {
-                        pertanyaanPerPage[inc] = mutableMapOf()
-                    }
-                    pertanyaanPerPage[inc]?.put(item.first, item.second)
-                    resetCount++
-                }
-
-
-
-
-
-                val layout =
-                    findViewById<ConstraintLayout>(R.id.parentFormP2H) // Assuming you have a parent layout to add the duplicates to
-                for (i in 0 until batchCount) {
-
-                    val includedLayout =
-                        layoutInflater.inflate(R.layout.activity_form_p2h_layout_pertanyaan, null)
-                    includedLayout.id =
-                        View.generateViewId() // Generate unique id for each duplicate
-                    includedLayout.visibility = View.GONE
-                    val layoutParams = ConstraintLayout.LayoutParams(
-                        ConstraintLayout.LayoutParams.MATCH_PARENT,
-                        ConstraintLayout.LayoutParams.MATCH_PARENT
-                    )
-                    includedLayout.layoutParams = layoutParams
-
-                    val textViewQuestion = includedLayout.findViewById<TextView>(R.id.textTitleTest)
-                    textViewQuestion.text = "Form page ke-${i + 1}"
-
-                    //jika form sudah berada di page terakhir visible button save
-                    if (i == (batchCount - 1)) {
-                        val mbSaveFormP2H =
-                            includedLayout.findViewById<TextView>(R.id.mbSaveFormP2H)
-                        mbSaveFormP2H.visibility = View.VISIBLE
-                    } else {
-                        val mbButtonForNext =
-                            includedLayout.findViewById<TextView>(R.id.mbButtonNext)
-                        mbButtonForNext.visibility = View.VISIBLE
-                        mbButtonForNext.text = "Next"
-                    }
-
-                    val pertanyaanThisPage = pertanyaanPerPage[i]
-
-
-                    if (pertanyaanThisPage is Map<*, *>) {
-                        val containerPertanyaan =
-                            includedLayout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
-                        pertanyaanThisPage.forEach { (key, value) ->
-
-                            val layoutPertanyaan = layoutInflater.inflate(
-                                R.layout.layout_pertanyaan,
-                                null
-                            ) as ConstraintLayout
-                            layoutPertanyaan.id = key
-
-                            val textTitlePertanyaan =
-                                layoutPertanyaan.findViewById<TextView>(R.id.textPertanyaan)
-                            textTitlePertanyaan.visibility = View.VISIBLE
-                            textTitlePertanyaan.text = pertanyaanThisPage[key]
-
-                            val test =
-                                layoutPertanyaan.findViewById<ConstraintLayout>(R.id.etHasilPeriksa)
-                            test.visibility = View.VISIBLE
-                            val etTemplateDropdown =
-                                layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown)
-
-                            val dropdownOptions = arrayOf(
-                                "Sudah dicek",
-                                "Belum dicek",
-                                "Sudah dicek, tetapi ada perbaikan"
-                            )
-                            val adapter = ArrayAdapter(
-                                this,
-                                android.R.layout.simple_spinner_dropdown_item,
-                                dropdownOptions
-                            )
-                            etTemplateDropdown.setAdapter(adapter)
-
-                            etTemplateDropdown.setText("Sudah dicek", false)
-
-                            val defaultPosition = adapter.getPosition("Sudah dicek")
-                            etTemplateDropdown.setSelection(defaultPosition)
-
-                            layoutPertanyaan.etHasilPeriksa.etTemplateDropdown.setOnItemClickListener { _, _, position, _ ->
-                                val selectedItem = dropdownOptions[position]
-                                var komentarText = ""
-                                if (selectedItem == "Sudah dicek, tetapi ada perbaikan") {
-                                    layoutPertanyaan.layout_komentar_foto.visibility = View.VISIBLE
-                                    layoutPertanyaan.layout_komentar_foto.etKomentar.setText(
-                                        komentarText
-                                    )
-
-                                    var id_foto = key.toString()
-                                    layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan.setOnClickListener{
-
-
-                                        includedLayout.visibility = View.GONE
-                                        id_take_foto_layout.visibility = View.VISIBLE
-
-                                        takeCameraNow(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
-                                    }
-
-                                    id_editable_foto_layout.retakePhoto.setOnClickListener {
-
-
-                                        AppUtils.hideKeyboard(this)
-                                        zoomOpen = false
-                                        id_editable_foto_layout.visibility = View.GONE
-                                        id_take_foto_layout.visibility = View.VISIBLE
-                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
-                                    }
-
-                                } else {
-                                    layoutPertanyaan.layout_komentar_foto.visibility = View.GONE
-                                    komentarText = layoutPertanyaan.etKomentar.text.toString()
-                                    layoutPertanyaan.layout_komentar_foto.etKomentar.setText("")
-
-                                }
-                            }
-
-
-                            // Create layout parameters for layoutPertanyaan
-                            val params = ConstraintLayout.LayoutParams(
-                                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                                ConstraintLayout.LayoutParams.WRAP_CONTENT
-                            )
-
-                            if (key == pertanyaanThisPage.keys.last()) {
-                                params.bottomMargin =
-                                    (200 * resources.displayMetrics.density).toInt() // Convert 16dp to pixels
-                            }
-
-                            layoutPertanyaan.layoutParams = params
-
-                            containerPertanyaan.addView(layoutPertanyaan)
-                        }
-                    }
-
-                    layout.addView(includedLayout)
-                    formLayoutsPertanyaan.add(includedLayout)
 
                 }
-                handleClicksForm()
+                 globalPertanyaanAllJenisUnitMapping[id] = pertanyaanList
             }
-        }
 
+        }
 
 
         etTanggalPeriksa.isEnabled = false
@@ -489,7 +295,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 //            }
 //        }else{
 
-        Log.d("testing", id_foto)
+
         cameraViewModel.takeCameraPhotos(
             id_foto,
             imageView
@@ -752,104 +558,267 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private fun checkDataAvailability(){
 
         if (dataMapUnitKerjaArray != null && dataMapJenisUnitArray != null && dataMapKodeUnitArray != null ) {
+
+            var isDoneRetrieveData = false
+
+            dataMapJenisUnitArray?.let { data ->
+                val idUnitList = data.map { it["id"] as? Int }.filterNotNull()
+                val listPertanyaanJenisUnit = data.map { it["list_pertanyaan"] as? String }.filterNotNull()
+
+                globalListPilJenisUnit = data.mapNotNull {
+                    val id = it["id"] as? Int
+                    val namaUnit = it["nama_unit"] as? String
+                    if (id != null && namaUnit != null) {
+                        id to namaUnit
+                    } else {
+                        null
+                    }
+                }.toMap().toMutableMap()
+
+                val listPertanyaanJenisUnitArray = listPertanyaanJenisUnit.toTypedArray()
+
+                GlobalScope.launch(Dispatchers.IO) {
+
+                    listPertanyaanJenisUnitArray.forEachIndexed { index, datas ->
+                        val id = idUnitList[index]
+                        val values = handleStringtoJsonObjectPertanyaan(datas)
+                        unitViewModel.loadDataListPertanyaanBasedOnJenisUnit(values.toTypedArray(), id)
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        isDoneRetrieveData = true
+                    }
+                }
+            }
+
+
+
+
+
+
+            GlobalScope.launch(Dispatchers.Main) {
+                while (!isDoneRetrieveData) {
+                    delay(100)
+                }
+                AppUtils.closeLoadingLayout(loadingFetchingData)
+                setupDropdown()
+            }
+        }
+
+    }
+
+    private fun setupLayoutPertanyaan(pertanyaanList: MutableList<MutableMap<String, Any>>) {
+        // Clear previous data
+        pertanyaanPerPage.clear()
+        formLayoutsPertanyaan.clear()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            // Do background processing
+            val layoutData = withContext(Dispatchers.IO) {
+                // Group questions by condition
+                val pertanyaanMap = pertanyaanList.groupBy { it["kondisi_mesin"] }
+                val matiList = pertanyaanMap["mati"] ?: emptyList()
+                val hidupList = pertanyaanMap["hidup"] ?: emptyList()
+
+                // Merge and sort the questions
+                val mergedList = mutableListOf<Pair<Int, String>>()
+                mergedList.addAll(matiList.map { it["id"] as Int to it["nama_pertanyaan"] as String })
+                mergedList.addAll(hidupList.map { it["id"] as Int to it["nama_pertanyaan"] as String })
+
+                val minBatch = 10
+                var batchCount = 0
+                var remainingQuestions = mergedList.size
+
+                while (remainingQuestions > 0) {
+                    remainingQuestions -= minBatch
+                    batchCount++
+                }
+
+                // Create paginated data
+                val paginatedData = mutableMapOf<Int, MutableMap<Int, String>>()
+                var resetCount = 1
+                var inc = 0
+
+                for (item in mergedList) {
+                    if (resetCount > minBatch) {
+                        resetCount = 1
+                        inc++
+                    }
+
+                    if (!paginatedData.containsKey(inc)) {
+                        paginatedData[inc] = mutableMapOf()
+                    }
+                    paginatedData[inc]?.put(item.first, item.second)
+                    resetCount++
+                }
+
+                Triple(paginatedData, batchCount, mergedList.size)
+            }
+
+            val (paginatedData, batchCount, _) = layoutData
+
+            // Update the UI with the processed data
+            val layout = findViewById<ConstraintLayout>(R.id.parentFormP2H)
+            for (i in 0 until batchCount) {
+                val includedLayout = layoutInflater.inflate(R.layout.activity_form_p2h_layout_pertanyaan, null)
+                includedLayout.id = View.generateViewId()
+                includedLayout.visibility = View.GONE
+                val layoutParams = ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.MATCH_PARENT
+                )
+                includedLayout.layoutParams = layoutParams
+
+                val textViewQuestion = includedLayout.findViewById<TextView>(R.id.textTitleTest)
+                textViewQuestion.text = "Form page ke-${i + 1}"
+
+                if (i == (batchCount - 1)) {
+                    val mbSaveFormP2H = includedLayout.findViewById<TextView>(R.id.mbSaveFormP2H)
+                    mbSaveFormP2H.visibility = View.VISIBLE
+                } else {
+                    val mbButtonForNext = includedLayout.findViewById<TextView>(R.id.mbButtonNext)
+                    mbButtonForNext.visibility = View.VISIBLE
+                    mbButtonForNext.text = "Next"
+                }
+
+                val pertanyaanThisPage = paginatedData[i]
+
+                if (pertanyaanThisPage is Map<*, *>) {
+                    val containerPertanyaan = includedLayout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
+                    pertanyaanThisPage.forEach { (key, value) ->
+                        val layoutPertanyaan = layoutInflater.inflate(R.layout.layout_pertanyaan, null) as ConstraintLayout
+                        layoutPertanyaan.id = key as Int
+
+                        val textTitlePertanyaan = layoutPertanyaan.findViewById<TextView>(R.id.textPertanyaan)
+                        textTitlePertanyaan.visibility = View.VISIBLE
+                        textTitlePertanyaan.text = value as String
+
+                        val test = layoutPertanyaan.findViewById<ConstraintLayout>(R.id.etHasilPeriksa)
+                        test.visibility = View.VISIBLE
+                        val etTemplateDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown)
+
+                        val dropdownOptions = arrayOf(
+                            "Sudah dicek",
+                            "Belum dicek",
+                            "Sudah dicek, tetapi ada perbaikan"
+                        )
+                        val adapter = ArrayAdapter(
+                            this@FormLaporP2HActivity,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            dropdownOptions
+                        )
+                        etTemplateDropdown.setAdapter(adapter)
+                        etTemplateDropdown.setText("Sudah dicek", false)
+
+                        val defaultPosition = adapter.getPosition("Sudah dicek")
+                        etTemplateDropdown.setSelection(defaultPosition)
+
+                        etTemplateDropdown.setOnItemClickListener { _, _, position, _ ->
+                            val selectedItem = dropdownOptions[position]
+                            if (selectedItem == "Sudah dicek, tetapi ada perbaikan") {
+                                layoutPertanyaan.layout_komentar_foto.visibility = View.VISIBLE
+                                layoutPertanyaan.layout_komentar_foto.etKomentar.setText("")
+
+                                val id_foto = key.toString()
+                                layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan.setOnClickListener {
+                                    includedLayout.visibility = View.GONE
+                                    id_take_foto_layout.visibility = View.VISIBLE
+                                    takeCameraNow(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
+                                }
+
+                                id_editable_foto_layout.retakePhoto.setOnClickListener {
+                                    AppUtils.hideKeyboard(this@FormLaporP2HActivity)
+                                    zoomOpen = false
+                                    id_editable_foto_layout.visibility = View.GONE
+                                    id_take_foto_layout.visibility = View.VISIBLE
+                                    retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
+                                }
+
+                            } else {
+                                layoutPertanyaan.layout_komentar_foto.visibility = View.GONE
+                                layoutPertanyaan.layout_komentar_foto.etKomentar.setText("")
+                            }
+                        }
+
+                        // Create layout parameters for layoutPertanyaan
+                        val params = ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.MATCH_PARENT,
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT
+                        )
+
+                        if (key == pertanyaanThisPage.keys.last()) {
+                            params.bottomMargin = (200 * resources.displayMetrics.density).toInt() // Convert 16dp to pixels
+                        }
+
+                        layoutPertanyaan.layoutParams = params
+                        containerPertanyaan.addView(layoutPertanyaan)
+                    }
+                }
+
+                layout.addView(includedLayout)
+                formLayoutsPertanyaan.add(includedLayout)
+            }
+
+
+            handleClicksForm()
             AppUtils.closeLoadingLayout(loadingFetchingData)
-            setupDropdown()
         }
     }
 
     private fun setupDropdown(){
-        dataMapJenisUnitArray?.let { data ->
 
-            globalJenisUnitMap.clear()
+        val listPilJenisUnitValues = globalListPilJenisUnit.values.toList()
 
-            val namaUnitList = data.map { it["nama_unit"] as? String }.filterNotNull()
-            val idUnitList = data.map { it["id"] as? Int }.filterNotNull()
-            val listPertanyaanJenisUnit = data.map { it["list_pertanyaan"] as? String }.filterNotNull()
+        val adapterJenisUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listPilJenisUnitValues)
+        etJenisUnit.setAdapter(adapterJenisUnitItems)
+
+        etJenisUnit.setOnItemClickListener { parent, _, position, _ ->
+
+            val selectedNamaUnit = listPilJenisUnitValues[position]
+
+            val selectedIdJenisUnit = globalListPilJenisUnit.filterValues { it == selectedNamaUnit }.keys.firstOrNull()
 
 
 
-            for (i in idUnitList.indices) {
-                globalJenisUnitMap[idUnitList[i]] = namaUnitList[i]
+//            AppUtils.showLoadingLayout(this, window, loadingFetchingData)
+            loadingFetchingData.visibility = View.VISIBLE
+            globalPertanyaanAllJenisUnitMapping[selectedIdJenisUnit]?.let { setupLayoutPertanyaan(it) }
+
+            val filteredUnitKerjaList = dataMapUnitKerjaArray?.filter {
+                it["id_jenis_unit"] == selectedIdJenisUnit
             }
+            val unitKerjaArray = filteredUnitKerjaList?.map { it["nama_unit_kerja"] as? String }?.filterNotNull()
+            val idUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
+            val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArray ?: emptyList())
+            etUnitKerja.setAdapter(adapterUnitKerjaItems)
+
+            etUnitKerja.setText("")
+            etKodeUnit.setText("")
+            etTypeUnit.setText("")
 
 
-            val idNamaUnitArray = idUnitList.toTypedArray()
-            val namaUnitArray = namaUnitList.toTypedArray()
-            val listPertanyaanJenisUnitArray = listPertanyaanJenisUnit.toTypedArray()
-            adapterJenisUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line,
-                namaUnitArray
-            )
-            etJenisUnit.setAdapter(adapterJenisUnitItems)
+            etUnitKerja.setOnItemClickListener { _, _, position, _ ->
+                val idPilUnitKerja = idUnitKerjaArray?.get(position)
 
-            etJenisUnit.setOnItemClickListener { parent, _, position, _ ->
-                AppUtils.hideKeyboard(this)
-                val pilJenisUnit = parent.getItemAtPosition(position).toString()
-                val idPilJenisUnit = idNamaUnitArray[position]
-
-                var ListPertanyaanIdJenisUnit: String? = null
-                ListPertanyaanIdJenisUnit = listPertanyaanJenisUnitArray[position]
-
-                val values = handleListPertanyaanDropdownArray(ListPertanyaanIdJenisUnit)
-
-                ListPertanyaanStr = values.toTypedArray()
-
-                unitViewModel.loadDataListPertanyaanBasedOnJenisUnit(ListPertanyaanStr)
-
-                val filteredUnitKerjaList = dataMapUnitKerjaArray?.filter {
-                    it["id_jenis_unit"] == idPilJenisUnit
+                val filteredKodeUnitList = dataMapKodeUnitArray?.filter {
+                    it["id_unit_kerja"] == idPilUnitKerja
                 }
 
-                val namaUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["nama_unit_kerja"] as? String }?.toTypedArray()
-                val idUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
+                val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["nama_kode"] as? String }?.toTypedArray() ?: emptyArray()
+                val typeUnitArray = filteredKodeUnitList?.mapNotNull { it["type_unit"] as? String }?.toTypedArray()
 
-                etUnitKerja.setText("")
+                val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, namaKodeUnitArray)
+                etKodeUnit.setAdapter(adapterKodeUnitItems)
+
                 etKodeUnit.setText("")
                 etTypeUnit.setText("")
-
-                // Populate the ArrayAdapter for etUnitKerja with the new data
-                namaUnitKerjaArray?.let { unitKerjaArray ->
-                    val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArray)
-                    etUnitKerja.setAdapter(adapterUnitKerjaItems)
-
-                    etUnitKerja.setOnItemClickListener { _, _, position, _ ->
-                        val pilUnitKerja = adapterUnitKerjaItems.getItem(position).toString()
-                        val idPilUnitKerja = idUnitKerjaArray?.get(position)
-
-
-
-
-                        val filteredKodeUnitList = dataMapKodeUnitArray?.filter {
-                            it["id_unit_kerja"] == idPilUnitKerja
-                        }
-
-                        val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["nama_kode"] as? String }?.toTypedArray()
-                        val typeUnitArray = filteredKodeUnitList?.mapNotNull { it["type_unit"] as? String }?.toTypedArray()
-                        val idKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
-
-
-                        etKodeUnit.setText("")
-                        etTypeUnit.setText("")
-
-                        // Populate the ArrayAdapter for etKodeUnit with the new data
-                        namaKodeUnitArray?.let { unitKerjaArray ->
-                            val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArray)
-                            etKodeUnit.setAdapter(adapterKodeUnitItems)
-
-                            etKodeUnit.setOnItemClickListener { _, _, position, _ ->
-
-
-                                val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
-
-                                etTypeUnit.setText(typeUnitArray?.get(position))
-
-                            }
-                        }
-                    }
+                etKodeUnit.setOnItemClickListener { _, _, position, _ ->
+                        val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
+                        etTypeUnit.setText(typeUnitArray?.get(position))
                 }
-
-
             }
         }
+
     }
 
 
@@ -860,7 +829,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         formLayoutsPertanyaan.forEach { it.visibility = View.GONE }
 
         if (nextFormIndex >= 0 && nextFormIndex < formLayoutsPertanyaan.size) {
-            Log.d("testing", nextFormIndex.toString())
             formLayoutsPertanyaan[nextFormIndex].visibility = View.VISIBLE
             currentFormIndex = nextFormIndex
 

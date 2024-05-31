@@ -18,7 +18,6 @@ import com.cbi.monitoring_traksi.data.repository.UnitRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Date
 
 class UnitViewModel(application: Application, private val traksiUnitRepository: UnitRepository) : AndroidViewModel(application) {
 
@@ -50,9 +49,10 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
 
     private val _dataUnitKerja = MutableLiveData<List<UnitKerjaModel>>()
 
-    private val _dataPertanyaan = MutableLiveData<List<ItemPertanyaanModel>>()
+    private val _dataPertanyaan = MutableLiveData<Map<Int, List<ItemPertanyaanModel>>>()
 
-        private val _dataLaporan = MutableLiveData<List<DataLaporanModel>>()
+
+    private val _dataLaporan = MutableLiveData<List<DataLaporanModel>>()
 
     val dataJenisUnitList: LiveData<List<JenisUnitModel>> get() = _dataJenisUnit
 
@@ -60,10 +60,8 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
 
     val dataUnitkerjaList: LiveData<List<UnitKerjaModel>> get() = _dataUnitKerja
 
-    val pertanyaanBasedOnJenisUnitList: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
-        val saveToSQL: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
+    val pertanyaanBasedOnJenisUnitList: LiveData<Map<Int, List<ItemPertanyaanModel>>> get() = _dataPertanyaan
 
-    val dataPertanyaanlist: LiveData<List<ItemPertanyaanModel>> get() = _dataPertanyaan
 
     fun insertDataJenisUnit(
         id: Int,
@@ -195,12 +193,16 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         }
     }
 
-    fun loadDataListPertanyaanBasedOnJenisUnit(arrayHere: Array<String>){
+    fun loadDataListPertanyaanBasedOnJenisUnit(arrayHere: Array<String>, id: Int) {
         viewModelScope.launch {
             val dataUnit = withContext(Dispatchers.IO) {
                 traksiUnitRepository.fetchAllListPertanyaanBasedOnJenisUnit(arrayHere)
             }
-            _dataPertanyaan.value = dataUnit
+
+            if (dataUnit.isNotEmpty()) {
+                val dataWithCustomId = mapOf(id to dataUnit)
+                _dataPertanyaan.value = dataWithCustomId
+            }
         }
     }
 

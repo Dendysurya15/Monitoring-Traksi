@@ -678,7 +678,7 @@ object AppUtils {
         })
     }
 
-    fun handleListPertanyaanDropdownArray(jsonString: String): ArrayList<String> {
+    fun handleStringtoJsonObjectPertanyaan(jsonString: String): ArrayList<String> {
         val jsonObject = JSONObject(jsonString)
         val values = ArrayList<String>()
 
