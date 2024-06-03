@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initViewModel()
-
         loadingMain.visibility = View.VISIBLE
         AppUtils.showLoadingLayout(this, window, loadingMain)
 
@@ -55,11 +54,11 @@ class MainActivity : AppCompatActivity() {
 
         AppUtils.checkGeneralPermissions(this, this)
         clickAny()
+
+
     }
 
     private fun clickAny(){
-
-
 
         mbTambahMonitoring.setOnClickListener {
             try {
@@ -110,6 +109,8 @@ class MainActivity : AppCompatActivity() {
             this,
             UnitViewModel.Factory(application, UnitRepository(this))
         )[UnitViewModel::class.java]
+
+
     }
 
     private fun handleSynchronizeData(arg: String? = "") {

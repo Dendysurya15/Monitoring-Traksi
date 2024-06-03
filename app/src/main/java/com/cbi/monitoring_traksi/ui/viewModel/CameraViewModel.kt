@@ -8,8 +8,8 @@ import java.io.File
 
 class CameraViewModel(private val cameraRepository: CameraRepository) : ViewModel() {
 
-    fun takeCameraPhotos(resultCode : String, imageView: ImageView) {
-        cameraRepository.takeCameraPhotos(resultCode, imageView)
+    fun takeCameraPhotos(resultCode : String, imageView: ImageView, pageForm : Int) {
+        cameraRepository.takeCameraPhotos(resultCode, imageView, pageForm)
     }
 
     fun statusCamera(): Boolean = cameraRepository.statusCamera()

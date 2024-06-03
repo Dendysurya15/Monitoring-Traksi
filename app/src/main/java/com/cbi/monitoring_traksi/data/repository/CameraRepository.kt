@@ -42,7 +42,7 @@ import com.cbi.monitoring_traksi.utils.AppUtils
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import es.dmoral.toasty.Toasty
-import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.view.id_layout_foto_unit
+
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.view.id_layout_activity_informasi_unit
 import kotlinx.android.synthetic.main.camera_view_layout.view.captureCam
@@ -64,7 +64,7 @@ import java.util.Locale
 class CameraRepository(private val context: Context, private val window: Window, private val view: View, private val zoomView: View) {
 
     interface PhotoCallback {
-        fun onPhotoTaken(photoFile: File, fname: String, resultCode: String)
+        fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, pageForm: Int)
     }
     private var photoCallback: PhotoCallback? = null
 
@@ -184,7 +184,7 @@ class CameraRepository(private val context: Context, private val window: Window,
         return resultBitmap
     }
 
-    fun takeCameraPhotos(resultCode: String, imageView: ImageView) {
+    fun takeCameraPhotos(resultCode: String, imageView: ImageView, pageForm : Int) {
         // Initialize Camera View
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
@@ -284,7 +284,7 @@ class CameraRepository(private val context: Context, private val window: Window,
                                                 0
                                             }
 
-                                            takeCameraPhotos(resultCode, imageView)
+                                            takeCameraPhotos(resultCode, imageView, pageForm)
                                         }
                                     }
 
@@ -342,10 +342,13 @@ class CameraRepository(private val context: Context, private val window: Window,
                                         var commentWm = "comment"
                                         commentWm = commentWm.replace("|", ",").replace("\n", "")
                                         commentWm = AppUtils.splitStringWatermark(commentWm, 60)
-                                        val watermarkedBitmap = addWatermark(
-                                            takenImage,
+                                        val watermarkText = if (resultCode == "0") {
+                                            "MONITORING TRAKSI\n${dateWM}"
+                                        } else {
                                             "MONITORING TRAKSI\n${commentWm}\n${dateWM}"
-                                        )
+                                        }
+
+                                        val watermarkedBitmap = addWatermark(takenImage, watermarkText)
 
                                         try {
                                             val targetSizeBytes = 100 * 1024
@@ -431,7 +434,7 @@ class CameraRepository(private val context: Context, private val window: Window,
                                                 .into(imageView)
 
 
-                                            photoCallback?.onPhotoTaken(file, fileName, resultCode)
+                                            photoCallback?.onPhotoTaken(file, fileName, resultCode, pageForm)
                                         }
                                     }, handler)
 
@@ -527,7 +530,6 @@ class CameraRepository(private val context: Context, private val window: Window,
     }
 
     fun openZoomPhotos(file: File, function: () -> Unit) {
-        Log.d("testing", file.toString())
         YoYo.with(Techniques.FadeIn)
             .onStart {
                 Glide.with(context).load(Uri.fromFile(file)).diskCacheStrategy(

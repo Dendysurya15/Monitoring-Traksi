@@ -42,6 +42,7 @@ import com.cbi.monitoring_traksi.utils.AppUtils.handleStringtoJsonObjectPertanya
 import com.cbi.monitoring_traksi.utils.PrefManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etJenisUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etKodeUnit
@@ -50,6 +51,7 @@ import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.et
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etUnitKerja
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.ivSignLocation
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.view.id_layout_foto_unit
+
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_take_foto_layout
@@ -60,11 +62,10 @@ import kotlinx.android.synthetic.main.activity_layout_form_p2h.view.id_layout_ac
 import kotlinx.android.synthetic.main.edit_foto_layout.view.closeZoom
 import kotlinx.android.synthetic.main.edit_foto_layout.view.deletePhoto
 import kotlinx.android.synthetic.main.edit_foto_layout.view.retakePhoto
-import kotlinx.android.synthetic.main.layout_dropdown_hasil_periksa.view.etTemplateDropdown
 import kotlinx.android.synthetic.main.layout_foto_unit.view.ivAddFotoUnit
 import kotlinx.android.synthetic.main.layout_komentar_dan_foto.view.etKomentar
 import kotlinx.android.synthetic.main.layout_komentar_dan_foto.view.ivAddFotoPerPertanyaan
-import kotlinx.android.synthetic.main.layout_pertanyaan.view.etHasilPeriksa
+
 import kotlinx.android.synthetic.main.layout_pertanyaan.view.layout_komentar_foto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -84,18 +85,13 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private var currentFormIndex: Int = 0
     val dataJenisUnitList = mutableListOf<Map<String, Any>>()
     val dataUnitKerjaList = mutableListOf<Map<String, Any>>()
-    val pertanyaanList = mutableListOf<Map<String, Any>>()
     val dataKodeUnitList = mutableListOf<Map<String, Any>>()
-    val dataPertanyaanList = mutableListOf<Map<String, Any>>()
+
     val pertanyaanPerPage = mutableMapOf<Int, MutableMap<Int, String>>()
-    val pertanyaanPerPage2 = mutableMapOf<Int, MutableMap<Int, String>>()
-    val pertanyaanIds: MutableList<String> = mutableListOf()
     private var dataMapJenisUnitArray: Array<Map<String, Any>>? = null
     private var dataMapUnitKerjaArray: Array<Map<String, Any>>? = null
-    private var dataMapListPertanyaanArray: Array<Map<String, Any>>? = null
     private var dataMapKodeUnitArray: Array<Map<String, Any>>? = null
-    private var dataMapPertanyaanArray: Array<Map<String, Any>>? = null
-    private var adapterJenisUnitItems: ArrayAdapter<String>? = null
+
     private lateinit var cameraViewModel: CameraViewModel
     private lateinit var locationViewModel: LocationViewModel
     private var lat: Double? = null
@@ -103,6 +99,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     val viewsArray = ArrayList<View>()
     var pertanyaanPerJenisUnit: MutableMap<String, Array<String>> = mutableMapOf()
     lateinit var ListPertanyaanStr: Array<String>
+    private var isFormInformasiUnit :Boolean = false
 
     private val formLayoutInfoUnit: Array<View> by lazy {
         arrayOf(id_layout_activity_informasi_unit)
@@ -116,6 +113,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     private var globalListPilJenisUnit: MutableMap<Int, String> = mutableMapOf()
     private var globalListPilUnitKerja: MutableMap<Int, String> = mutableMapOf()
+    private var globalListPilKodeUnit: MutableMap<Int, String> = mutableMapOf()
     val listNamaFoto = mutableMapOf<String, String>()
     val listFileFoto = mutableMapOf<String, File>()
 
@@ -241,6 +239,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             if (formLayoutsPertanyaan.isEmpty()){
                     displayToasty(this,"Harap memilih jenis unit terlebih dahulu")
             }else{
+                isFormInformasiUnit = false
                 toggleFormVisibility(currentFormIndex)
             }
         }
@@ -254,53 +253,17 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
 
 
-        id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit.setOnClickListener{
-            if(prefManager!!.isCameraAllowed == false){
-                checkPermissionsCamera(this)
-            }else{
-                id_layout_activity_informasi_unit.visibility = View.GONE
-                id_take_foto_layout.visibility = View.VISIBLE
-                takeCameraNow("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit)
-            }
-        }
-
-        id_editable_foto_layout.deletePhoto.visibility = View.INVISIBLE
-        id_editable_foto_layout.deletePhoto.isClickable = true
-        id_editable_foto_layout.closeZoom.setOnClickListener {
-            zoomOpen = false
-            id_take_foto_layout.visibility = View.GONE
-            id_layout_activity_informasi_unit.visibility = View.VISIBLE
-            cameraViewModel.closeZoomPhotos()
-        }
-
-        id_editable_foto_layout.retakePhoto.setOnClickListener {
 
 
-            Log.d("testing", "terklik")
-            AppUtils.hideKeyboard(this)
-            zoomOpen = false
-            id_editable_foto_layout.visibility = View.GONE
-            id_take_foto_layout.visibility = View.VISIBLE
-            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit)
-        }
 
     }
 
-    private fun retakeCamera(id_foto: String, imageView: ImageView){
-//        if (listNamaFoto.containsKey(id_foto)){
-//            zoomOpen = true
-//            cameraViewModel.openZoomPhotos(listFileFoto[id_foto]!!){
-//                id_layout_activity_informasi_unit.visibility = View.GONE
-////                id_editable_foto_layout.visibility = View.VISIBLE
-//            }
-//        }else{
-
-
+    private fun retakeCamera(id_foto: String, imageView: ImageView, pageForm: Int){
         cameraViewModel.takeCameraPhotos(
             id_foto,
-            imageView
+            imageView,
+            pageForm,
         )
-//        }
     }
 
     private fun showSnackbar(message: String) {
@@ -318,7 +281,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
     }
 
-    private fun takeCameraNow(id_foto: String, imageView: ImageView){
+    private fun takeCameraNow(id_foto: String, pageForm: Int,  imageView: ImageView){
         if (listNamaFoto.containsKey(id_foto)){
             zoomOpen = true
             cameraViewModel.openZoomPhotos(listFileFoto[id_foto]!!){
@@ -328,7 +291,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }else{
             cameraViewModel.takeCameraPhotos(
                 id_foto,
-                imageView
+                imageView,
+                pageForm,
             )
         }
     }
@@ -345,7 +309,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     prefManager!!.isCameraAllowed = true
                     id_layout_activity_informasi_unit.visibility = View.GONE
                     id_take_foto_layout.visibility = View.VISIBLE
-                    takeCameraNow("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit)
+//                    takeCameraNow("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit)
                 }else{
                     prefManager!!.isCameraAllowed = false
                     id_layout_activity_informasi_unit.visibility = View.VISIBLE
@@ -405,18 +369,21 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     "Apakah anda yakin menyimpan data?",
                     "warning.json"
                 ) {
-                    val jenisunit = getIdFromJenisUnit(etJenisUnit.text.toString())!!.toInt()
+                    val jenisUnitId = getIdFromJenisUnit(etJenisUnit.text.toString())!!.toInt()
+                    val unitKerjaId = getIdFromUnitKerja(etUnitKerja.text.toString())!!.toInt()
+                    val kodeUnitId = getIdFromKodeUnit(etKodeUnit.text.toString())!!.toInt()
                     val app_version = BuildConfig.VERSION_NAME
-
 
                     unitViewModel.pushDataToLaporanP2hSQL(
                         tanggal_upload = getCurrentDate(true),
-                        id_jenis_unit = jenisunit,
+                        id_jenis_unit = jenisUnitId,
+                        id_unit_kerja = unitKerjaId,
+                        id_kode_unit =  kodeUnitId,
                         lat = lat.toString(),
                         lon = lon.toString(),
                         id_user = prefManager!!.userid!!.toInt(),
                         status = "pending",
-                        foto_unit =  "",
+                        foto_unit =  listNamaFoto["0"] ?: "",
                         app_version = app_version
                     )
 
@@ -435,13 +402,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         for (i in 1 until containerPertanyaan.childCount) {
                             val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
                             val idPertanyaan = layoutPertanyaan.id.toString()
-                            val etTemplateDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown)
-                            val gasTerus = layoutPertanyaan.layout_komentar_foto.etKomentar.text.toString()
-                            val selectedValue = etTemplateDropdown.text.toString()
+                            val selectedValueDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown).text.toString()
+                            val etValueKomentar = layoutPertanyaan.findViewById<TextInputEditText>(R.id.etKomentar).text.toString()
 
                             val valueMap = mutableMapOf<String, String>()
-                            valueMap["jawabanHasilPeriksa"] = selectedValue
-                            valueMap["komentarHasilPeriksa"] = gasTerus
+                            valueMap["jawabanHasilPeriksa"] = selectedValueDropdown
+                            valueMap["komentarHasilPeriksa"] = etValueKomentar
                             valueMap["namaFoto"] = listNamaFoto[idPertanyaan] ?: ""
                             selectedValuesMap[idPertanyaan] = valueMap
                         }
@@ -452,6 +418,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
                     hasilPeriksa.forEach { (index, pertanyaanMap) ->
                         pertanyaanMap.forEach { (idPertanyaan, valueMap) ->
+                            Log.d("testing", "page $index - kondisi : ${valueMap["jawabanHasilPeriksa"]} - komentar ${valueMap["komentarHasilPeriksa"]} - foto : ${valueMap["namaFoto"]}")
                             unitViewModel.pushToTableData(
                                 created_at = getCurrentDate(true),
                                 id_laporan = lastIdLaporP2H,
@@ -552,12 +519,20 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
         }
     }
-    private fun getIdFromJenisUnit(jenisunit: String): Int? {
-        return globalJenisUnitMap.entries.find { it.value == jenisunit }?.key
+    private fun getIdFromJenisUnit(idJenisUnit: String): Int? {
+        return globalListPilJenisUnit .entries.find { it.value == idJenisUnit }?.key
+    }
+
+    private fun getIdFromUnitKerja(idUnitKerja: String): Int? {
+        return globalListPilUnitKerja .entries.find { it.value == idUnitKerja }?.key
+    }
+
+    private fun getIdFromKodeUnit(idKodeUnit: String): Int? {
+        return globalListPilKodeUnit .entries.find { it.value == idKodeUnit }?.key
     }
     private fun checkDataAvailability(){
 
-        if (dataMapUnitKerjaArray != null && dataMapJenisUnitArray != null && dataMapKodeUnitArray != null ) {
+        if (dataMapUnitKerjaArray != null && dataMapJenisUnitArray != null && dataMapKodeUnitArray != null) {
 
             var isDoneRetrieveData = false
 
@@ -591,9 +566,29 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 }
             }
 
+            dataUnitKerjaList?.let {data->
+                globalListPilUnitKerja = data.mapNotNull {
+                    val id = it["id"] as? Int
+                    val unitKerja = it["nama_unit_kerja"] as? String
+                    if (id != null && unitKerja != null) {
+                        id to unitKerja
+                    } else {
+                        null
+                    }
+                }.toMap().toMutableMap()
+            }
 
-
-
+            dataMapKodeUnitArray?.let {data->
+                globalListPilKodeUnit = data.mapNotNull {
+                    val id = it["id"] as? Int
+                    val unitKerja = it["nama_kode"] as? String
+                    if (id != null && unitKerja != null) {
+                        id to unitKerja
+                    } else {
+                        null
+                    }
+                }.toMap().toMutableMap()
+            }
 
 
             GlobalScope.launch(Dispatchers.Main) {
@@ -669,7 +664,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 )
                 includedLayout.layoutParams = layoutParams
 
-                val textViewQuestion = includedLayout.findViewById<TextView>(R.id.textTitleTest)
+                val textViewQuestion = includedLayout.findViewById<TextView>(R.id.titlePageForm)
                 textViewQuestion.text = "Form page ke-${i + 1}"
 
                 if (i == (batchCount - 1)) {
@@ -723,7 +718,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan.setOnClickListener {
                                     includedLayout.visibility = View.GONE
                                     id_take_foto_layout.visibility = View.VISIBLE
-                                    takeCameraNow(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
+                                    takeCameraNow(id_foto, i,  layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
                                 }
 
                                 id_editable_foto_layout.retakePhoto.setOnClickListener {
@@ -731,16 +726,30 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     zoomOpen = false
                                     id_editable_foto_layout.visibility = View.GONE
                                     id_take_foto_layout.visibility = View.VISIBLE
-                                    retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
+                                    // in case ini adalah foto di layout informasi unit foto utama dengan id 0
+                                    if (listNamaFoto.containsKey("0")){
+                                        retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1)
+                                    }else{
+                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, i  )
+                                    }
+
+                                }
+                                id_editable_foto_layout.closeZoom.setOnClickListener {
+                                    zoomOpen = false
+                                    id_take_foto_layout.visibility = View.GONE
+                                    if(isFormInformasiUnit == false){
+                                        toggleFormVisibility(currentFormIndex)
+                                    }else{
+                                        toggleFormVisibility(0)
+                                    }
+                                    cameraViewModel.closeZoomPhotos()
                                 }
 
                             } else {
                                 layoutPertanyaan.layout_komentar_foto.visibility = View.GONE
-                                layoutPertanyaan.layout_komentar_foto.etKomentar.setText("")
                             }
                         }
 
-                        // Create layout parameters for layoutPertanyaan
                         val params = ConstraintLayout.LayoutParams(
                             ConstraintLayout.LayoutParams.MATCH_PARENT,
                             ConstraintLayout.LayoutParams.WRAP_CONTENT
@@ -761,7 +770,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
 
             handleClicksForm()
-            AppUtils.closeLoadingLayout(loadingFetchingData)
+            closeLoadingLayout(loadingFetchingData)
         }
     }
 
@@ -780,7 +789,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
 
 
-//            AppUtils.showLoadingLayout(this, window, loadingFetchingData)
             loadingFetchingData.visibility = View.VISIBLE
             globalPertanyaanAllJenisUnitMapping[selectedIdJenisUnit]?.let { setupLayoutPertanyaan(it) }
 
@@ -823,27 +831,54 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
 
     private fun toggleFormVisibility(nextFormIndex: Int) {
-
-
         formLayoutInfoUnit.forEach { it.visibility = View.GONE }
         formLayoutsPertanyaan.forEach { it.visibility = View.GONE }
 
-        if (nextFormIndex >= 0 && nextFormIndex < formLayoutsPertanyaan.size) {
+        if (isFormInformasiUnit == false && nextFormIndex >= 0 && nextFormIndex < formLayoutsPertanyaan.size) {
             formLayoutsPertanyaan[nextFormIndex].visibility = View.VISIBLE
             currentFormIndex = nextFormIndex
-
+            isFormInformasiUnit = false
 
         }else if(nextFormIndex == -1){
             formLayoutInfoUnit[0].visibility = View.VISIBLE
+            isFormInformasiUnit = true
         }else{
-            displayToasty(this, "Terjadi error untuk load page ini")
+            formLayoutInfoUnit[0].visibility = View.VISIBLE
+            isFormInformasiUnit = true
         }
-
 
     }
 
     private fun setupViewLayout() {
-        parentFormP2H.id_layout_activity_informasi_unit.visibility = View.VISIBLE
+        toggleFormVisibility(currentFormIndex)
+        parentFormP2H.id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit.setOnClickListener{
+            if(prefManager!!.isCameraAllowed == false){
+                checkPermissionsCamera(this)
+            }else{
+                id_layout_activity_informasi_unit.visibility = View.GONE
+                id_take_foto_layout.visibility = View.VISIBLE
+                takeCameraNow("0", -1,  id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit)
+            }
+        }
+
+        id_editable_foto_layout.deletePhoto.visibility = View.INVISIBLE
+        id_editable_foto_layout.deletePhoto.isClickable = true
+
+        id_editable_foto_layout.retakePhoto.setOnClickListener {
+            AppUtils.hideKeyboard(this@FormLaporP2HActivity)
+            zoomOpen = false
+            id_editable_foto_layout.visibility = View.GONE
+            id_take_foto_layout.visibility = View.VISIBLE
+            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1)
+        }
+
+        id_editable_foto_layout.closeZoom.setOnClickListener{
+
+            Log.d("testing", currentFormIndex.toString())
+            id_take_foto_layout.visibility = View.GONE
+            toggleFormVisibility(currentFormIndex)
+            cameraViewModel.closeZoomPhotos()
+        }
     }
 
     private fun initViewModel() {
@@ -906,6 +941,17 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 AppUtils.closeLoadingLayout(loadingFetchingData)
             }
 
+        }else{
+
+            if(isFormInformasiUnit == true){
+                val intent: Intent
+                intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finishAffinity()
+            }else{
+                toggleFormVisibility(currentFormIndex - 1)
+            }
+
         }
     }
 
@@ -939,13 +985,14 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     }
 
-    override fun onPhotoTaken(photoFile: File, fname: String, resultCode: String) {
-        id_layout_activity_informasi_unit.visibility = View.VISIBLE
+    override fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, pageForm: Int) {
+        toggleFormVisibility(pageForm)
 
         listFileFoto[resultCode] = photoFile
         listNamaFoto[resultCode] = fname
 
 
+        Log.d("testing", listNamaFoto.toString())
     }
 
 }

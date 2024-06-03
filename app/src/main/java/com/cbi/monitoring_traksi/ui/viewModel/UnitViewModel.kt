@@ -219,6 +219,8 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         fun pushDataToLaporanP2hSQL(
             id: Int? = 0,
             id_jenis_unit: Int,
+            id_unit_kerja: Int,
+            id_kode_unit: Int,
             tanggal_upload: String,
             lat: String,
             lon: String,
@@ -232,6 +234,8 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
                     val dataSubmitLaporan = LaporP2HModel(
                         id!!,
                         id_jenis_unit,
+                        id_unit_kerja,
+                        id_kode_unit,
                         tanggal_upload,
                         lat,
                         lon,
@@ -294,6 +298,14 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
 
 
     fun loadDataKodeUnit() {
+        viewModelScope.launch {
+            val dataUnit = withContext(Dispatchers.IO) {
+                traksiUnitRepository.fetchAllKodeUnit()
+            }
+            _dataKodeUnit.value = dataUnit
+        }
+    }
+    fun loadDataTypeUnit() {
         viewModelScope.launch {
             val dataUnit = withContext(Dispatchers.IO) {
                 traksiUnitRepository.fetchAllKodeUnit()

@@ -89,6 +89,8 @@ class UnitRepository(context: Context)  {
         val db = databaseHelper.writableDatabase
         val values = ContentValues().apply {
             put(DatabaseHelper.DB_ID_JENIS_UNIT, data.id_jenis_unit)
+            put(DatabaseHelper.DB_ID_UNIT_KERJA, data.id_unit_kerja)
+            put(DatabaseHelper.DB_ID_KODE_UNIT, data.id_kode_unit)
             put(DatabaseHelper.DB_TANGGAL_UPLOAD, data.tanggal_upload)
             put(DatabaseHelper.DB_LAT, data.lat)
             put(DatabaseHelper.DB_LON, data.lon)
