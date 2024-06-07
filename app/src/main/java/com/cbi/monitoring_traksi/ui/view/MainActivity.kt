@@ -1,8 +1,5 @@
 package com.cbi.monitoring_traksi.ui.view
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,21 +10,21 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
-import com.cbi.monitoring_traksi.data.repository.HistoryRepositoryP2H
+import com.cbi.monitoring_traksi.data.repository.HistoryP2HRepository
 import com.cbi.monitoring_traksi.data.repository.UnitRepository
-import com.cbi.monitoring_traksi.ui.adapter.UploadAdapter
+import com.cbi.monitoring_traksi.ui.adapter.UploadHistoryP2HAdapter
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.UnitViewModel
 import com.cbi.monitoring_traksi.utils.AlertDialogUtility
 import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.AppUtils.getCurrentDate
 import com.cbi.monitoring_traksi.utils.PrefManager
+import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.fbUploadData
 import kotlinx.android.synthetic.main.activity_main.iblogout
 import kotlinx.android.synthetic.main.activity_main.loadingFetchingData
@@ -36,7 +33,7 @@ import kotlinx.android.synthetic.main.activity_main.mbTambahMonitoring
 import kotlinx.android.synthetic.main.activity_main.name_user_login
 import kotlinx.android.synthetic.main.activity_main.rvListData
 
-class MainActivity : AppCompatActivity(), UploadAdapter.OnDeleteClickListener  {
+class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickListener  {
     private var prefManager: PrefManager? = null
     private lateinit var unitViewModel: UnitViewModel
 
@@ -50,7 +47,7 @@ class MainActivity : AppCompatActivity(), UploadAdapter.OnDeleteClickListener  {
     private lateinit var historyP2HViewModel: HistoryP2HViewModel
     var completedObserversCount = 0
     val dataTempQueryDateLaporP2H = mutableListOf<Map<String, Any>>()
-    private var uploadAdapter: UploadAdapter? = null
+    private var uploadHistoryP2HAdapter: UploadHistoryP2HAdapter? = null
     private var dataMapQueryLaporP2H: Array<Map<String, Any>>? = null
 
     private var totalList = 0
@@ -75,7 +72,7 @@ class MainActivity : AppCompatActivity(), UploadAdapter.OnDeleteClickListener  {
 
 
         rvListData.layoutManager = LinearLayoutManager(this)
-        rvListData.adapter = uploadAdapter
+        rvListData.adapter = uploadHistoryP2HAdapter
 
         rvListData.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -100,8 +97,43 @@ class MainActivity : AppCompatActivity(), UploadAdapter.OnDeleteClickListener  {
 
         historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) {
             Log.d("testing", "gass")
-            uploadAdapter!!.submitList(it)
+            uploadHistoryP2HAdapter!!.submitList(it)
         }
+        fbUploadData.setOnClickListener{
+            if (AppUtils.checkConnectionDevice(this)) {
+//                if (totalList != 0) {
+                    AlertDialogUtility.withTwoActions(
+                        this,
+                        "Ya",
+                        "Peringatan",
+                        "Apakah anda yakin mengunggah data?",
+                        "warning.json"
+                    ) {
+                        loadingFetchingData.visibility = View.VISIBLE
+                        AppUtils.showLoadingLayout(this, window, loadingFetchingData)
+
+                        Toasty.info(this, "Sedang mengunggah data..", Toast.LENGTH_SHORT).show()
+                        val currentDate = getCurrentDate(true)
+                        historyP2HViewModel.uploadToServer(currentDate)
+                    }
+//                } else {
+//                    AlertDialogUtility.alertDialog(
+//                        this,
+//                        "Peringatan",
+//                        "Tidak ada data dalam list",
+//                        "warning.json"
+//                    )
+//                }
+            } else {
+                AlertDialogUtility.alertDialog(
+                    this,
+                    "Peringatan",
+                    "Pastikan jaringan anda stabil dan perangkat sudah terkoneksi internet",
+                    "network_error.json"
+                )
+            }
+        }
+
         clickAny()
 
         setupRecyclerList()
@@ -169,13 +201,13 @@ class MainActivity : AppCompatActivity(), UploadAdapter.OnDeleteClickListener  {
             HistoryP2HViewModel.Factory(
                 application,
                 this,
-                HistoryRepositoryP2H(this),
+                HistoryP2HRepository(this),
                 loadingFetchingData,
                 window,
                 PrefManager(this),
             )
         )[HistoryP2HViewModel::class.java]
-        uploadAdapter = UploadAdapter(this, historyP2HViewModel, this)
+        uploadHistoryP2HAdapter = UploadHistoryP2HAdapter(this, historyP2HViewModel, this)
     }
 
     private fun handleSynchronizeData(arg: String? = "") {

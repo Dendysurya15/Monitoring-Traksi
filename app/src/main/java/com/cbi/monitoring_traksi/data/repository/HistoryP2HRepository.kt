@@ -1,13 +1,36 @@
 package com.cbi.monitoring_traksi.data.repository
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import com.cbi.monitoring_traksi.data.database.DatabaseHelper
-import com.cbi.monitoring_traksi.data.model.DataLaporanModel
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 
-class HistoryRepositoryP2H(context: Context) {
+class HistoryP2HRepository(context: Context) {
     private val databaseHelper: DatabaseHelper = DatabaseHelper(context)
+
+
+    fun updateArchiveMtc(id: String): Boolean {
+        val db = databaseHelper.writableDatabase
+
+        val values = ContentValues()
+        values.put(DatabaseHelper.DB_ARCHIVE, 1)
+
+        val rowsAffected = db.update(DatabaseHelper.DB_TAB_LAPORAN_P2H, values, "id=?", arrayOf(id))
+//        db.close()
+
+        return rowsAffected > 0
+    }
+
+    fun updateUploadTimeP2HLocal(id: String, uploadTime :String): Boolean {
+        val db = databaseHelper.writableDatabase
+        val values = ContentValues()
+        values.put(DatabaseHelper.DB_UPLOADED_TIME, uploadTime)
+        val rowsAffected = db.update(DatabaseHelper.DB_TAB_LAPORAN_P2H, values, "id=?", arrayOf(id))
+//        db.close()
+
+        return rowsAffected > 0
+    }
 
     @SuppressLint("Range")
     fun fetchByDateLaporanP2H(id: String): List<LaporP2HModel> {

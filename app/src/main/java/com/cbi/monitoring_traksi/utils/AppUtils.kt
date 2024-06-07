@@ -51,8 +51,14 @@ import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.loading_view.view.blurLoadView
 import kotlinx.android.synthetic.main.loading_view.view.lottieLoadAnimate
 import kotlinx.android.synthetic.main.loading_view.view.overlayLoadView
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -66,6 +72,8 @@ object AppUtils {
     const val serverListDBServer = "https://srs-ssms.com/aplikasi_traksi/getListAllTraksi.php"
     const val TAG_SUCCESS = "success"
     const val TAG_MESSAGE = "message"
+
+    const val LOG_UPLOAD = "uploadLog"
 
     const val TAG_USERID = "user_id"
     const val TAG_NAMA = "nama_lengkap"
@@ -121,6 +129,87 @@ object AppUtils {
         loadingView.overlayLoadView.visibility = View.VISIBLE
         loadingView.overlayLoadView.setOnTouchListener { _, _ -> true }
         blurViewLayout(context, window, loadingView.blurLoadView)
+    }
+
+    fun uploadDataRows(
+        context: Context,
+        urlInsert: String,
+        params: Map<String, String>,
+        callback: UploadCallback
+    ) {
+        var messageInsert: String
+        var successResponseInsert = 0
+
+        val postRequest: StringRequest = object : StringRequest(
+            Method.POST, urlInsert,
+            Response.Listener { response ->
+                try {
+                    val jObj = JSONObject(response)
+                    messageInsert = try {
+                        jObj.getString("message")
+                    } catch (e: Exception) {
+                        e.toString()
+                    }
+                    successResponseInsert = try {
+                        jObj.getInt("success")
+                    } catch (e: Exception) {
+                        0
+                    }
+                    Log.d(
+                        LOG_UPLOAD,
+                        "upload data -- m: $messageInsert, s: $successResponseInsert"
+                    )
+
+                    callback.onUploadComplete(messageInsert, successResponseInsert)
+                } catch (e: JSONException) {
+                    messageInsert = "Failed to parse server response: ${e.message}"
+                    Log.e(LOG_UPLOAD, "Failed to parse server response2: ${e.message}")
+
+                    callback.onUploadComplete(messageInsert, successResponseInsert)
+                }
+            },
+            Response.ErrorListener {
+                messageInsert = "Terjadi kesalahan koneksi: $it"
+                Log.e(LOG_UPLOAD, "Terjadi kesalahan koneksi: $it")
+
+                callback.onUploadComplete(messageInsert, successResponseInsert)
+            }
+        ) {
+            override fun getParams(): Map<String, String> {
+                return params
+            }
+        }
+        val queue = Volley.newRequestQueue(context)
+        queue.cache.clear()
+        queue.add(postRequest)
+    }
+
+    fun uploadFilePhotos(urlPhotos: String, sourceFile: File): Boolean {
+        val fileName: String = sourceFile.name
+        val requestBody: RequestBody =
+            MultipartBody
+                .Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart(
+                    "file",
+                    fileName,
+                    sourceFile.asRequestBody()
+                )
+                .build()
+        val request: Request = Request
+            .Builder()
+            .url(urlPhotos)
+            .post(requestBody)
+            .build()
+        return try {
+            val response: okhttp3.Response = OkHttpClient()
+                .newCall(request)
+                .execute()
+            response.isSuccessful
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            false
+        }
     }
 
     fun checkBiometricSupport(context: Context): Boolean {
@@ -700,5 +789,9 @@ object AppUtils {
         }
 
         return values
+    }
+
+    interface UploadCallback {
+        fun onUploadComplete(message: String, success: Int)
     }
 }

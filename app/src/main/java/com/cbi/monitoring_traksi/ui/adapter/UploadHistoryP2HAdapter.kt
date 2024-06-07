@@ -15,11 +15,11 @@ import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class UploadAdapter(
+class UploadHistoryP2HAdapter(
     private val context: Context,
     private val historyP2HViewModel: HistoryP2HViewModel,
     private val onDeleteClickListener: OnDeleteClickListener
-) : ListAdapter<LaporP2HModel, UploadAdapter.ViewHolder>(ItemDiffCallback()) {
+) : ListAdapter<LaporP2HModel, UploadHistoryP2HAdapter.ViewHolder>(ItemDiffCallback()) {
 
     private var isDescendingOrder = true
 
@@ -77,7 +77,7 @@ class UploadAdapter(
         holder.itemStatusArchive.text = textStatusArchive
         holder.itemLastUpdate.text = textLastUpdate
 
-//        holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
+        holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
 
 
 //        when (position % 5) {
@@ -136,22 +136,6 @@ class UploadAdapter(
 
 //        holder.itemDate.text = AppUtils.formatDate(item.no_daily.substring(0, 11))
 
-//        historyP2HViewModel.resultQueryDateLaporanP2H.observe(context as LifecycleOwner) { datas ->
-//
-//            try {
-//                for (data in datas) {
-//                    holder.itemTitle.text = data.jenis_unit.ifEmpty { "" }
-//                }
-//                Log.d("testing","gas")
-//            }
-//            catch (e:Exception){
-//                Log.d("testing", e.printStackTrace().toString())
-//            }
-//
-//        }
-//
-//        val currentDate = AppUtils.getCurrentDate(true)
-//        historyP2HViewModel.loadLaporanP2HByDate(currentDate)
 
 //        val sortedList = currentList.sortedWith(
 //            if (isDescendingOrder) compareByDescending<HistoryP2HViewModel> {
