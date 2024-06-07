@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.cbi.monitoring_traksi.R
@@ -22,6 +24,7 @@ import kotlinx.android.synthetic.main.alert_dialog_view.view.viewDialog
 
 class AlertDialogUtility {
     companion object {
+        @RequiresApi(Build.VERSION_CODES.R)
         @SuppressLint("InflateParams")
         fun alertDialog(context: Context, titleText: String, alertText: String, animAsset: String) {
             if (context is Activity && !context.isFinishing) {
@@ -51,7 +54,7 @@ class AlertDialogUtility {
                     alertDialog.dismiss()
 //                    AppUtils.checkCameraPermissions(context as MainActivity)
 //                    AppUtils.checkReadAndWriteExternalCameraPermissions(context as MainActivity)
-
+                    AppUtils.checkGeneralPermissions(context, context as Activity)
                 }, 2000)
             }
         }

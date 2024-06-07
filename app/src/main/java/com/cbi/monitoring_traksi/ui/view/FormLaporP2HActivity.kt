@@ -72,6 +72,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -369,107 +370,74 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     "Apakah anda yakin menyimpan data?",
                     "warning.json"
                 ) {
-                    val jenisUnitId = getIdFromJenisUnit(etJenisUnit.text.toString())!!.toInt()
-                    val unitKerjaId = getIdFromUnitKerja(etUnitKerja.text.toString())!!.toInt()
-                    val kodeUnitId = getIdFromKodeUnit(etKodeUnit.text.toString())!!.toInt()
-                    val app_version = BuildConfig.VERSION_NAME
 
-                    unitViewModel.pushDataToLaporanP2hSQL(
-                        tanggal_upload = getCurrentDate(true),
-                        id_jenis_unit = jenisUnitId,
-                        id_unit_kerja = unitKerjaId,
-                        id_kode_unit =  kodeUnitId,
-                        lat = lat.toString(),
-                        lon = lon.toString(),
-                        id_user = prefManager!!.userid!!.toInt(),
-                        status = "pending",
-                        foto_unit =  listNamaFoto["0"] ?: "",
-                        app_version = app_version
-                    )
 
-                    var lastIdLaporP2H = 0
-                    unitViewModel.fetchLastIdLaporanP2HSQL()
-                    unitViewModel.last_id_laporp2h.observe(this){
-                        lastIdLaporP2H = it
-                    }
-
-                    val hasilPeriksa = mutableMapOf<Int, MutableMap<String, MutableMap<String, String>>>()
-
+                    val kerusakanUnit = mutableMapOf<String, MutableMap<String, String>>()
                     formLayoutsPertanyaan.forEachIndexed { index, layout ->
                         val containerPertanyaan = layout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
-                        val selectedValuesMap = mutableMapOf<String, MutableMap<String, String>>()
 
                         for (i in 1 until containerPertanyaan.childCount) {
                             val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
                             val idPertanyaan = layoutPertanyaan.id.toString()
                             val selectedValueDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown).text.toString()
                             val etValueKomentar = layoutPertanyaan.findViewById<TextInputEditText>(R.id.etKomentar).text.toString()
-
-                            val valueMap = mutableMapOf<String, String>()
-                            valueMap["jawabanHasilPeriksa"] = selectedValueDropdown
-                            valueMap["komentarHasilPeriksa"] = etValueKomentar
-                            valueMap["namaFoto"] = listNamaFoto[idPertanyaan] ?: ""
-                            selectedValuesMap[idPertanyaan] = valueMap
-                        }
-
-                        hasilPeriksa[index] = selectedValuesMap
-                    }
+                            if (selectedValueDropdown == "Sudah dicek, tetapi perlu perbaikan"){
+                                val valueMap = mutableMapOf<String, String>()
+                                valueMap["komentar"] = etValueKomentar
+                                valueMap["foto"] = listNamaFoto[idPertanyaan] ?: ""
+                                kerusakanUnit[idPertanyaan] = valueMap
 
 
-                    hasilPeriksa.forEach { (index, pertanyaanMap) ->
-                        pertanyaanMap.forEach { (idPertanyaan, valueMap) ->
-                            Log.d("testing", "page $index - kondisi : ${valueMap["jawabanHasilPeriksa"]} - komentar ${valueMap["komentarHasilPeriksa"]} - foto : ${valueMap["namaFoto"]}")
-                            unitViewModel.pushToTableData(
-                                created_at = getCurrentDate(true),
-                                id_laporan = lastIdLaporP2H,
-                                id_pertanyaan = idPertanyaan.toInt(),
-                                kondisi = valueMap["jawabanHasilPeriksa"].toString(),
-                                komentar = valueMap["komentarHasilPeriksa"].toString(),
-                                foto = valueMap["namaFoto"].toString(),
-                            )
-
-                            unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->
-                                    val resultMap = mapOf(
-                                        "is_inserted" to isInserted,
-                                        "id_laporan" to lastIdLaporP2H,
-                                        "id_pertanyaan" to  idPertanyaan.toInt(),
-                                        "kondisi" to valueMap["jawabanHasilPeriksa"].toString(),
-                                        "komentar" to valueMap["komentarHasilPeriksa"].toString(),
-                                        "foto" to valueMap["namaFoto"].toString(),
-                                    )
-                                    arrInsertedDataTable[idPertanyaan.toInt()] = resultMap
                             }
+                        }
 
+                    }
+
+                    var kerusakanUnitJson  = ""
+                    if (kerusakanUnit.isNotEmpty()) {
+                        val jsonObject = JSONObject()
+                        for ((idPertanyaan, valueMap) in kerusakanUnit) {
+                            val valueJsonObject = JSONObject(valueMap as Map<*, *>)
+                            jsonObject.put(idPertanyaan, valueJsonObject)
+                        }
+                        kerusakanUnitJson = jsonObject.toString()
+                    }
+
+                    val app_version = BuildConfig.VERSION_NAME
+
+                    unitViewModel.pushDataToLaporanP2hSQL(
+                        tanggal_upload = getCurrentDate(true),
+                        jenis_unit = etJenisUnit.text.toString(),
+                        unit_kerja = etUnitKerja.text.toString(),
+                        kode_unit =  etKodeUnit.text.toString(),
+                        type_unit =  etKodeUnit.text.toString(),
+                        lat = lat.toString(),
+                        lon = lon.toString(),
+                        user = prefManager!!.name!!,
+                        status_unit_beroperasi = "Pending",
+                        kerusakan_unit = kerusakanUnitJson,
+                        foto_unit =  listNamaFoto["0"] ?: "",
+                        app_version = app_version
+                    )
+
+                    unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->
+                        if (isInserted){
+                            AlertDialogUtility.alertDialogAction(
+                                this,
+                                "Sukses",
+                                "Data berhasil disimpan!",
+                                "success.json"
+                            ) {
+                                AppUtils.showLoadingLayout(this, window, loadingFetchingData)
+                                val intent = Intent(this, MainActivity
+                                ::class.java)
+                                startActivity(intent)
+                            }
+                        }else{
+                            displayToasty(this, "Terjadi kesalahan dalam menyimpan data")
                         }
                     }
-
-
-                    val hasFalse = arrInsertedDataTable.any { (_, value) ->
-                        value["is_inserted"] == false
-                    }
-
-                    if (hasFalse) {
-                        retryInsertDataLaporanPertanyaan(arrInsertedDataTable, 3)
-                    }else{
-
-                        AlertDialogUtility.alertDialogAction(
-                            this,
-                            "Sukses",
-                            "Data berhasil disimpan!",
-                            "success.json"
-                        ) {
-                            AppUtils.showLoadingLayout(this, window, loadingFetchingData)
-                            val intent = Intent(this, MainActivity
-                            ::class.java)
-                            startActivity(intent)
-                        }
-                    }
-
-
-
                 }
-
-
 
 
 
@@ -478,47 +446,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     }
 
-    private fun retryInsertDataLaporanPertanyaan(
-        arrInsertedDataTable: MutableMap<Int, Map<String, Any>>,
-        retryCount: Int
-    ) {
-        if (retryCount == 0) return
-
-        val filteredMap = arrInsertedDataTable.filterValues { it["is_inserted"] == false }
-
-        if (filteredMap.isEmpty()) {
-            return
-        }
-
-        filteredMap.forEach { (id, data) ->
-            val id_laporan = data["id_laporan"]
-            val idPertanyaan = data["id_pertanyaan"]
-            val kondisi = data["kondisi"]
-            val komentar = data["komentar"]
-            val foto = data["foto"]
-
-            unitViewModel.pushToTableData(
-                created_at = getCurrentDate(true),
-                id_laporan = id_laporan as Int,
-                id_pertanyaan = idPertanyaan as Int,
-                kondisi = kondisi as String,
-                komentar = komentar as String,
-                foto = foto as String,
-            )
-
-            unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->
-                val updatedData = data.toMutableMap()
-                updatedData["is_inserted"] = isInserted
-                arrInsertedDataTable[id] = updatedData
-
-                // Check if all entries are now inserted
-                if (arrInsertedDataTable.all { it.value["is_inserted"] == true }) {
-                } else if (id == filteredMap.keys.last()) {
-                    retryInsertDataLaporanPertanyaan(arrInsertedDataTable, retryCount - 1)
-                }
-            }
-        }
-    }
     private fun getIdFromJenisUnit(idJenisUnit: String): Int? {
         return globalListPilJenisUnit .entries.find { it.value == idJenisUnit }?.key
     }
@@ -694,8 +621,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
                         val dropdownOptions = arrayOf(
                             "Sudah dicek",
-                            "Belum dicek",
-                            "Sudah dicek, tetapi ada perbaikan"
+                            "Sudah dicek, tetapi perlu perbaikan"
                         )
                         val adapter = ArrayAdapter(
                             this@FormLaporP2HActivity,
@@ -710,7 +636,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
                         etTemplateDropdown.setOnItemClickListener { _, _, position, _ ->
                             val selectedItem = dropdownOptions[position]
-                            if (selectedItem == "Sudah dicek, tetapi ada perbaikan") {
+                            if (selectedItem == "Sudah dicek, tetapi perlu perbaikan") {
                                 layoutPertanyaan.layout_komentar_foto.visibility = View.VISIBLE
                                 layoutPertanyaan.layout_komentar_foto.etKomentar.setText("")
 

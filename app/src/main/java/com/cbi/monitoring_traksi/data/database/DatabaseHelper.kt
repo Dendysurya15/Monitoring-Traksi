@@ -10,6 +10,7 @@ class DatabaseHelper(context: Context):
     companion object {
         const val DATABASE_NAME = "ssms_monitoring_traksi"
         const val DATABASE_VERSION = 2
+        const val DB_ARCHIVE = "archive"
 
         const val DB_TAB_JENIS_UNIT = "jenis_unit"
         const val DB_TAB_KODE_UNIT = "kode_unit"
@@ -41,20 +42,24 @@ class DatabaseHelper(context: Context):
         //data_laporan
         const val DB_CREATED_AT = "created_at"
         const val DB_ID_LAPORAN = "id_laporan"
-        const val DB_ID_PERTANYAAN = "id_pertanyaaan"
+        const val DB_ID_PERTANYAAN = "id_pertanyaan"
         const val DB_KONDISI = "kondisi"
         const val DB_KOMENTAR = "komentar"
         const val DB_FOTO = "foto"
 
 
         //laporan_p2h
-        const val DB_ID_KODE_UNIT = "id_kode_unit"
+        const val DB_JENIS_UNIT = "jenis_unit"
+        const val DB_UNIT_KERJA = "unit_kerja"
+        const val DB_KODE_UNIT = "kode_unit"
         const val DB_TANGGAL_UPLOAD = "tanggal_upload"
         const val DB_LAT = "lat"
         const val DB_LON = "lon"
-        const val DB_ID_USER = "id_user"
+        const val DB_USER = "user"
         const val DB_FOTO_UNIT = "foto_unit"
-        const val DB_STATUS_PEMERIKSAAN = "status"
+        const val DB_STATUS_UNIT_BEROPERASI = "status_unit_beroperasi"
+        const val DB_KERUSAKAN_UNIT = "kerusakan_unit"
+        const val DB_UPLOADED_TIME = "uploaded_time"
         const val DB_APP_VERSION = "app_version"
     }
 
@@ -80,35 +85,40 @@ class DatabaseHelper(context: Context):
             "$DB_NAMA_PERTANYAAN VARCHAR, " +
             "$DB_KONDISI_MESIN VARCHAR)"
 
-    private val createTableData = "CREATE TABLE IF NOT EXISTS $DB_TAB_DATA (" +
-            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_CREATED_AT VARCHAR, " +
-            "$DB_ID_LAPORAN INTEGER, " +
-            "$DB_ID_PERTANYAAN VARCHAR, " +
-            "$DB_KONDISI VARCHAR, " +
-            "$DB_KOMENTAR VARCHAR, " +
-            "$DB_FOTO VARCHAR)"
+//    private val createTableData = "CREATE TABLE IF NOT EXISTS $DB_TAB_DATA (" +
+//            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//            "$DB_CREATED_AT VARCHAR, " +
+//            "$DB_ID_LAPORAN INTEGER, " +
+//            "$DB_ID_PERTANYAAN VARCHAR, " +
+//            "$DB_KONDISI VARCHAR, " +
+//            "$DB_KOMENTAR VARCHAR, " +
+//            "$DB_FOTO VARCHAR, " +
+//            "$DB_ARCHIVE INTEGER)"
 
 
     private val createTableLaporanP2H = "CREATE TABLE IF NOT EXISTS $DB_TAB_LAPORAN_P2H (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_ID_JENIS_UNIT INTEGER, " +
-            "$DB_ID_UNIT_KERJA INTEGER, " +
-            "$DB_ID_KODE_UNIT INTEGER, " +
+            "$DB_JENIS_UNIT VARCHAR, " +
+            "$DB_UNIT_KERJA VARCHAR, " +
+            "$DB_KODE_UNIT VARCHAR, " +
+            "$DB_TYPE_UNIT VARCHAR, " +
             "$DB_TANGGAL_UPLOAD VARCHAR, " +
             "$DB_LAT VARCHAR, " +
             "$DB_LON VARCHAR, " +
-            "$DB_ID_USER INTEGER, " +
+            "$DB_USER INTEGER, " +
             "$DB_FOTO_UNIT VARCHAR, " +
-            "$DB_STATUS_PEMERIKSAAN VARCHAR, " +
-            "$DB_APP_VERSION VARCHAR)"
+            "$DB_STATUS_UNIT_BEROPERASI VARCHAR, " +
+            "$DB_KERUSAKAN_UNIT VARCHAR, " +
+            "$DB_APP_VERSION VARCHAR, " +
+            "$DB_UPLOADED_TIME VARCHAR, " +
+            "$DB_ARCHIVE INTEGER)"
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createTableJenisUnit)
         db.execSQL(createTableKodeUnit)
         db.execSQL(createTableUnitKerja)
         db.execSQL(createTableItemPertanyaan)
-        db.execSQL(createTableData)
+//        db.execSQL(createTableData)
         db.execSQL(createTableLaporanP2H)
     }
 

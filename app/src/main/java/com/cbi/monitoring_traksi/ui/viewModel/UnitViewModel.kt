@@ -218,30 +218,34 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
     }
         fun pushDataToLaporanP2hSQL(
             id: Int? = 0,
-            id_jenis_unit: Int,
-            id_unit_kerja: Int,
-            id_kode_unit: Int,
+            jenis_unit: String,
+            unit_kerja: String,
+            kode_unit: String,
+            type_unit:String,
             tanggal_upload: String,
             lat: String,
             lon: String,
-            id_user : Int,
+            user : String,
             foto_unit : String,
-            status : String,
+            status_unit_beroperasi : String,
+            kerusakan_unit : String,
             app_version : String,
         ) {
             viewModelScope.launch {
                 try {
                     val dataSubmitLaporan = LaporP2HModel(
                         id!!,
-                        id_jenis_unit,
-                        id_unit_kerja,
-                        id_kode_unit,
+                        jenis_unit,
+                        unit_kerja,
+                        kode_unit,
+                        type_unit,
                         tanggal_upload,
                         lat,
                         lon,
-                        id_user,
+                        user,
                         foto_unit,
-                        status,
+                        status_unit_beroperasi,
+                        kerusakan_unit,
                         app_version,
                     )
                     val isInserted = traksiUnitRepository.insertLaporP2HToSQL(dataSubmitLaporan)

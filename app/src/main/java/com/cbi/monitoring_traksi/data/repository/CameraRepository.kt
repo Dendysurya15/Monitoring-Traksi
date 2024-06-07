@@ -188,9 +188,11 @@ class CameraRepository(private val context: Context, private val window: Window,
         // Initialize Camera View
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-            "Monitoring Traksi"
+            "Monitoring-Traksi"
         ).toString()
+
         val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
+
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -303,14 +305,28 @@ class CameraRepository(private val context: Context, private val window: Window,
                                             val bytes = ByteArray(buffer.remaining())
                                             buffer.get(bytes)
 
-                                            val dirApp = File(rootApp)
-                                            dirApp.mkdirs()
-                                            val dirDCIM = File(rootDCIM)
-                                            dirDCIM.mkdirs()
+                                            var dirDCIM:File
+                                            var dirApp: File
+                                            if (pageForm == -1){
+                                                dirApp = File(rootApp, "LaporP2H")
+                                                dirApp.mkdirs()
+                                                dirDCIM = File(rootDCIM, "LaporP2H")
+                                                dirDCIM.mkdirs()
+                                            }else{
+                                                dirApp = File(rootApp, "FolderPerPertanyaanP2H")
+                                                dirApp.mkdirs()
+                                                dirDCIM = File(rootDCIM, "FolderPerPertanyaanP2H")
+                                                dirDCIM.mkdirs()
+                                            }
+
+//                                            val dirApp = File(rootApp)
+//                                            dirApp.mkdirs()
+//                                            val dirDCIM = File(rootDCIM)
+//                                            dirDCIM.mkdirs()
 
                                             val dateFormat =
                                                 SimpleDateFormat("yyyyMdd_HHmmss").format(Calendar.getInstance().time)
-                                            fileName = "WM_${dateFormat}.jpg"
+                                            fileName = "MT_${dateFormat}.jpg"
                                             file = File(dirApp, fileName)
 
                                             fileDCIM = File(dirDCIM, fileName)

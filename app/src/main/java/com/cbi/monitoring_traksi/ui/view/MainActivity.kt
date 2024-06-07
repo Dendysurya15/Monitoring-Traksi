@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity() {
             AppUtils.closeLoadingLayout(loadingMain)
         }
 
-        AppUtils.checkGeneralPermissions(this, this)
         clickAny()
 
 

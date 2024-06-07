@@ -88,15 +88,17 @@ class UnitRepository(context: Context)  {
     fun insertLaporP2HToSQL(data: LaporP2HModel): Boolean {
         val db = databaseHelper.writableDatabase
         val values = ContentValues().apply {
-            put(DatabaseHelper.DB_ID_JENIS_UNIT, data.id_jenis_unit)
-            put(DatabaseHelper.DB_ID_UNIT_KERJA, data.id_unit_kerja)
-            put(DatabaseHelper.DB_ID_KODE_UNIT, data.id_kode_unit)
+            put(DatabaseHelper.DB_JENIS_UNIT, data.jenis_unit)
+            put(DatabaseHelper.DB_UNIT_KERJA, data.unit_kerja)
+            put(DatabaseHelper.DB_KODE_UNIT, data.kode_unit)
+            put(DatabaseHelper.DB_TYPE_UNIT, data.type_unit)
             put(DatabaseHelper.DB_TANGGAL_UPLOAD, data.tanggal_upload)
             put(DatabaseHelper.DB_LAT, data.lat)
             put(DatabaseHelper.DB_LON, data.lon)
-            put(DatabaseHelper.DB_ID_USER, data.id_user)
+            put(DatabaseHelper.DB_USER, data.user)
             put(DatabaseHelper.DB_FOTO_UNIT, data.foto_unit)
-            put(DatabaseHelper.DB_STATUS_PEMERIKSAAN, data.status_pemeriksaan)
+            put(DatabaseHelper.DB_STATUS_UNIT_BEROPERASI, data.status_unit_beroperasi)
+            put(DatabaseHelper.DB_KERUSAKAN_UNIT, data.kerusakan_unit)
             put(DatabaseHelper.DB_APP_VERSION, data.app_version)
         }
         val rowsAffected = db.insert(DatabaseHelper.DB_TAB_LAPORAN_P2H, null, values)
