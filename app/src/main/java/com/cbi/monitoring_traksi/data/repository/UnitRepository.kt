@@ -100,6 +100,8 @@ class UnitRepository(context: Context)  {
             put(DatabaseHelper.DB_STATUS_UNIT_BEROPERASI, data.status_unit_beroperasi)
             put(DatabaseHelper.DB_KERUSAKAN_UNIT, data.kerusakan_unit)
             put(DatabaseHelper.DB_APP_VERSION, data.app_version)
+            put(DatabaseHelper.DB_UPLOADED_TIME, data.uploaded_time)
+            put(DatabaseHelper.DB_ARCHIVE, data.archive)
         }
         val rowsAffected = db.insert(DatabaseHelper.DB_TAB_LAPORAN_P2H, null, values)
 //        db.close()

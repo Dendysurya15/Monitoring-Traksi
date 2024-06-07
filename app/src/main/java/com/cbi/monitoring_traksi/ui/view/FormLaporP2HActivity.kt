@@ -417,7 +417,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         status_unit_beroperasi = "Pending",
                         kerusakan_unit = kerusakanUnitJson,
                         foto_unit =  listNamaFoto["0"] ?: "",
-                        app_version = app_version
+                        app_version = app_version,
+                        uploaded_time = "",
+                        archive = 0,
                     )
 
                     unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->

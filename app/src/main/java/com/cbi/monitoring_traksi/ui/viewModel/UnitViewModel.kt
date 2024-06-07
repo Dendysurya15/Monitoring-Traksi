@@ -230,6 +230,8 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
             status_unit_beroperasi : String,
             kerusakan_unit : String,
             app_version : String,
+            uploaded_time :String,
+            archive : Int,
         ) {
             viewModelScope.launch {
                 try {
@@ -247,6 +249,8 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
                         status_unit_beroperasi,
                         kerusakan_unit,
                         app_version,
+                        uploaded_time,
+                        archive ,
                     )
                     val isInserted = traksiUnitRepository.insertLaporP2HToSQL(dataSubmitLaporan)
 

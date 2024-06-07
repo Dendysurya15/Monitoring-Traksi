@@ -188,6 +188,16 @@ object AppUtils {
             }).check()
 
     }
+
+    fun getCurrentDate(fullTime: Boolean = false): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = if (fullTime) {
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        } else {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        }
+        return dateFormat.format(calendar.time)
+    }
     fun checkPermissionsCamera(context: Context?) {
         val permissions = arrayOf(
             android.Manifest.permission.CAMERA,

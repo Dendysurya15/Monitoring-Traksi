@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginTop="10dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="10dp"
+    app:cardBackgroundColor="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginVertical="10dp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:id="@+id/titlePeriksaUnit"
+                    android:text="1. Exavator 911 SLE CAT 320GC / PC 200"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="12dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="0.6"
+                    android:text="Jenis Kerusakan"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="1"
+                    android:id="@+id/listJenisKerusakan"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="0.6"
+                    android:text="Foto Terlampir"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/bluedarklight"
+                    android:layout_weight="1"
+                    android:id="@+id/listFotoKerusakan"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="0.6"
+                    android:text="Lokasi Unit"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/graytextdark"
+                    android:layout_weight="1"
+                    android:id="@+id/lokasiPeriksaUnit"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:id="@+id/statusArchive"
+                    android:fontFamily="@font/poppins_italic"
+                    android:textColor="@color/yellowbutton"
+                    android:textSize="9dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:id="@+id/lastUpdate"
+                    android:textColor="@color/yellowbutton"
+                    android:textSize="9dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fbDelData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="@color/colorRed"
+            app:fabCustomSize="40dp"
+            app:maxImageSize="20dp"
+            app:srcCompat="@drawable/ic_delete_24"
+            app:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

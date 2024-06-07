@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:id="@+id/parentMainHalamanUtama"
     tools:context=".ui.view.MainActivity"
     >
@@ -101,7 +102,7 @@
                 android:fontFamily="@font/poppins_italic"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="A'an Syahputra"
+                android:id="@+id/name_user_login"
                 android:layout_width="wrap_content"
                 android:paddingTop="5dp"
                 android:fontFamily="@font/poppins_medium"
@@ -116,7 +117,7 @@
                 android:drawableLeft="@drawable/baseline_add_circle_24"
                 android:drawableTint="@color/greenbutton"
                 android:drawablePadding="5dp"
-                android:text="Lapor P2H Harian Unit"
+                android:text="Tambah Laporan P2H"
                 android:textSize="15sp"
                 android:textColor="@color/black"
                 android:id="@+id/mbTambahMonitoring"
@@ -134,7 +135,7 @@
         app:layout_constraintTop_toBottomOf="@id/cardButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="History Monitoring Unit"
+        android:text="History Pelaporan P2H Unit"
         android:textSize="18dp"
         android:fontFamily="@font/poppins_medium"
 
@@ -143,7 +144,7 @@
         tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clTextBottomCard"
+        android:id="@+id/sortingContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
@@ -191,23 +192,61 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvListData"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="5dp"
-            app:layout_constraintTop_toBottomOf="@+id/clTextBottomCard"
-            tools:layout_editor_absoluteX="10dp"
-            tools:listitem="@layout/list_item_history_new" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvListData"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="5dp"
+        tools:layout_editor_absoluteX="10dp"
+        app:layout_constraintTop_toBottomOf="@id/sortingContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/list_item_history_p2h"
+        tools:ignore="MissingConstraints" />
     <include
         android:id="@+id/loadingMain"
         layout="@layout/loading_view"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clUploadData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fbUploadData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="@color/greenbutton"
+            app:fabCustomSize="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:maxImageSize="30dp"
+            app:srcCompat="@drawable/baseline_cloud_upload_24"
+            app:tint="@color/white"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <include
+        android:id="@+id/loadingFetchingData"
+        layout="@layout/loading_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
