@@ -13,7 +13,7 @@ class HistoryP2HRepository(context: Context) {
     fun deleteItem(id: String): Boolean {
         val db = databaseHelper.writableDatabase
         val rowsAffected = db.delete(DatabaseHelper.DB_TAB_LAPORAN_P2H, "id=?", arrayOf(id))
-        db.close()
+//        db.close()
 
         return rowsAffected > 0
     }

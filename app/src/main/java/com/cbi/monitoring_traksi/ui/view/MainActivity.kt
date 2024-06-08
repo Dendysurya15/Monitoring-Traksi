@@ -6,8 +6,12 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -26,10 +30,12 @@ import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.AppUtils.getCurrentDate
 import com.cbi.monitoring_traksi.utils.PrefManager
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main.dateToday
 import kotlinx.android.synthetic.main.activity_main.fbUploadData
 import kotlinx.android.synthetic.main.activity_main.iblogout
 import kotlinx.android.synthetic.main.activity_main.loadingFetchingData
 import kotlinx.android.synthetic.main.activity_main.loadingMain
+
 import kotlinx.android.synthetic.main.activity_main.mbTambahMonitoring
 import kotlinx.android.synthetic.main.activity_main.name_user_login
 import kotlinx.android.synthetic.main.activity_main.rvListData
@@ -41,6 +47,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
     private lateinit var historyP2HViewModel: HistoryP2HViewModel
     private var uploadHistoryP2HAdapter: UploadHistoryP2HAdapter? = null
 
+    var sizeListAdapeter = 0
     private var totalList = 0
     private var firstScroll = false
     private var firstPage = true
@@ -61,7 +68,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
             handleSynchronizeData()
         }
         name_user_login.text = prefManager!!.name
-
+        dateToday.text =  AppUtils.getCurrentDate()
 
         rvListData.layoutManager = LinearLayoutManager(this)
         rvListData.adapter = uploadHistoryP2HAdapter
@@ -88,12 +95,21 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         })
 
         historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) {
-            uploadHistoryP2HAdapter!!.submitList(it)
+
+            Log.d("testing", it.toString())
+            if (it.size == 0) {
+                findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
+                findViewById<TextView>(R.id.tvNoData).visibility = View.VISIBLE
+            } else{
+                Log.d("testing", "coba donggas")
+                uploadHistoryP2HAdapter!!.submitList(it)
+            }
+            sizeListAdapeter = it.size
         }
 
         fbUploadData.setOnClickListener{
             if (AppUtils.checkConnectionDevice(this)) {
-//                if (totalList != 0) {
+                if (sizeListAdapeter != 0) {
                     AlertDialogUtility.withTwoActions(
                         this,
                         "Ya",
@@ -108,14 +124,14 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                         val currentDate = getCurrentDate(true)
                         historyP2HViewModel.uploadToServer(currentDate)
                     }
-//                } else {
-//                    AlertDialogUtility.alertDialog(
-//                        this,
-//                        "Peringatan",
-//                        "Tidak ada data dalam list",
-//                        "warning.json"
-//                    )
-//                }
+                } else {
+                    AlertDialogUtility.alertDialog(
+                        this,
+                        "Peringatan",
+                        "Tidak ada data dalam list",
+                        "warning.json"
+                    )
+                }
             } else {
                 AlertDialogUtility.alertDialog(
                     this,
@@ -128,8 +144,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
         historyP2HViewModel.uploadResult.observe(this) { updatedList ->
             uploadHistoryP2HAdapter!!.submitList(updatedList)
-            uploadHistoryP2HAdapter!!.notifyDataSetChanged()  // Notify adapter of data change
-            Log.d("uploadLog", "Data updated in MainActivity")
+            uploadHistoryP2HAdapter!!.notifyDataSetChanged()
         }
 
         clickAny()
@@ -321,14 +336,23 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                 historyP2HViewModel.deleteItemResult.observe(this){isSuccess->
                     if (isSuccess ) {
                         Toasty.success(this, "Data berhasil dihapus!", Toast.LENGTH_SHORT).show()
-                        val newList = uploadHistoryP2HAdapter?.currentList?.toMutableList()
-                        newList?.removeAt(position)
-                        uploadHistoryP2HAdapter?.submitList(newList)
+                        val oldList = uploadHistoryP2HAdapter?.currentList?.toMutableList()
+
+
+
+                        oldList?.removeAt(position)
+                        uploadHistoryP2HAdapter?.submitList(oldList)
                         uploadHistoryP2HAdapter?.notifyItemRemoved(position)
 
-                        // Update the numbers displayed in the UI
-                        for (i in position until newList?.size!!) {
+                        for (i in position until oldList?.size!!) {
                             uploadHistoryP2HAdapter?.notifyItemChanged(i)
+                        }
+
+                        if(oldList.size == 0 ){
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
+                                findViewById<TextView>(R.id.tvNoData).visibility = View.VISIBLE
+                            }, 1500) // Delay of 2000 milliseconds (2 seconds)
                         }
                     } else {
                         Toasty.warning(

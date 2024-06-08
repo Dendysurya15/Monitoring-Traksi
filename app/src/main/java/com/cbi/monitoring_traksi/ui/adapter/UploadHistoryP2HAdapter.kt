@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
+import com.cbi.monitoring_traksi.utils.AppUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class UploadHistoryP2HAdapter(
@@ -35,6 +36,7 @@ class UploadHistoryP2HAdapter(
         val itemfotoKerusakan: TextView = itemView.findViewById(R.id.listFotoKerusakan)
         val itemStatusArchive: TextView = itemView.findViewById(R.id.statusArchive)
         val itemLastUpdate: TextView = itemView.findViewById(R.id.lastUpdate)
+
         val deleteButton: FloatingActionButton = itemView.findViewById(R.id.fbDelData)
 
 
@@ -67,6 +69,7 @@ class UploadHistoryP2HAdapter(
         holder.bind(item)
         holder.itemTitlePeriksaUnit.text = "${position + 1}. ${item.jenis_unit} ${item.unit_kerja} ${item.type_unit}"
         holder.itemLokasiPeriksaUnit.text = ": ${item.unit_kerja}"
+        val tes = AppUtils.getCurrentDate()
         var textStatusArchive = "Tersimpan - "
         var textLastUpdate = "${item.tanggal_upload}"
         if (item.archive == 1){
