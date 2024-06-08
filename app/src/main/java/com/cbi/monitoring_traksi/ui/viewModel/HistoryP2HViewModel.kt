@@ -60,6 +60,12 @@ class HistoryP2HViewModel(
     private val delay = 5000
     private val timeOut = 300000
     private val idUpload = ArrayList<Int>()
+    private val _uploadResult = MutableLiveData<List<LaporP2HModel>>()
+    val uploadResult: LiveData<List<LaporP2HModel>> get() = _uploadResult
+
+    private val _deleteItemResult = MutableLiveData<Boolean>()
+    val deleteItemResult: LiveData<Boolean> get() = _deleteItemResult
+
 
     val resultQueryDateLaporanP2H: LiveData<List<LaporP2HModel>> get() = _queryGetLaporanP2H
     fun loadLaporanP2HByDate(dateRequest : String) {
@@ -69,6 +75,18 @@ class HistoryP2HViewModel(
             }catch (e:Exception){
                 e.printStackTrace()
                 _queryGetLaporanP2H.value = emptyList()
+            }
+        }
+    }
+
+    fun deleteItemList(id: String) {
+        viewModelScope.launch {
+            try {
+                val isDeleted = historyRepo.deleteItem(id)
+                _deleteItemResult.value = isDeleted
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _deleteItemResult.value = false
             }
         }
     }
@@ -84,6 +102,7 @@ class HistoryP2HViewModel(
             }
 
             if (successResponse == 2) {
+
                 stoppedByConditions = true
                 shouldStop = true
                 uploading = false
@@ -135,6 +154,7 @@ class HistoryP2HViewModel(
                                     .show()
                             }
                         }, if (successResponseCheckData == 1) 2000 else 1000)
+
 
                         AppUtils.closeLoadingLayout(loadingView!!)
 
@@ -234,15 +254,20 @@ class HistoryP2HViewModel(
                                     })
 
                                     if (successResponseInsert == 1) {
+                                        val currentDate = AppUtils.getCurrentDate(true)
                                         if (data.archive == 0) {
                                             if (historyRepo.updateArchiveMtc(data.id.toString())) {
-                                                val currentDate = AppUtils.getCurrentDate(true)
                                                 historyRepo.updateUploadTimeP2HLocal(data.id.toString(),currentDate )
-                                                Log.d(AppUtils.LOG_UPLOAD, "Success archive!")
+                                                Log.d(AppUtils.LOG_UPLOAD, "Success archive id ${data.id}!")
                                             } else {
                                                 Log.e(AppUtils.LOG_UPLOAD, "Failed archive!")
                                             }
                                         }
+
+
+                                        //live observer to update the recycle latest data
+                                        val resultQueryLaporanP2H = historyRepo.fetchByDateLaporanP2H(currentDate)
+                                        _uploadResult.value = resultQueryLaporanP2H
                                     }
                                 }
                             }
@@ -316,9 +341,11 @@ class HistoryP2HViewModel(
 //                        "yes"
 //                    )
 
+
+                    Log.d("uploadLog", "stopRunnable")
                     AppUtils.closeLoadingLayout(loadingView!!)
 
-                    Log.d("upload Log", "stopRunnable")
+
                 } else {
                     AppUtils.closeLoadingLayout(loadingView!!)
                 }
@@ -417,6 +444,8 @@ class HistoryP2HViewModel(
             queue.cache.clear()
             queue.add(postRequest)
         }
+
+        Log.d("uploadLog", "sudah selesai mengirim semua data gan")
     }
 
     class Factory(

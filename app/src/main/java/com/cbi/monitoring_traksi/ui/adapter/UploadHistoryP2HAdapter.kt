@@ -2,6 +2,7 @@ package com.cbi.monitoring_traksi.ui.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +44,7 @@ class UploadHistoryP2HAdapter(
             deleteButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onDeleteClickListener.onDeleteClick(currentItem)
+                    onDeleteClickListener.onDeleteClick(position, currentItem)
                 }
             }
         }
@@ -63,7 +64,7 @@ class UploadHistoryP2HAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val item = getItem(position)
-
+        holder.bind(item)
         holder.itemTitlePeriksaUnit.text = "${position + 1}. ${item.jenis_unit} ${item.unit_kerja} ${item.type_unit}"
         holder.itemLokasiPeriksaUnit.text = ": ${item.unit_kerja}"
         var textStatusArchive = "Tersimpan - "
@@ -79,90 +80,24 @@ class UploadHistoryP2HAdapter(
 
         holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
 
+        val isLastItem = position == currentList.lastIndex
 
-//        when (position % 5) {
-//            0 -> {
-//                holder.viewList.backgroundTintList =
-//                    ContextCompat.getColorStateList(context, R.color.colorPrimary)
-//                holder.iconList.setColorFilter(
-//                    context.resources.getColor(
-//                        R.color.colorPrimary,
-//                        null
-//                    ), PorterDuff.Mode.SRC_IN
-//                )
-//            }
-//            1 -> {
-//                holder.viewList.backgroundTintList =
-//                    ContextCompat.getColorStateList(context, R.color.list1)
-//                holder.iconList.setColorFilter(
-//                    context.resources.getColor(
-//                        R.color.list1,
-//                        null
-//                    ), PorterDuff.Mode.SRC_IN
-//                )
-//            }
-//            2 -> {
-//                holder.viewList.backgroundTintList =
-//                    ContextCompat.getColorStateList(context, R.color.list2)
-//                holder.iconList.setColorFilter(
-//                    context.resources.getColor(
-//                        R.color.list2,
-//                        null
-//                    ), PorterDuff.Mode.SRC_IN
-//                )
-//            }
-//            3 -> {
-//                holder.viewList.backgroundTintList =
-//                    ContextCompat.getColorStateList(context, R.color.list3)
-//                holder.iconList.setColorFilter(
-//                    context.resources.getColor(
-//                        R.color.list3,
-//                        null
-//                    ), PorterDuff.Mode.SRC_IN
-//                )
-//            }
-//            4 -> {
-//                holder.viewList.backgroundTintList =
-//                    ContextCompat.getColorStateList(context, R.color.list4)
-//                holder.iconList.setColorFilter(
-//                    context.resources.getColor(
-//                        R.color.list4,
-//                        null
-//                    ), PorterDuff.Mode.SRC_IN
-//                )
-//            }
-//        }
+        val marginBottom = if (isLastItem) {
+            val marginBottomDp = 25
+            val density = context.resources.displayMetrics.density
+            (marginBottomDp * density).toInt()
+        } else {
+            0
+        }
 
+        // Set the layout params with bottom margin
+        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParams.bottomMargin = marginBottom
+        holder.itemView.layoutParams = layoutParams
 
-//        holder.itemDate.text = AppUtils.formatDate(item.no_daily.substring(0, 11))
-
-
-//        val sortedList = currentList.sortedWith(
-//            if (isDescendingOrder) compareByDescending<HistoryP2HViewModel> {
-//                it.id
-//            } else compareBy<HistoryP2HViewModel> {
-//                it.id
-//            }
-//        )
-//        val isLastItemInSorted = sortedList.indexOf(item) == sortedList.size - 1
-//
-//        val marginBottom = if (isLastItemInSorted) {
-//            50
-//        } else {
-//            0
-//        }
-//
-//        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-//        layoutParams.bottomMargin = marginBottom
-//        holder.itemView.layoutParams = layoutParams
-//
-//        val animation = AnimationUtils.loadAnimation(holder.itemView.context, android.R.anim.slide_in_left)
-//        holder.itemView.startAnimation(animation)
     }
 
     class ItemDiffCallback : DiffUtil.ItemCallback<LaporP2HModel>() {
-
-
         override fun areItemsTheSame(
             oldItem: LaporP2HModel,
             newItem: LaporP2HModel
@@ -178,22 +113,7 @@ class UploadHistoryP2HAdapter(
         }
     }
 
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun toggleSortingOrder() {
-//        isDescendingOrder = !isDescendingOrder
-//        submitList(
-//            currentList.sortedWith(
-//                if (isDescendingOrder) compareByDescending<HistoryP2HViewModel> {
-//                    it.id
-//                } else compareBy<HistoryP2HViewModel> {
-//                    it.id
-//                }
-//            )
-//        )
-//        notifyDataSetChanged()
-//    }
-
     interface OnDeleteClickListener {
-        fun onDeleteClick(item: LaporP2HModel)
+        fun onDeleteClick(position:Int, item: LaporP2HModel)
     }
 }

@@ -10,6 +10,13 @@ class HistoryP2HRepository(context: Context) {
     private val databaseHelper: DatabaseHelper = DatabaseHelper(context)
 
 
+    fun deleteItem(id: String): Boolean {
+        val db = databaseHelper.writableDatabase
+        val rowsAffected = db.delete(DatabaseHelper.DB_TAB_LAPORAN_P2H, "id=?", arrayOf(id))
+        db.close()
+
+        return rowsAffected > 0
+    }
     fun updateArchiveMtc(id: String): Boolean {
         val db = databaseHelper.writableDatabase
 
@@ -33,10 +40,18 @@ class HistoryP2HRepository(context: Context) {
     }
 
     @SuppressLint("Range")
-    fun fetchByDateLaporanP2H(id: String): List<LaporP2HModel> {
+    fun fetchByDateLaporanP2H(dateRequest: String): List<LaporP2HModel> {
         val dataLaporanP2H = mutableListOf<LaporP2HModel>()
         val db = databaseHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHelper.DB_TAB_LAPORAN_P2H}", null)
+        // Extract date part from the dateRequest parameter
+        val dateOnly = dateRequest.substring(0, 10)
+
+        // Construct the SQL query to filter records for the specified date
+        val query = "SELECT * FROM ${DatabaseHelper.DB_TAB_LAPORAN_P2H} " +
+                "WHERE DATE(tanggal_upload) = ?"
+
+        // Execute the query with the date parameter
+        val cursor = db.rawQuery(query, arrayOf(dateOnly))
 
         cursor.use {
             while (it.moveToNext()) {

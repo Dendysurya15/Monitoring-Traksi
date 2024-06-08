@@ -1,5 +1,6 @@
 package com.cbi.monitoring_traksi.ui.view
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -37,24 +38,15 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
     private var prefManager: PrefManager? = null
     private lateinit var unitViewModel: UnitViewModel
 
-    val dataJenisUnitList = mutableListOf<Map<String, Any>>()
-    val dataUnitKerjaList = mutableListOf<Map<String, Any>>()
-    val dataKodeUnitList = mutableListOf<Map<String, Any>>()
-    private var dataMapJenisUnitArray: Array<Map<String, Any>>? = null
-    private var dataMapUnitKerjaArray: Array<Map<String, Any>>? = null
-    private var dataMapKodeUnitArray: Array<Map<String, Any>>? = null
-
     private lateinit var historyP2HViewModel: HistoryP2HViewModel
-    var completedObserversCount = 0
-    val dataTempQueryDateLaporP2H = mutableListOf<Map<String, Any>>()
     private var uploadHistoryP2HAdapter: UploadHistoryP2HAdapter? = null
-    private var dataMapQueryLaporP2H: Array<Map<String, Any>>? = null
 
     private var totalList = 0
     private var firstScroll = false
     private var firstPage = true
     private var sortedBool = false
 
+    @SuppressLint("NotifyDataSetChanged")
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,9 +88,9 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         })
 
         historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) {
-            Log.d("testing", "gass")
             uploadHistoryP2HAdapter!!.submitList(it)
         }
+
         fbUploadData.setOnClickListener{
             if (AppUtils.checkConnectionDevice(this)) {
 //                if (totalList != 0) {
@@ -132,6 +124,12 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                     "network_error.json"
                 )
             }
+        }
+
+        historyP2HViewModel.uploadResult.observe(this) { updatedList ->
+            uploadHistoryP2HAdapter!!.submitList(updatedList)
+            uploadHistoryP2HAdapter!!.notifyDataSetChanged()  // Notify adapter of data change
+            Log.d("uploadLog", "Data updated in MainActivity")
         }
 
         clickAny()
@@ -310,7 +308,38 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         }
     }
 
-    override fun onDeleteClick(item: LaporP2HModel) {
-        Log.d("testing", "nais")
+    override fun onDeleteClick(position:Int, item: LaporP2HModel) {
+            AlertDialogUtility.withTwoActions(
+                this,
+                "Ya",
+                "Peringatan",
+                "Apakah anda yakin menghapus data?",
+                "warning.json"
+            ) {
+                historyP2HViewModel.deleteItemList(item.id.toString())
+
+                historyP2HViewModel.deleteItemResult.observe(this){isSuccess->
+                    if (isSuccess ) {
+                        Toasty.success(this, "Data berhasil dihapus!", Toast.LENGTH_SHORT).show()
+                        val newList = uploadHistoryP2HAdapter?.currentList?.toMutableList()
+                        newList?.removeAt(position)
+                        uploadHistoryP2HAdapter?.submitList(newList)
+                        uploadHistoryP2HAdapter?.notifyItemRemoved(position)
+
+                        // Update the numbers displayed in the UI
+                        for (i in position until newList?.size!!) {
+                            uploadHistoryP2HAdapter?.notifyItemChanged(i)
+                        }
+                    } else {
+                        Toasty.warning(
+                            this,
+                            "Terjadi kesalahan, hubungi pengembang!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+
+            }
     }
 }
