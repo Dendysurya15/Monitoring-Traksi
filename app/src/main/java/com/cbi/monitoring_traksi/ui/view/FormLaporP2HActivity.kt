@@ -363,6 +363,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
 
             mbSaveFormP2H.setOnClickListener {
+
+
                 AlertDialogUtility.withTwoActions(
                     this,
                     "Ya",
@@ -371,77 +373,98 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     "warning.json"
                 ) {
 
-
-                    val kerusakanUnit = mutableMapOf<String, MutableMap<String, String>>()
-                    formLayoutsPertanyaan.forEachIndexed { index, layout ->
-                        val containerPertanyaan = layout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
-
-                        for (i in 1 until containerPertanyaan.childCount) {
-                            val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
-                            val idPertanyaan = layoutPertanyaan.id.toString()
-                            val selectedValueDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown).text.toString()
-                            val etValueKomentar = layoutPertanyaan.findViewById<TextInputEditText>(R.id.etKomentar).text.toString()
-                            if (selectedValueDropdown == "Sudah dicek, tetapi perlu perbaikan"){
-                                val valueMap = mutableMapOf<String, String>()
-                                valueMap["komentar"] = etValueKomentar
-                                valueMap["foto"] = listNamaFoto[idPertanyaan] ?: ""
-                                kerusakanUnit[idPertanyaan] = valueMap
+                    val jenis_unit = etJenisUnit.text.toString()
+                    val unit_kerja = etUnitKerja.text.toString()
+                    val kode_unit =  etKodeUnit.text.toString()
+                    val type_unit =  etKodeUnit.text.toString()
 
 
+                    if (jenis_unit != "" && unit_kerja != "" && kode_unit != "" && type_unit != "" && !listNamaFoto["0"].isNullOrEmpty()){
+                        var isKomentarFillAll = true
+                        var isFotoTakenAll = true
+                        val kerusakanUnit = mutableMapOf<String, MutableMap<String, String>>()
+                        formLayoutsPertanyaan.forEachIndexed { index, layout ->
+                            val containerPertanyaan = layout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
+
+                            for (i in 1 until containerPertanyaan.childCount) {
+                                val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
+                                val idPertanyaan = layoutPertanyaan.id.toString()
+                                val selectedValueDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown).text.toString()
+                                val etValueKomentar = layoutPertanyaan.findViewById<TextInputEditText>(R.id.etKomentar).text.toString()
+                                if (selectedValueDropdown == "Sudah dicek, tetapi perlu perbaikan"){
+                                    val valueMap = mutableMapOf<String, String>()
+                                    valueMap["komentar"] = etValueKomentar
+                                    valueMap["foto"] = listNamaFoto[idPertanyaan] ?: ""
+                                    kerusakanUnit[idPertanyaan] = valueMap
+
+                                    // Check if komentar or foto is empty and update the flags
+                                    if (etValueKomentar.isEmpty()) {
+                                        isKomentarFillAll = false
+                                    }
+                                    if (valueMap["foto"].isNullOrEmpty()) {
+                                        isFotoTakenAll = false
+                                    }
+
+                                }
                             }
+
                         }
 
-                    }
-
-                    var kerusakanUnitJson  = ""
-                    if (kerusakanUnit.isNotEmpty()) {
-                        val jsonObject = JSONObject()
-                        for ((idPertanyaan, valueMap) in kerusakanUnit) {
-                            val valueJsonObject = JSONObject(valueMap as Map<*, *>)
-                            jsonObject.put(idPertanyaan, valueJsonObject)
-                        }
-                        kerusakanUnitJson = jsonObject.toString()
-                    }
-
-                    val app_version = BuildConfig.VERSION_NAME
-
-                    unitViewModel.pushDataToLaporanP2hSQL(
-                        tanggal_upload = getCurrentDate(true),
-                        jenis_unit = etJenisUnit.text.toString(),
-                        unit_kerja = etUnitKerja.text.toString(),
-                        kode_unit =  etKodeUnit.text.toString(),
-                        type_unit =  etKodeUnit.text.toString(),
-                        lat = lat.toString(),
-                        lon = lon.toString(),
-                        user = prefManager!!.name!!,
-                        status_unit_beroperasi = "Pending",
-                        kerusakan_unit = kerusakanUnitJson,
-                        foto_unit =  listNamaFoto["0"] ?: "",
-                        app_version = app_version,
-                        uploaded_time = "",
-                        archive = 0,
-                    )
-
-                    unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->
-                        if (isInserted){
-                            AlertDialogUtility.alertDialogAction(
-                                this,
-                                "Sukses",
-                                "Data berhasil disimpan!",
-                                "success.json"
-                            ) {
-                                AppUtils.showLoadingLayout(this, window, loadingFetchingData)
-                                val intent = Intent(this, MainActivity
-                                ::class.java)
-                                startActivity(intent)
-                            }
+                        if(isFotoTakenAll == false || isKomentarFillAll == false){
+                            displayToasty(this, "Mohon untuk mengupload semua foto atau mengisi komentar perbaikan unit setiap pertanyaan!")
                         }else{
-                            displayToasty(this, "Terjadi kesalahan dalam menyimpan data")
+                            var kerusakanUnitJson  = ""
+                            if (kerusakanUnit.isNotEmpty()) {
+                                val jsonObject = JSONObject()
+                                for ((idPertanyaan, valueMap) in kerusakanUnit) {
+                                    val valueJsonObject = JSONObject(valueMap as Map<*, *>)
+                                    jsonObject.put(idPertanyaan, valueJsonObject)
+                                }
+                                kerusakanUnitJson = jsonObject.toString()
+                            }
+
+                            val app_version = BuildConfig.VERSION_NAME
+
+                            unitViewModel.pushDataToLaporanP2hSQL(
+                                tanggal_upload = getCurrentDate(true),
+                                jenis_unit = jenis_unit,
+                                unit_kerja = unit_kerja,
+                                kode_unit =  kode_unit,
+                                type_unit =  type_unit,
+                                lat = lat.toString(),
+                                lon = lon.toString(),
+                                user = prefManager!!.name!!,
+                                status_unit_beroperasi = "Pending",
+                                kerusakan_unit = kerusakanUnitJson,
+                                foto_unit =  listNamaFoto["0"] ?: "",
+                                app_version = app_version,
+                                uploaded_time = "",
+                                archive = 0,
+                            )
+
+                            unitViewModel.insertResultLaporP2H.observe(this) { isInserted ->
+                                if (isInserted){
+                                    AlertDialogUtility.alertDialogAction(
+                                        this,
+                                        "Sukses",
+                                        "Data berhasil disimpan!",
+                                        "success.json"
+                                    ) {
+                                        AppUtils.showLoadingLayout(this, window, loadingFetchingData)
+                                        val intent = Intent(this, MainActivity
+                                        ::class.java)
+                                        startActivity(intent)
+                                    }
+                                }else{
+                                    displayToasty(this, "Terjadi kesalahan dalam menyimpan data")
+                                }
+                            }
                         }
+                    }else{
+                        displayToasty(this, "Pastikan untuk mengisi Jenis Unit, Unit Kerja, Kode Unit, Type Unit dan Upload Foto Unit")
                     }
+
                 }
-
-
 
             }
         }

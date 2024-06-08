@@ -30,6 +30,7 @@ import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.AppUtils.getCurrentDate
 import com.cbi.monitoring_traksi.utils.PrefManager
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main.animationView
 import kotlinx.android.synthetic.main.activity_main.dateToday
 import kotlinx.android.synthetic.main.activity_main.fbUploadData
 import kotlinx.android.synthetic.main.activity_main.iblogout
@@ -39,7 +40,9 @@ import kotlinx.android.synthetic.main.activity_main.loadingMain
 import kotlinx.android.synthetic.main.activity_main.mbTambahMonitoring
 import kotlinx.android.synthetic.main.activity_main.name_user_login
 import kotlinx.android.synthetic.main.activity_main.rvListData
+import kotlinx.android.synthetic.main.alert_dialog_view.view.lottieDialog
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickListener  {
     private var prefManager: PrefManager? = null
     private lateinit var unitViewModel: UnitViewModel
@@ -96,12 +99,13 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
         historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) {
 
-            Log.d("testing", it.toString())
+
             if (it.size == 0) {
                 findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
+//                animationView.visibility = View.VISIBLE
+//                animationView.playAnimation()
                 findViewById<TextView>(R.id.tvNoData).visibility = View.VISIBLE
             } else{
-                Log.d("testing", "coba donggas")
                 uploadHistoryP2HAdapter!!.submitList(it)
             }
             sizeListAdapeter = it.size
