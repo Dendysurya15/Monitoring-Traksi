@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
     private var uploadHistoryP2HAdapter: UploadHistoryP2HAdapter? = null
 
     var sizeListAdapeter = 0
+    var allListUploaded: Boolean = false
     private var totalList = 0
     private var firstScroll = false
     private var firstPage = true
@@ -97,35 +98,51 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
             }
         })
 
-        historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) {
-            if (it.size == 0) {
+        historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) { list->
+            if (list.size == 0) {
                 findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
 //                animationView.visibility = View.VISIBLE
 //                animationView.playAnimation()
                 findViewById<TextView>(R.id.tvNoData).visibility = View.VISIBLE
             } else{
-                uploadHistoryP2HAdapter!!.submitList(it)
+                uploadHistoryP2HAdapter!!.submitList(list)
             }
-            sizeListAdapeter = it.size
+            sizeListAdapeter = list.size
+
+            allListUploaded = list.all { it.archive == 1 }
+
         }
 
         fbUploadData.setOnClickListener{
             if (AppUtils.checkConnectionDevice(this)) {
-                if (sizeListAdapeter != 0) {
-                    AlertDialogUtility.withTwoActions(
-                        this,
-                        "Ya",
-                        "Peringatan",
-                        "Apakah anda yakin mengunggah data?",
-                        "warning.json"
-                    ) {
-                        loadingFetchingData.visibility = View.VISIBLE
-                        AppUtils.showLoadingLayout(this, window, loadingFetchingData)
 
-                        Toasty.info(this, "Sedang mengunggah data..", Toast.LENGTH_SHORT).show()
-                        val currentDate = getCurrentDate(true)
-                        historyP2HViewModel.uploadToServer(currentDate)
+                Log.d("testing", allListUploaded.toString())
+                if (sizeListAdapeter != 0) {
+                    if (allListUploaded == true){
+                        AlertDialogUtility.alertDialog(
+                            this,
+                            "Peringatan",
+                            "Semua data dalam list sudah terupload",
+                            "warning.json"
+                        )
+                    }else{
+                        AlertDialogUtility.withTwoActions(
+                            this,
+                            "Ya",
+                            "Peringatan",
+                            "Apakah anda yakin mengunggah data?",
+                            "warning.json"
+                        ) {
+                            loadingFetchingData.visibility = View.VISIBLE
+                            AppUtils.showLoadingLayout(this, window, loadingFetchingData)
+
+                            Toasty.info(this, "Sedang mengunggah data..", Toast.LENGTH_SHORT).show()
+                            val currentDate = getCurrentDate(true)
+                            historyP2HViewModel.uploadToServer(currentDate)
+                        }
+
                     }
+
                 } else {
                     AlertDialogUtility.alertDialog(
                         this,
