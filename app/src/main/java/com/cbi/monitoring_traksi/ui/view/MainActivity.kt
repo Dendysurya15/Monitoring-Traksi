@@ -98,8 +98,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         })
 
         historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) {
-
-
             if (it.size == 0) {
                 findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
 //                animationView.visibility = View.VISIBLE

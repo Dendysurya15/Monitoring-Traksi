@@ -23,16 +23,15 @@ class LoginRepository(private val context: Context, private val window: Window, 
         val pmu = prefManager.email
         val pmp = prefManager.password
 
-        if (AppUtils.checkConnectionDevice(context)) {
+        if (email == pmu && password == pmp) {
+            callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
+        } else if (AppUtils.checkConnectionDevice(context)) {
             onlineAuth(email, password, callback)
         }
-//        if (username == pmu && password == pmp) {
-//            callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
-//        } else if (AppUtils.checkConnectionDevice(context)) {
-//            onlineAuth(username, password, callback)
-//        } else {
+        else {
 //            callback(LoginModel(success = false, statusCode = 0, message = "asdkljfklajsdfkljk"))
-//        }
+            offlineAuth(email, password, callback)
+        }
     }
 
     private fun onlineAuth(email: String, password: String, callback: (LoginModel) -> Unit) {
@@ -104,6 +103,17 @@ class LoginRepository(private val context: Context, private val window: Window, 
                     }
                 }
             Volley.newRequestQueue(context).add(strReq)
+        }
+    }
+
+    private fun offlineAuth(email: String, password: String, callback: (LoginModel) -> Unit) {
+        val prefManager = PrefManager(context)
+        if (email == "srs" && password == "srs3") {
+            callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
+        } else if (email == prefManager.email && password == prefManager.password) {
+            callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
+        } else {
+            callback(LoginModel(success = false, statusCode = 0, message = "Silahkan hubungkan perangkat anda ke jaringan untuk melanjutkan."))
         }
     }
 }

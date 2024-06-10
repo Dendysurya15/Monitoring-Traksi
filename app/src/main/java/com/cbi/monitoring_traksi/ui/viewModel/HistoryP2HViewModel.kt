@@ -180,17 +180,32 @@ class HistoryP2HViewModel(
         for (i in idUpload.indices) {
             laporanP2HList.map { data ->
                 if (idUpload[i] == data.id.toInt()) {
-                    val fotoPerLaporan = data.foto_unit
-                    if (fotoPerLaporan.isNotEmpty()) {
-                        if (!arrayCheckFoto.contains(fotoPerLaporan)) {
-                            arrayCheckFoto.add(fotoPerLaporan)
+                    val fotoUnit = data.foto_unit
+                    if (fotoUnit.isNotEmpty()) {
+                        if (!arrayCheckFoto.contains(fotoUnit)) {
+                            arrayCheckFoto.add(fotoUnit)
+                        }
+                    }
+
+
+                    val kerusakanUnit = data.kerusakan_unit
+                    if (kerusakanUnit.isNotEmpty()) {
+                        val jsonObject = JSONObject(kerusakanUnit)
+                        val keys = jsonObject.keys()
+                        while (keys.hasNext()) {
+                            val key = keys.next()
+                            val item = jsonObject.getJSONObject(key)
+                            val foto = item.getString("foto")
+                            if (!arrayCheckFoto.contains(foto)) {
+                                arrayCheckFoto.add(foto)
+                            }
                         }
                     }
                 }
             }
         }
 
-
+        Log.d("uploadLog", arrayCheckFoto.toString())
         val postRequest: StringRequest = object : StringRequest(
             Method.POST, urlCheckPhotos,
             Response.Listener { response ->
@@ -344,8 +359,6 @@ class HistoryP2HViewModel(
 
                     Log.d("uploadLog", "stopRunnable")
                     AppUtils.closeLoadingLayout(loadingView!!)
-
-
                 } else {
                     AppUtils.closeLoadingLayout(loadingView!!)
                 }
@@ -445,7 +458,6 @@ class HistoryP2HViewModel(
             queue.add(postRequest)
         }
 
-        Log.d("uploadLog", "sudah selesai mengirim semua data gan")
     }
 
     class Factory(

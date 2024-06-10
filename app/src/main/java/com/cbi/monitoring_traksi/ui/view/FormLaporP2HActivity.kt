@@ -97,9 +97,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private lateinit var locationViewModel: LocationViewModel
     private var lat: Double? = null
     private var lon: Double? = null
-    val viewsArray = ArrayList<View>()
-    var pertanyaanPerJenisUnit: MutableMap<String, Array<String>> = mutableMapOf()
-    lateinit var ListPertanyaanStr: Array<String>
     private var isFormInformasiUnit :Boolean = false
 
     private val formLayoutInfoUnit: Array<View> by lazy {
@@ -107,11 +104,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     }
 
     val arrInsertedDataTable =  mutableMapOf<Int, Map<String, Any>>()
-    val globalJenisUnitMap: MutableMap<Int, String> = mutableMapOf()
     val globalPertanyaanAllJenisUnitMapping = mutableMapOf<Int, MutableList<MutableMap<String, Any>>>()
     val formLayoutsPertanyaan = mutableListOf<View>()
     private var pertanyaanListGlobal: MutableList<MutableMap<String, Any>> = mutableListOf()
-
+    private var locationEnable:Boolean = false
     private var globalListPilJenisUnit: MutableMap<Int, String> = mutableMapOf()
     private var globalListPilUnitKerja: MutableMap<Int, String> = mutableMapOf()
     private var globalListPilKodeUnit: MutableMap<Int, String> = mutableMapOf()
@@ -237,11 +233,20 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
         val nextButton = findViewById<Button>(resources.getIdentifier("mbNextForm0", "id", packageName))
         nextButton.setOnClickListener {
-            if (formLayoutsPertanyaan.isEmpty()){
-                    displayToasty(this,"Harap memilih jenis unit terlebih dahulu")
+            val jenis_unit = etJenisUnit.text.toString()
+            val unit_kerja = etUnitKerja.text.toString()
+            val kode_unit =  etKodeUnit.text.toString()
+            val type_unit =  etKodeUnit.text.toString()
+
+            if (locationEnable == true){
+                if (jenis_unit != "" && unit_kerja != "" && kode_unit != "" && type_unit != "" && !listNamaFoto["0"].isNullOrEmpty()){
+                    isFormInformasiUnit = false
+                    toggleFormVisibility(currentFormIndex)
+                }else{
+                    displayToasty(this,"Mohon untuk mengisi semua kolom dan upload foto unit terlebih dahulu")
+                }
             }else{
-                isFormInformasiUnit = false
-                toggleFormVisibility(currentFormIndex)
+                displayToasty(this, "Harap aktifkan GPS agar kami dapat mengakses koordinat Anda")
             }
         }
 
@@ -259,11 +264,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     }
 
-    private fun retakeCamera(id_foto: String, imageView: ImageView, pageForm: Int){
+    private fun retakeCamera(id_foto: String, imageView: ImageView, pageForm: Int, kode_foto :String ){
         cameraViewModel.takeCameraPhotos(
             id_foto,
             imageView,
             pageForm,
+            kode_foto
         )
     }
 
@@ -282,7 +288,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
     }
 
-    private fun takeCameraNow(id_foto: String, pageForm: Int,  imageView: ImageView){
+    private fun takeCameraNow(id_foto: String, pageForm: Int,  imageView: ImageView,kode_foto: String){
+        val kodeFotoNoWhitespace = removeWhitespaces(kode_foto)
         if (listNamaFoto.containsKey(id_foto)){
             zoomOpen = true
             cameraViewModel.openZoomPhotos(listFileFoto[id_foto]!!){
@@ -290,11 +297,34 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
               id_editable_foto_layout.visibility = View.VISIBLE
             }
         }else{
-            cameraViewModel.takeCameraPhotos(
-                id_foto,
-                imageView,
-                pageForm,
-            )
+            if (isFormInformasiUnit == true){
+                val jenis_unit = etJenisUnit.text.toString()
+                val unit_kerja = etUnitKerja.text.toString()
+                if (id_foto == "0" && jenis_unit != "" && unit_kerja != ""){
+                    val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
+                    val kodeFotoNoWhitespace = removeWhitespaces(kode_foto)
+                    id_layout_activity_informasi_unit.visibility = View.GONE
+                    id_take_foto_layout.visibility = View.VISIBLE
+
+                    cameraViewModel.takeCameraPhotos(
+                        id_foto,
+                        imageView,
+                        pageForm,
+                        kodeFotoNoWhitespace
+                    )
+                }
+                else{
+                    displayToasty(this, "Harap untuk mengisi Jenis Unit dan Unit Kerja terlebih dahulu")
+                }
+            }else{
+                cameraViewModel.takeCameraPhotos(
+                    id_foto,
+                    imageView,
+                    pageForm,
+                    kodeFotoNoWhitespace
+                )
+            }
+
         }
     }
     override fun onRequestPermissionsResult(
@@ -322,6 +352,11 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
             // Add more cases if you have multiple permission requests in your app
         }
+    }
+
+
+    fun removeWhitespaces(input: String): String {
+        return input.replace(" ", "")
     }
 
     fun showPermissionDeniedDialogForCamera() {
@@ -379,7 +414,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     val type_unit =  etKodeUnit.text.toString()
 
 
-                    if (jenis_unit != "" && unit_kerja != "" && kode_unit != "" && type_unit != "" && !listNamaFoto["0"].isNullOrEmpty()){
+
                         var isKomentarFillAll = true
                         var isFotoTakenAll = true
                         val kerusakanUnit = mutableMapOf<String, MutableMap<String, String>>()
@@ -460,9 +495,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 }
                             }
                         }
-                    }else{
-                        displayToasty(this, "Pastikan untuk mengisi Jenis Unit, Unit Kerja, Kode Unit, Type Unit dan Upload Foto Unit")
-                    }
 
                 }
 
@@ -669,7 +701,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan.setOnClickListener {
                                     includedLayout.visibility = View.GONE
                                     id_take_foto_layout.visibility = View.VISIBLE
-                                    takeCameraNow(id_foto, i,  layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan)
+                                    val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
+                                    takeCameraNow(id_foto, i,  layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, kode_foto)
                                 }
 
                                 id_editable_foto_layout.retakePhoto.setOnClickListener {
@@ -678,10 +711,11 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     id_editable_foto_layout.visibility = View.GONE
                                     id_take_foto_layout.visibility = View.VISIBLE
                                     // in case ini adalah foto di layout informasi unit foto utama dengan id 0
+                                    val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
                                     if (listNamaFoto.containsKey("0")){
-                                        retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1)
+                                        retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1, kode_foto)
                                     }else{
-                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, i  )
+                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, i ,kode_foto)
                                     }
 
                                 }
@@ -802,14 +836,13 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     private fun setupViewLayout() {
         toggleFormVisibility(currentFormIndex)
+        val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
         parentFormP2H.id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit.setOnClickListener{
-            if(prefManager!!.isCameraAllowed == false){
-                checkPermissionsCamera(this)
-            }else{
-                id_layout_activity_informasi_unit.visibility = View.GONE
-                id_take_foto_layout.visibility = View.VISIBLE
-                takeCameraNow("0", -1,  id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit)
-            }
+                if(prefManager!!.isCameraAllowed == false){
+                    checkPermissionsCamera(this)
+                }else{
+                    takeCameraNow("0", -1,  id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, kode_foto)
+                }
         }
 
         id_editable_foto_layout.deletePhoto.visibility = View.INVISIBLE
@@ -820,7 +853,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             zoomOpen = false
             id_editable_foto_layout.visibility = View.GONE
             id_take_foto_layout.visibility = View.VISIBLE
-            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1)
+
+            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1, kode_foto)
         }
 
         id_editable_foto_layout.closeZoom.setOnClickListener{
@@ -912,6 +946,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             if (!isLocationEnabled) {
                 requestLocationPermission()
             } else {
+                locationEnable = true
                 locationViewModel.startLocationUpdates()
             }
         }

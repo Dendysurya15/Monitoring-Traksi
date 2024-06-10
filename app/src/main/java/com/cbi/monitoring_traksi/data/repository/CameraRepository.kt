@@ -184,7 +184,7 @@ class CameraRepository(private val context: Context, private val window: Window,
         return resultBitmap
     }
 
-    fun takeCameraPhotos(resultCode: String, imageView: ImageView, pageForm : Int) {
+    fun takeCameraPhotos(resultCode: String, imageView: ImageView, pageForm : Int, kodeFoto:String) {
         // Initialize Camera View
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
@@ -286,7 +286,7 @@ class CameraRepository(private val context: Context, private val window: Window,
                                                 0
                                             }
 
-                                            takeCameraPhotos(resultCode, imageView, pageForm)
+                                            takeCameraPhotos(resultCode, imageView, pageForm, kodeFoto)
                                         }
                                     }
 
@@ -307,26 +307,21 @@ class CameraRepository(private val context: Context, private val window: Window,
 
                                             var dirDCIM:File
                                             var dirApp: File
+                                            var tipe_foto:String
                                             if (pageForm == -1){
-                                                dirApp = File(rootApp, "LaporP2H")
-                                                dirApp.mkdirs()
-                                                dirDCIM = File(rootDCIM, "LaporP2H")
-                                                dirDCIM.mkdirs()
+                                                tipe_foto = "FU"
                                             }else{
-                                                dirApp = File(rootApp, "FolderPerPertanyaanP2H")
-                                                dirApp.mkdirs()
-                                                dirDCIM = File(rootDCIM, "FolderPerPertanyaanP2H")
-                                                dirDCIM.mkdirs()
+                                                tipe_foto = "FK"
                                             }
 
-//                                            val dirApp = File(rootApp)
-//                                            dirApp.mkdirs()
-//                                            val dirDCIM = File(rootDCIM)
-//                                            dirDCIM.mkdirs()
+                                            dirApp = File(rootApp, "LaporP2H")
+                                            dirApp.mkdirs()
+                                            dirDCIM = File(rootDCIM, "LaporP2H")
+                                            dirDCIM.mkdirs()
 
                                             val dateFormat =
                                                 SimpleDateFormat("yyyyMdd_HHmmss").format(Calendar.getInstance().time)
-                                            fileName = "MT_${dateFormat}.jpg"
+                                            fileName = "MT_${tipe_foto}_${kodeFoto}_${dateFormat}.jpg"
                                             file = File(dirApp, fileName)
 
                                             fileDCIM = File(dirDCIM, fileName)
