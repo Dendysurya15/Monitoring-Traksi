@@ -859,12 +859,11 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
 
         id_editable_foto_layout.closeZoom.setOnClickListener{
-
-            Log.d("testing", currentFormIndex.toString())
             id_take_foto_layout.visibility = View.GONE
             toggleFormVisibility(currentFormIndex)
             cameraViewModel.closeZoomPhotos()
         }
+
     }
 
     private fun initViewModel() {

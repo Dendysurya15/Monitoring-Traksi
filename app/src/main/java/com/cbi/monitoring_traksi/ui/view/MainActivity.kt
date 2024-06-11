@@ -20,9 +20,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
+import com.cbi.monitoring_traksi.data.repository.CameraRepository
 import com.cbi.monitoring_traksi.data.repository.HistoryP2HRepository
 import com.cbi.monitoring_traksi.data.repository.UnitRepository
 import com.cbi.monitoring_traksi.ui.adapter.UploadHistoryP2HAdapter
+import com.cbi.monitoring_traksi.ui.viewModel.CameraViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.UnitViewModel
 import com.cbi.monitoring_traksi.utils.AlertDialogUtility
@@ -30,10 +32,13 @@ import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.AppUtils.getCurrentDate
 import com.cbi.monitoring_traksi.utils.PrefManager
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
+import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_take_foto_layout
 import kotlinx.android.synthetic.main.activity_main.animationView
 import kotlinx.android.synthetic.main.activity_main.dateToday
 import kotlinx.android.synthetic.main.activity_main.fbUploadData
 import kotlinx.android.synthetic.main.activity_main.iblogout
+import kotlinx.android.synthetic.main.activity_main.id_preview_foto
 import kotlinx.android.synthetic.main.activity_main.loadingFetchingData
 import kotlinx.android.synthetic.main.activity_main.loadingMain
 
@@ -46,7 +51,6 @@ import kotlinx.android.synthetic.main.alert_dialog_view.view.lottieDialog
 class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickListener , UploadHistoryP2HAdapter.OnClickDataListener {
     private var prefManager: PrefManager? = null
     private lateinit var unitViewModel: UnitViewModel
-
     private lateinit var historyP2HViewModel: HistoryP2HViewModel
     private var uploadHistoryP2HAdapter: UploadHistoryP2HAdapter? = null
 
@@ -169,6 +173,19 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         setupRecyclerList()
     }
 
+
+    fun setLayoutVisibility(isZooming: Boolean) {
+        val informationUnitLayout: View = findViewById(R.id.parentMainHalamanUtama)
+        val editablePhotoLayout: View = findViewById(R.id.id_preview_foto)
+
+        if (isZooming) {
+            informationUnitLayout.visibility = View.GONE
+            editablePhotoLayout.visibility = View.VISIBLE
+        } else {
+            informationUnitLayout.visibility = View.VISIBLE
+            editablePhotoLayout.visibility = View.GONE
+        }
+    }
     private fun setupRecyclerList(){
         val currentDate = getCurrentDate(true)
         historyP2HViewModel.loadLaporanP2HByDate(currentDate)
@@ -237,6 +254,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                 PrefManager(this),
             )
         )[HistoryP2HViewModel::class.java]
+
         uploadHistoryP2HAdapter = UploadHistoryP2HAdapter(this, historyP2HViewModel, this, this)
     }
 

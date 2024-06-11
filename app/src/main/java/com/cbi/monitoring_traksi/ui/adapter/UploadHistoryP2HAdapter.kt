@@ -29,9 +29,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.ui.view.MainActivity
+import com.cbi.monitoring_traksi.ui.viewModel.CameraViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.cbi.monitoring_traksi.utils.AppUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
+import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.detail_foto_unit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.mbStatusBeroperasi
 //import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.mbStatusBeroperasi
@@ -61,7 +64,7 @@ class UploadHistoryP2HAdapter(
         RecyclerView.ViewHolder(itemView) {
 
 
-        val test = context as MainActivity
+        val mainActivity = context as MainActivity
         val itemTitlePeriksaUnit: TextView = itemView.findViewById(R.id.titlePeriksaUnit)
         val itemLokasiPeriksaUnit: TextView = itemView.findViewById(R.id.lokasiPeriksaUnit)
         val itemJenisKerusakan: TextView = itemView.findViewById(R.id.listJenisKerusakan)
@@ -91,7 +94,7 @@ class UploadHistoryP2HAdapter(
                 if(position != RecyclerView.NO_POSITION){
                     onClickDataListener.onClickList(position, currentItem)
 
-                    val rootView = test.findViewById<View>(android.R.id.content)
+                    val rootView = mainActivity.findViewById<View>(android.R.id.content)
 
                     val parentLayout = rootView.findViewById<ConstraintLayout>(R.id.clParentAlertDialog)
                     val layoutBuilder =
@@ -123,12 +126,31 @@ class UploadHistoryP2HAdapter(
                         textStatusArchive = "Terupload - "
                         textLastUpdate = "${currentItem.uploaded_time}"
                         layoutBuilder.tvTglCreated.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
-                        layoutBuilder.tvTglCreated.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
                     }
                     layoutBuilder.tvTglCreated.text = "$textStatusArchive$textLastUpdate"
                     layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja} ${currentItem.type_unit}"
                     layoutBuilder.tvLokasiUnit.text = "(Unit ${currentItem.unit_kerja})"
-                    layoutBuilder.mbStatusBeroperasi.text = currentItem.status_unit_beroperasi
+
+                    val status = currentItem.status_unit_beroperasi
+                    layoutBuilder.mbStatusBeroperasi.text = "$status!"
+
+                    // Set the background color based on the status
+                    val statusBackgroundColor = when (status) {
+                        "Segera Beroperasi" -> {
+                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
+                            ContextCompat.getColor(context, R.color.greendarkerbutton)
+                        }
+                        "Tidak Diizinkan Beroperasi" -> {
+                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
+                            ContextCompat.getColor(context, R.color.colorRedDark)
+                        }
+                        else -> {
+                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.black))
+                            ContextCompat.getColor(context, R.color.graylight) // Define a default background color if needed
+                        }
+                    }
+
+                    layoutBuilder.mbStatusBeroperasi.setBackgroundColor(statusBackgroundColor)
 
                     val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
                     val dirApp = File(rootApp, "LaporP2H")
@@ -139,6 +161,33 @@ class UploadHistoryP2HAdapter(
                             DiskCacheStrategy.NONE
                         ).skipMemoryCache(true).centerCrop()
                         .into(layoutBuilder.detail_foto_unit)
+
+                    layoutBuilder.detail_foto_unit.setOnClickListener{
+                        val defaultRotation = 90f
+                        val zoomLayout = LayoutInflater.from(context).inflate(R.layout.layout_preview_foto_detail_laporan, null)
+                        val zoomImageView: ImageView = zoomLayout.findViewById(R.id.zoomImageView)
+                        zoomImageView.rotation = defaultRotation
+
+                        val zoomBuilder: AlertDialog.Builder = AlertDialog.Builder(context).setView(layoutBuilder)
+                        val zoomDialog: AlertDialog = zoomBuilder.create()
+
+                        val closeZoomButton: ImageView = zoomLayout.findViewById(R.id.closeZoomButton)
+                        closeZoomButton.setOnClickListener {
+                            zoomDialog.dismiss()
+                        }
+
+                        val rotateButton: ImageView = zoomLayout.findViewById(R.id.rotateButton)
+                        var currentRotation = defaultRotation
+                        rotateButton.setOnClickListener {
+                            currentRotation += 90f
+                            if (currentRotation >= 360f) {
+                                currentRotation = 0f
+                            }
+                            zoomImageView.rotation = currentRotation
+                        }
+
+                        zoomDialog.show()
+                    }
 
                     val idPertanyaan = mutableListOf<String>()
                     if (!currentItem.kerusakan_unit.isNullOrEmpty()) {
@@ -190,6 +239,44 @@ class UploadHistoryP2HAdapter(
                                     ).skipMemoryCache(true).centerCrop()
                                     .into(listItemView.fotoItemKerusakanUnit)
 
+                                listItemView.fotoItemKerusakanUnit.setOnClickListener{
+
+                                    val zoomLayout = LayoutInflater.from(context).inflate(R.layout.layout_preview_foto_detail_laporan, null)
+                                    val zoomImageView: ImageView = zoomLayout.findViewById(R.id.zoomImageView)
+
+
+                                    Glide.with(context).load(Uri.fromFile(file))
+                                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                        .skipMemoryCache(true)
+                                        .into(zoomImageView)
+
+
+                                    // Set the default rotation angle
+                                    val defaultRotation = 90f
+                                    zoomImageView.rotation = defaultRotation
+
+                                    val zoomBuilder: AlertDialog.Builder = AlertDialog.Builder(context).setView(zoomLayout)
+                                    val zoomDialog: AlertDialog = zoomBuilder.create()
+
+                                    val closeZoomButton: ImageView = zoomLayout.findViewById(R.id.closeZoomButton)
+                                    closeZoomButton.setOnClickListener {
+                                        zoomDialog.dismiss()
+                                    }
+
+                                    val rotateButton: ImageView = zoomLayout.findViewById(R.id.rotateButton)
+                                    var currentRotation = defaultRotation
+                                    rotateButton.setOnClickListener {
+                                        currentRotation += 90f
+                                        if (currentRotation >= 360f) {
+                                            currentRotation = 0f
+                                        }
+                                        zoomImageView.rotation = currentRotation
+                                    }
+
+                                    zoomDialog.show()
+
+                                }
+
                                 it.addView(listItemView)
 
                                 inc++
@@ -206,10 +293,34 @@ class UploadHistoryP2HAdapter(
             }
         }
 
+        @SuppressLint("MissingInflatedId")
+        private fun showZoomDialog(file: File, activity: Activity) {
+            val layoutInflater = LayoutInflater.from(activity)
+            val zoomView = layoutInflater.inflate(R.layout.layout_preview_foto_detail_laporan, null)
+
+            val builder = AlertDialog.Builder(activity).setView(zoomView)
+            val zoomDialog: AlertDialog = builder.create()
+
+            val zoomImageView: ImageView = zoomView.findViewById(R.id.fotoItemKerusakanUnit)
+            Glide.with(activity).load(Uri.fromFile(file))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(zoomImageView)
+
+//            val closeZoomButton: ImageView = zoomView.findViewById(R.id.closeZoomButton)
+//            closeZoomButton.setOnClickListener {
+//                zoomDialog.dismiss()
+//            }
+
+            zoomDialog.show()
+        }
+
         fun bind(item: LaporP2HModel) {
             currentItem = item
         }
     }
+
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

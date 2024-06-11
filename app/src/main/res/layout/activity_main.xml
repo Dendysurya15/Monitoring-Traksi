@@ -173,23 +173,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UseCompoundDrawables">
 
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="2dp"-->
-<!--                android:fontFamily="@font/poppins_regular"-->
-<!--                android:text="sort by date"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="12sp"/>-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/ivIconSortBy"-->
-<!--                android:layout_width="15dp"-->
-<!--                android:layout_height="15dp"-->
-<!--                android:scaleX="-1"-->
-<!--                app:srcCompat="@drawable/baseline_sort_24"-->
-<!--                app:tint="@color/black"-->
-<!--                tools:ignore="ContentDescription" />-->
 
         </LinearLayout>
 
@@ -321,6 +304,20 @@
     <include
         android:id="@+id/loadingFetchingData"
         layout="@layout/loading_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/id_take_foto_layout"
+        layout="@layout/camera_view_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/id_preview_foto"
+        layout="@layout/edit_foto_layout"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

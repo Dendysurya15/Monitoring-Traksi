@@ -120,17 +120,19 @@
                     android:layout_height="wrap_content"
                     android:text="List Kerusakan Unit : "
                     android:id="@+id/titleListPertanyaan"
-                    android:background="@color/graylight"
+                    android:background="@color/bluedark"
                     android:fontFamily="@font/poppins_semibold"
-                    android:textColor="@color/bluedark"
-                    android:padding="10dp"
+                    android:textColor="@color/white"
+                    android:paddingTop="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingBottom="10dp"
                     android:textSize="14dp" />
             </LinearLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:background="@color/white"
+                android:background="@color/graylight"
                 app:layout_constraintTop_toBottomOf="@+id/listTitle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:fillViewport="true">
