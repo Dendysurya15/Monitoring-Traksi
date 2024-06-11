@@ -469,7 +469,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 lat = lat.toString(),
                                 lon = lon.toString(),
                                 user = prefManager!!.name!!,
-                                status_unit_beroperasi = "Pending",
+                                status_unit_beroperasi = "Menunggu Persetujuan Beroperasi",
                                 kerusakan_unit = kerusakanUnitJson,
                                 foto_unit =  listNamaFoto["0"] ?: "",
                                 app_version = app_version,
@@ -639,6 +639,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             // Update the UI with the processed data
             val layout = findViewById<ConstraintLayout>(R.id.parentFormP2H)
             for (i in 0 until batchCount) {
+
                 val includedLayout = layoutInflater.inflate(R.layout.activity_form_p2h_layout_pertanyaan, null)
                 includedLayout.id = View.generateViewId()
                 includedLayout.visibility = View.GONE

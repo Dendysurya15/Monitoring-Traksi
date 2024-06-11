@@ -43,7 +43,7 @@ import kotlinx.android.synthetic.main.activity_main.rvListData
 import kotlinx.android.synthetic.main.alert_dialog_view.view.lottieDialog
 
 @Suppress("DEPRECATION")
-class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickListener  {
+class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickListener , UploadHistoryP2HAdapter.OnClickDataListener {
     private var prefManager: PrefManager? = null
     private lateinit var unitViewModel: UnitViewModel
 
@@ -110,7 +110,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
             sizeListAdapeter = list.size
 
             allListUploaded = list.all { it.archive == 1 }
-
         }
 
         fbUploadData.setOnClickListener{
@@ -167,7 +166,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         }
 
         clickAny()
-
         setupRecyclerList()
     }
 
@@ -239,7 +237,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                 PrefManager(this),
             )
         )[HistoryP2HViewModel::class.java]
-        uploadHistoryP2HAdapter = UploadHistoryP2HAdapter(this, historyP2HViewModel, this)
+        uploadHistoryP2HAdapter = UploadHistoryP2HAdapter(this, historyP2HViewModel, this, this)
     }
 
     private fun handleSynchronizeData(arg: String? = "") {
@@ -340,6 +338,10 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                 }
             }
         }
+    }
+
+    override fun onClickList(position: Int, item: LaporP2HModel){
+
     }
 
     override fun onDeleteClick(position:Int, item: LaporP2HModel) {

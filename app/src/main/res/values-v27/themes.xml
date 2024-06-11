@@ -9,7 +9,6 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:forceDarkAllowed">false</item>
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowIsTranslucent">true</item> <!--REMOVE DEFAULT SPLASH SCREEN-->
         <item name="android:windowTranslucentStatus">false</item>
