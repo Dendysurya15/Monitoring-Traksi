@@ -8,14 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
+import com.cbi.monitoring_traksi.ui.view.MainActivity
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.cbi.monitoring_traksi.utils.AppUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.json.JSONObject
 
 class UploadHistoryP2HAdapter(
     private val context: Context,
@@ -69,7 +72,30 @@ class UploadHistoryP2HAdapter(
         holder.bind(item)
         holder.itemTitlePeriksaUnit.text = "${position + 1}. ${item.jenis_unit} ${item.unit_kerja} ${item.type_unit}"
         holder.itemLokasiPeriksaUnit.text = ": ${item.unit_kerja}"
-        val tes = AppUtils.getCurrentDate()
+        var textjumlahKerusakan = ": Tidak ada"
+        var textItemKerusakan = ": Tidak ada"
+        val idPertanyaan = mutableListOf<String>()
+
+        // Check if kerusakan_unit data exists and is not empty
+        if (!item.kerusakan_unit.isNullOrEmpty()) {
+            val jsonObject = JSONObject(item.kerusakan_unit)
+            textjumlahKerusakan = ": ${jsonObject.length()} foto"
+            val keys = jsonObject.keys()
+
+            while (keys.hasNext()) {
+                idPertanyaan.add(keys.next())
+            }
+
+            historyP2HViewModel.loadNamaPertanyaanBasedFromId(idPertanyaan)
+            historyP2HViewModel.queryGetNamaPertanyaan.observe(context as LifecycleOwner){data->
+                var joinedText = data.joinToString(", ")
+                if (joinedText.length > 70) {
+                    joinedText = joinedText.substring(0, 70) + "..."
+                }
+                textItemKerusakan = joinedText
+            }
+        }
+
         var textStatusArchive = "Tersimpan - "
         var textLastUpdate = "${item.tanggal_upload}"
         if (item.archive == 1){
@@ -78,9 +104,10 @@ class UploadHistoryP2HAdapter(
             holder.itemStatusArchive.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
             holder.itemLastUpdate.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
         }
+        holder.itemJenisKerusakan.text = textItemKerusakan
         holder.itemStatusArchive.text = textStatusArchive
         holder.itemLastUpdate.text = textLastUpdate
-
+        holder.itemfotoKerusakan.text = textjumlahKerusakan
         holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
 
         val isLastItem = position == currentList.lastIndex

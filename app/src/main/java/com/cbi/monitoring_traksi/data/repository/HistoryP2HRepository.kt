@@ -39,6 +39,25 @@ class HistoryP2HRepository(context: Context) {
         return rowsAffected > 0
     }
 
+        fun fetchNamaPertanyaanBasedOnId(idList: Collection<String>): MutableList<String> {
+            val db = databaseHelper.readableDatabase
+            val idString = idList.joinToString(",") { "'$it'" } // Convert IDs to a comma-separated string
+            val query = "SELECT nama_pertanyaan FROM ${DatabaseHelper.DB_TAB_LIST_PERTANYAAN} " +
+                    "WHERE id IN ($idString)"
+
+            val cursor = db.rawQuery(query, null)
+            val namaPertanyaanList = mutableListOf<String>()
+
+            if (cursor.moveToFirst()) {
+                do {
+                    val namaPertanyaan = cursor.getString(cursor.getColumnIndexOrThrow("nama_pertanyaan"))
+                    namaPertanyaanList.add(namaPertanyaan)
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+            return namaPertanyaanList
+        }
+
     @SuppressLint("Range")
     fun fetchByDateLaporanP2H(dateRequest: String): List<LaporP2HModel> {
         val dataLaporanP2H = mutableListOf<LaporP2HModel>()

@@ -41,6 +41,8 @@ class HistoryP2HViewModel(
 ) : AndroidViewModel(application) {
 
     private val _queryGetLaporanP2H = MutableLiveData<List<LaporP2HModel>>()
+    private val _queryGetNamaPertanyaan = MutableLiveData<MutableList<String>>()
+    val queryGetNamaPertanyaan: LiveData<MutableList<String>> get() = _queryGetNamaPertanyaan
     private val urlCheckPhotos = AppUtils.mainServer + "aplikasi_traksi/" + "checkPhotosLaporanP2H.php"
     private val urlCheckData = AppUtils.mainServer + "aplikasi_traksi/" + "checkDataLaporanP2H.php"
     private val urlInsertData = AppUtils.mainServer + "aplikasi_traksi/" + "postNewLaporanP2H.php"
@@ -61,6 +63,7 @@ class HistoryP2HViewModel(
     private val timeOut = 300000
     private val idUpload = ArrayList<Int>()
     private val _uploadResult = MutableLiveData<List<LaporP2HModel>>()
+
     val uploadResult: LiveData<List<LaporP2HModel>> get() = _uploadResult
 
     private val _deleteItemResult = MutableLiveData<Boolean>()
@@ -75,6 +78,18 @@ class HistoryP2HViewModel(
             }catch (e:Exception){
                 e.printStackTrace()
                 _queryGetLaporanP2H.value = emptyList()
+            }
+        }
+    }
+
+
+    fun loadNamaPertanyaanBasedFromId(idList: MutableList<String>) {
+        viewModelScope.launch {
+            try {
+                _queryGetNamaPertanyaan.value = historyRepo.fetchNamaPertanyaanBasedOnId(idList)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _queryGetNamaPertanyaan
             }
         }
     }
