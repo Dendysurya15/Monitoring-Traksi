@@ -31,22 +31,22 @@ import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.ui.view.MainActivity
 import com.cbi.monitoring_traksi.ui.viewModel.CameraViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
-import com.cbi.monitoring_traksi.utils.AppUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
-import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.detail_foto_unit
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.listKerusakanContainer
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.mbStatusBeroperasi
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.testing
 //import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.mbStatusBeroperasi
-import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.titleListPertanyaan
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvCaptionDenganKerusakan
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvCaptionTanpaKerusakan
 
 
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvLokasiUnit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvNamaUnit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvTglCreated
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvTitleDenganKerusakan
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvTitleTanpaKerusakan
 import kotlinx.android.synthetic.main.list_item_kerusakan_per_unit.view.fotoItemKerusakanUnit
-import kotlinx.android.synthetic.main.list_item_kerusakan_per_unit.view.komentarKerusakanUnit
-import kotlinx.android.synthetic.main.list_item_kerusakan_per_unit.view.namaKerusakanUnit
 
 import org.json.JSONObject
 import java.io.File
@@ -105,10 +105,6 @@ class UploadHistoryP2HAdapter(
                     val parentWidth = rootView.width
                     val parentHeight = rootView.height
 
-                    val cardViewLayoutParams = cardView.layoutParams
-                    cardViewLayoutParams.width = (parentWidth * 0.9).toInt()
-                    cardViewLayoutParams.height = (parentHeight * 0.7).toInt()
-                    cardView.layoutParams = cardViewLayoutParams
 
                     val builder: AlertDialog.Builder =
                         AlertDialog.Builder(context).setView(layoutBuilder)
@@ -129,7 +125,7 @@ class UploadHistoryP2HAdapter(
                     }
                     layoutBuilder.tvTglCreated.text = "$textStatusArchive$textLastUpdate"
                     layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja} ${currentItem.type_unit}"
-                    layoutBuilder.tvLokasiUnit.text = "(Unit ${currentItem.unit_kerja})"
+                    layoutBuilder.tvLokasiUnit.text = "Unit ${currentItem.unit_kerja}"
 
                     val status = currentItem.status_unit_beroperasi
                     layoutBuilder.mbStatusBeroperasi.text = "$status!"
@@ -145,8 +141,8 @@ class UploadHistoryP2HAdapter(
                             ContextCompat.getColor(context, R.color.colorRedDark)
                         }
                         else -> {
-                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.black))
-                            ContextCompat.getColor(context, R.color.graylight) // Define a default background color if needed
+                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
+                            ContextCompat.getColor(context, R.color.yellowbutton) // Define a default background color if needed
                         }
                     }
 
@@ -154,44 +150,26 @@ class UploadHistoryP2HAdapter(
 
                     val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
                     val dirApp = File(rootApp, "LaporP2H")
-                    val file = File(dirApp, currentItem.foto_unit)
+                    val fileFotoUnit = File(dirApp, currentItem.foto_unit)
 
-                    Glide.with(context).load(Uri.fromFile(file))
+                    Glide.with(context).load(Uri.fromFile(fileFotoUnit))
                         .diskCacheStrategy(
                             DiskCacheStrategy.NONE
                         ).skipMemoryCache(true).centerCrop()
                         .into(layoutBuilder.detail_foto_unit)
 
                     layoutBuilder.detail_foto_unit.setOnClickListener{
-                        val defaultRotation = 90f
-                        val zoomLayout = LayoutInflater.from(context).inflate(R.layout.layout_preview_foto_detail_laporan, null)
-                        val zoomImageView: ImageView = zoomLayout.findViewById(R.id.zoomImageView)
-                        zoomImageView.rotation = defaultRotation
-
-                        val zoomBuilder: AlertDialog.Builder = AlertDialog.Builder(context).setView(layoutBuilder)
-                        val zoomDialog: AlertDialog = zoomBuilder.create()
-
-                        val closeZoomButton: ImageView = zoomLayout.findViewById(R.id.closeZoomButton)
-                        closeZoomButton.setOnClickListener {
-                            zoomDialog.dismiss()
-                        }
-
-                        val rotateButton: ImageView = zoomLayout.findViewById(R.id.rotateButton)
-                        var currentRotation = defaultRotation
-                        rotateButton.setOnClickListener {
-                            currentRotation += 90f
-                            if (currentRotation >= 360f) {
-                                currentRotation = 0f
-                            }
-                            zoomImageView.rotation = currentRotation
-                        }
-
-                        zoomDialog.show()
+                        preview_image(fileFotoUnit, context)
                     }
 
                     val idPertanyaan = mutableListOf<String>()
-                    if (!currentItem.kerusakan_unit.isNullOrEmpty()) {
 
+                    val cardViewLayoutParams = cardView.layoutParams
+                    cardViewLayoutParams.width = (parentWidth * 0.9).toInt()
+
+
+                    if (!currentItem.kerusakan_unit.isNullOrEmpty()) {
+                        cardViewLayoutParams.height = (parentHeight * 0.9).toInt()
                         val jsonObject = JSONObject(currentItem.kerusakan_unit)
                         val keys = jsonObject.keys()
                         val listKerusakan = mutableListOf<Map<String, String>>()
@@ -226,55 +204,25 @@ class UploadHistoryP2HAdapter(
                             listKerusakan.forEachIndexed { index, data ->
                                 val layoutInflater = LayoutInflater.from(context)
                                 val listItemView = layoutInflater.inflate(R.layout.list_item_kerusakan_per_unit, it, false)
+                                layoutBuilder.tvTitleDenganKerusakan.visibility = View.VISIBLE
+                                layoutBuilder.tvCaptionDenganKerusakan.visibility = View.VISIBLE
+                                layoutBuilder.testing.visibility = View.VISIBLE
+
                                 val namaKerusakanUnit = listItemView.findViewById<TextView>(R.id.namaKerusakanUnit)
                                 val komentarKerusakanUnit = listItemView.findViewById<TextView>(R.id.komentarKerusakanUnit)
 
                                 namaKerusakanUnit.text = "$inc. ${namaPertanyaan.getOrNull(index)?: "Unknown Data"}"
                                 komentarKerusakanUnit.text = data["komentar"]
-                                val file = File(dirApp, data["foto"])
+                                val fileKerusakanUnit = File(dirApp, data["foto"])
 
-                                Glide.with(context).load(Uri.fromFile(file))
+                                Glide.with(context).load(Uri.fromFile(fileKerusakanUnit))
                                     .diskCacheStrategy(
                                         DiskCacheStrategy.NONE
                                     ).skipMemoryCache(true).centerCrop()
                                     .into(listItemView.fotoItemKerusakanUnit)
 
                                 listItemView.fotoItemKerusakanUnit.setOnClickListener{
-
-                                    val zoomLayout = LayoutInflater.from(context).inflate(R.layout.layout_preview_foto_detail_laporan, null)
-                                    val zoomImageView: ImageView = zoomLayout.findViewById(R.id.zoomImageView)
-
-
-                                    Glide.with(context).load(Uri.fromFile(file))
-                                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                        .skipMemoryCache(true)
-                                        .into(zoomImageView)
-
-
-                                    // Set the default rotation angle
-                                    val defaultRotation = 90f
-                                    zoomImageView.rotation = defaultRotation
-
-                                    val zoomBuilder: AlertDialog.Builder = AlertDialog.Builder(context).setView(zoomLayout)
-                                    val zoomDialog: AlertDialog = zoomBuilder.create()
-
-                                    val closeZoomButton: ImageView = zoomLayout.findViewById(R.id.closeZoomButton)
-                                    closeZoomButton.setOnClickListener {
-                                        zoomDialog.dismiss()
-                                    }
-
-                                    val rotateButton: ImageView = zoomLayout.findViewById(R.id.rotateButton)
-                                    var currentRotation = defaultRotation
-                                    rotateButton.setOnClickListener {
-                                        currentRotation += 90f
-                                        if (currentRotation >= 360f) {
-                                            currentRotation = 0f
-                                        }
-                                        zoomImageView.rotation = currentRotation
-                                    }
-
-                                    zoomDialog.show()
-
+                                    preview_image(fileKerusakanUnit, context)
                                 }
 
                                 it.addView(listItemView)
@@ -282,7 +230,13 @@ class UploadHistoryP2HAdapter(
                                 inc++
                             }
                         }
+                    }else{
+                        cardViewLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                        layoutBuilder.tvTitleTanpaKerusakan.visibility = View.VISIBLE
+                        layoutBuilder.tvCaptionTanpaKerusakan.visibility = View.VISIBLE
                     }
+
+                    cardView.layoutParams = cardViewLayoutParams
 
                     if (alertDialog.window != null) {
                         alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
@@ -293,27 +247,41 @@ class UploadHistoryP2HAdapter(
             }
         }
 
-        @SuppressLint("MissingInflatedId")
-        private fun showZoomDialog(file: File, activity: Activity) {
-            val layoutInflater = LayoutInflater.from(activity)
-            val zoomView = layoutInflater.inflate(R.layout.layout_preview_foto_detail_laporan, null)
+       fun preview_image(file:File , context: Context){
 
-            val builder = AlertDialog.Builder(activity).setView(zoomView)
-            val zoomDialog: AlertDialog = builder.create()
+           val zoomLayout = LayoutInflater.from(context).inflate(R.layout.layout_preview_foto_detail_laporan, null)
+           val zoomImageView: ImageView = zoomLayout.findViewById(R.id.zoomImageView)
 
-            val zoomImageView: ImageView = zoomView.findViewById(R.id.fotoItemKerusakanUnit)
-            Glide.with(activity).load(Uri.fromFile(file))
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(zoomImageView)
 
-//            val closeZoomButton: ImageView = zoomView.findViewById(R.id.closeZoomButton)
-//            closeZoomButton.setOnClickListener {
-//                zoomDialog.dismiss()
-//            }
+           Glide.with(context).load(Uri.fromFile(file))
+               .diskCacheStrategy(DiskCacheStrategy.NONE)
+               .skipMemoryCache(true)
+               .into(zoomImageView)
 
-            zoomDialog.show()
-        }
+           val defaultRotation = 90f
+           zoomImageView.rotation = defaultRotation
+
+           val zoomBuilder: AlertDialog.Builder = AlertDialog.Builder(context).setView(zoomLayout)
+           val zoomDialog: AlertDialog = zoomBuilder.create()
+
+           val closeZoomButton: ImageView = zoomLayout.findViewById(R.id.closeZoomButton)
+           closeZoomButton.setOnClickListener {
+               zoomDialog.dismiss()
+           }
+
+           val rotateButton: ImageView = zoomLayout.findViewById(R.id.rotateButton)
+           var currentRotation = defaultRotation
+           rotateButton.setOnClickListener {
+               currentRotation += 90f
+               if (currentRotation >= 360f) {
+                   currentRotation = 0f
+               }
+               zoomImageView.rotation = currentRotation
+           }
+
+           zoomDialog.show()
+
+       }
 
         fun bind(item: LaporP2HModel) {
             currentItem = item
