@@ -23,10 +23,8 @@ import com.cbi.monitoring_traksi.ui.viewModel.LoginViewModel
 import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.PrefManager
 import es.dmoral.toasty.Toasty
-import kotlinx.android.synthetic.main.activity_login.fieldEmail
-import kotlinx.android.synthetic.main.activity_login.fieldPassword
-import kotlinx.android.synthetic.main.activity_login.idEmail
 import kotlinx.android.synthetic.main.activity_login.idPassword
+import kotlinx.android.synthetic.main.activity_login.idUsername
 import kotlinx.android.synthetic.main.activity_login.loadingLogin
 import kotlinx.android.synthetic.main.activity_login.mbFinger
 import kotlinx.android.synthetic.main.activity_login.mbLogin
@@ -35,7 +33,7 @@ import kotlinx.android.synthetic.main.activity_login.mcbRemember
 class LoginActivity : AppCompatActivity() {
 
     private var prefManager: PrefManager? = null
-    private var email = ""
+    private var username = ""
     private var pass = ""
 
     private lateinit var viewModel: LoginViewModel
@@ -80,8 +78,8 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun clickButtonLogin(){
 
-        AppUtils.handleTextChanges(idEmail) {
-            email = it
+        AppUtils.handleTextChanges(idUsername) {
+            username = it
         }
         AppUtils.handleTextChanges(idPassword) {
             pass = it
@@ -89,13 +87,14 @@ class LoginActivity : AppCompatActivity() {
 
         mbLogin.setOnClickListener {
 
-            if (email.isEmpty() || pass.isEmpty()) {
+
+            if (username.isEmpty() || pass.isEmpty()) {
                 showAlertDialog("Error", "Username or password cannot be empty.")
             }else{
 //                displayToasty(this,email + ' ' + pass)
                 loadingLogin.visibility = View.VISIBLE
                 AppUtils.showLoadingLayout(this, window, loadingLogin)
-                viewModel.loginUser(email, pass)
+                viewModel.loginUser(username, pass)
             }
         }
 
@@ -124,10 +123,10 @@ class LoginActivity : AppCompatActivity() {
     private fun setTampilan() {
         if (prefManager!!.remember) {
             mcbRemember.isChecked = true
-            if (prefManager!!.email.toString().isNotEmpty() && prefManager!!.password.toString().isNotEmpty()) {
-                idEmail.setText(prefManager!!.email, TextView.BufferType.SPANNABLE)
+            if (prefManager!!.username.toString().isNotEmpty() && prefManager!!.password.toString().isNotEmpty()) {
+                idUsername.setText(prefManager!!.username, TextView.BufferType.SPANNABLE)
                 idPassword.setText(prefManager!!.password, TextView.BufferType.SPANNABLE)
-                email = prefManager!!.email.toString()
+                username = prefManager!!.username.toString()
                 pass = prefManager!!.password.toString()
             }
         } else {

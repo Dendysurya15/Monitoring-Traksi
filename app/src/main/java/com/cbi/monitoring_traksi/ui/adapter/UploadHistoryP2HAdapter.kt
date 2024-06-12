@@ -32,6 +32,7 @@ import com.cbi.monitoring_traksi.ui.view.MainActivity
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.detail_foto_unit
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.listKerusakanContainer
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.mbStatusBeroperasi
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.scListKerusakan
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvCaptionDenganKerusakan
@@ -122,26 +123,26 @@ class UploadHistoryP2HAdapter(
                     layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja} ${currentItem.type_unit}"
                     layoutBuilder.tvLokasiUnit.text = "Unit ${currentItem.unit_kerja}"
 
-                    val status = currentItem.status_unit_beroperasi
-                    layoutBuilder.mbStatusBeroperasi.text = "$status!"
-
-                    // Set the background color based on the status
-                    val statusBackgroundColor = when (status) {
-                        "Segera Beroperasi" -> {
-                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
-                            ContextCompat.getColor(context, R.color.greendarkerbutton)
-                        }
-                        "Tidak Diizinkan Beroperasi" -> {
-                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
-                            ContextCompat.getColor(context, R.color.colorRedDark)
-                        }
-                        else -> {
-                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
-                            ContextCompat.getColor(context, R.color.yellowbutton) // Define a default background color if needed
-                        }
-                    }
-
-                    layoutBuilder.mbStatusBeroperasi.setBackgroundColor(statusBackgroundColor)
+//                    val status = currentItem.status_unit_beroperasi
+//                    layoutBuilder.mbStatusBeroperasi.text = "$status!"
+//
+//                    // Set the background color based on the status
+//                    val statusBackgroundColor = when (status) {
+//                        "Segera Beroperasi" -> {
+//                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
+//                            ContextCompat.getColor(context, R.color.greendarkerbutton)
+//                        }
+//                        "Tidak Diizinkan Beroperasi" -> {
+//                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
+//                            ContextCompat.getColor(context, R.color.colorRedDark)
+//                        }
+//                        else -> {
+//                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.black))
+//                            ContextCompat.getColor(context, R.color.graylight) // Define a default background color if needed
+//                        }
+//                    }
+//
+//                    layoutBuilder.mbStatusBeroperasi.setBackgroundColor(statusBackgroundColor)
 
                     val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
                     val dirApp = File(rootApp, "LaporP2H")
@@ -201,7 +202,7 @@ class UploadHistoryP2HAdapter(
                                 val listItemView = layoutInflater.inflate(R.layout.list_item_kerusakan_per_unit, it, false)
                                 layoutBuilder.tvTitleDenganKerusakan.visibility = View.VISIBLE
                                 layoutBuilder.tvCaptionDenganKerusakan.visibility = View.VISIBLE
-                                layoutBuilder.scListKerusakan.visibility = View.VISIBLE
+                                layoutBuilder.listKerusakanContainer.visibility = View.VISIBLE
 
                                 val namaKerusakanUnit = listItemView.findViewById<TextView>(R.id.namaKerusakanUnit)
                                 val komentarKerusakanUnit = listItemView.findViewById<TextView>(R.id.komentarKerusakanUnit)

@@ -20,8 +20,10 @@ import org.json.JSONObject
 class LoginRepository(private val context: Context, private val window: Window, private val loadingLayout: View) {
     fun loginUser(email: String, password: String, callback: (LoginModel) -> Unit) {
         val prefManager = PrefManager(context)
-        val pmu = prefManager.email
+        val pmu = prefManager.username
         val pmp = prefManager.password
+
+
 
         if (email == pmu && password == pmp) {
             callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
@@ -29,6 +31,7 @@ class LoginRepository(private val context: Context, private val window: Window, 
             onlineAuth(email, password, callback)
         }
         else {
+            Log.d("testing", "asdfsdf")
 //            callback(LoginModel(success = false, statusCode = 0, message = "asdkljfklajsdfkljk"))
             offlineAuth(email, password, callback)
         }
@@ -39,7 +42,7 @@ class LoginRepository(private val context: Context, private val window: Window, 
         val url = AppUtils.serverMp + "config/apk-login.php"
 
 
-        if (email == prefManager.email && password == prefManager.password) {
+        if (email == prefManager.username && password == prefManager.password) {
             callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
         } else {
             AppUtils.showLoadingLayout(context, window, loadingLayout)
@@ -52,6 +55,8 @@ class LoginRepository(private val context: Context, private val window: Window, 
                         try {
                             val jObj = JSONObject(response)
                             val success = jObj.getInt(AppUtils.TAG_SUCCESS)
+
+                            Log.d("testing", success.toString())
                             if (success == 1) {
                                 prefManager.session = true
                                 prefManager.userid = jObj.getInt(AppUtils.TAG_USERID).toString()
@@ -62,7 +67,7 @@ class LoginRepository(private val context: Context, private val window: Window, 
                                 prefManager.jabatan = jObj.getString(AppUtils.TAG_JABATAN)
                                 prefManager.nohp = jObj.getString(AppUtils.TAG_NOHP)
                                 Log.d("masuk sini",jObj.getString(AppUtils.TAG_EMAIL))
-                                prefManager.email = jObj.getString(AppUtils.TAG_EMAIL)
+                                prefManager.username = jObj.getString(AppUtils.TAG_EMAIL)
                                 prefManager.lokasi = jObj.getString(AppUtils.TAG_LOKASI)
                                 prefManager.akses = jObj.getString(AppUtils.TAG_AKSES)
                                 prefManager.password = jObj.getString(AppUtils.TAG_PASSWORD)
@@ -110,7 +115,7 @@ class LoginRepository(private val context: Context, private val window: Window, 
         val prefManager = PrefManager(context)
         if (email == "srs" && password == "srs3") {
             callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
-        } else if (email == prefManager.email && password == prefManager.password) {
+        } else if (email == prefManager.username && password == prefManager.password) {
             callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
         } else {
             callback(LoginModel(success = false, statusCode = 0, message = "Silahkan hubungkan perangkat anda ke jaringan untuk melanjutkan."))

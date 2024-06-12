@@ -36,9 +36,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.8"
                     android:id="@+id/titlePeriksaUnit"
-                    android:text="1. Exavator 911 SLE CAT 320GC / PC 200"
+                    android:textColor="@color/black"
+
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="12dp"/>
+                    android:textSize="14dp"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,7 +54,7 @@
                     android:layout_weight="0.6"
                     android:text="Jenis Kerusakan"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="8dp"/>
+                    android:textSize="10dp"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -62,7 +63,7 @@
                     android:layout_weight="1"
                     android:id="@+id/listJenisKerusakan"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="8dp"/>
+                    android:textSize="10dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -78,7 +79,7 @@
                     android:layout_weight="0.6"
                     android:text="Foto Terlampir"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="8dp"/>
+                    android:textSize="10dp"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -87,7 +88,7 @@
                     android:layout_weight="1"
                     android:id="@+id/listFotoKerusakan"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="8dp"/>
+                    android:textSize="10dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -103,7 +104,7 @@
                     android:layout_weight="0.6"
                     android:text="Lokasi Unit"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="8dp"/>
+                    android:textSize="10dp"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -112,7 +113,7 @@
                     android:layout_weight="1"
                     android:id="@+id/lokasiPeriksaUnit"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="8dp"/>
+                    android:textSize="10dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -128,15 +129,14 @@
                     android:id="@+id/statusArchive"
                     android:fontFamily="@font/poppins_italic"
                     android:textColor="@color/yellowbutton"
-                    android:textSize="9dp"/>
-
+                    android:textSize="11dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:id="@+id/lastUpdate"
                     android:textColor="@color/yellowbutton"
-                    android:textSize="9dp"/>
+                    android:textSize="11dp"/>
             </LinearLayout>
         </LinearLayout>
 

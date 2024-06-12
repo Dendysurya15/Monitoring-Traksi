@@ -12,8 +12,8 @@ class LoginViewModel(private val repository: LoginRepository) : ViewModel() {
     private val _loginModel = MutableLiveData<LoginModel>()
 
     val loginModel: LiveData<LoginModel> get() = _loginModel
-    fun loginUser(email: String, password: String) {
-        repository.loginUser(email, password) { result ->
+    fun loginUser(username: String, password: String) {
+        repository.loginUser(username, password) { result ->
             _loginModel.postValue(result)
         }
     }

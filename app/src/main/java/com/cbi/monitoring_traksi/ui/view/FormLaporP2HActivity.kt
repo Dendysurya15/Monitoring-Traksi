@@ -25,6 +25,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.cbi.monitoring_traksi.BuildConfig
 import com.cbi.monitoring_traksi.R
@@ -41,6 +42,7 @@ import com.cbi.monitoring_traksi.utils.AppUtils.closeLoadingLayout
 import com.cbi.monitoring_traksi.utils.AppUtils.handleStringtoJsonObjectPertanyaan
 import com.cbi.monitoring_traksi.utils.PrefManager
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import es.dmoral.toasty.Toasty
@@ -383,9 +385,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private fun handleClicksForm(){
         arrInsertedDataTable.clear()
         formLayoutsPertanyaan.forEachIndexed { index, layout ->
-            val materialButtonNext = layout.findViewById<MaterialButton>(R.id.mbButtonNext)
-            val materialButtonPrev = layout.findViewById<MaterialButton>(R.id.mbButtonPrev)
-            val mbSaveFormP2H = layout.findViewById<MaterialButton>(R.id.mbSaveFormP2H)
+            val materialButtonNext = layout.findViewById<FloatingActionButton>(R.id.mbButtonNext)
+            val materialButtonPrev = layout.findViewById<FloatingActionButton>(R.id.mbButtonPrev)
+            val materialButtonPrevTop = layout.findViewById<MaterialButton>(R.id.mbButtonPrevTop)
+            val mbSaveFormP2H = layout.findViewById<FloatingActionButton>(R.id.mbSaveFormP2H)
 
 
             materialButtonNext.setOnClickListener {
@@ -393,6 +396,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
 
             materialButtonPrev.setOnClickListener {
+                toggleFormVisibility(index - 1)
+            }
+
+            materialButtonPrevTop.setOnClickListener {
                 toggleFormVisibility(index - 1)
             }
 
@@ -411,7 +418,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     val jenis_unit = etJenisUnit.text.toString()
                     val unit_kerja = etUnitKerja.text.toString()
                     val kode_unit =  etKodeUnit.text.toString()
-                    val type_unit =  etKodeUnit.text.toString()
+                    val type_unit =  etTypeUnit.text.toString()
 
 
 
@@ -653,12 +660,15 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 textViewQuestion.text = "Form page ke-${i + 1}"
 
                 if (i == (batchCount - 1)) {
-                    val mbSaveFormP2H = includedLayout.findViewById<TextView>(R.id.mbSaveFormP2H)
+                    val mbSaveFormP2H = includedLayout.findViewById<FloatingActionButton>(R.id.mbSaveFormP2H)
                     mbSaveFormP2H.visibility = View.VISIBLE
                 } else {
-                    val mbButtonForNext = includedLayout.findViewById<TextView>(R.id.mbButtonNext)
+                    val mbButtonForNext = includedLayout.findViewById<FloatingActionButton>(R.id.mbButtonNext)
                     mbButtonForNext.visibility = View.VISIBLE
-                    mbButtonForNext.text = "Next"
+                    mbButtonForNext.backgroundTintList = ContextCompat.getColorStateList(this@FormLaporP2HActivity, R.color.bluedark)
+                    val mbButtonForPrev = includedLayout.findViewById<FloatingActionButton>(R.id.mbButtonPrev)
+                    mbButtonForPrev.visibility = View.VISIBLE
+                    mbButtonForPrev.backgroundTintList = ContextCompat.getColorStateList(this@FormLaporP2HActivity, R.color.graytextdark)
                 }
 
                 val pertanyaanThisPage = paginatedData[i]
@@ -910,12 +920,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     override fun onBackPressed() {
         if (cameraViewModel.statusCamera() || zoomOpen) {
 
-            Log.d("testing", "lagi buka camera gan")
-
-
-            Log.d("testing", currentFormIndex.toString())
-
-            Log.d("testing", isFormInformasiUnit.toString())
             if (isFormInformasiUnit == false && currentFormIndex >= 0 && currentFormIndex < formLayoutsPertanyaan.size) {
                 id_take_foto_layout.visibility = View.VISIBLE
                 AppUtils.showLoadingLayout(this, window, loadingFetchingData)
@@ -952,12 +956,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             if (!isLocationEnabled) {
                 requestLocationPermission()
             } else {
-                locationEnable = true
                 locationViewModel.startLocationUpdates()
             }
         }
 
         locationViewModel.locationData.observe(this) { location ->
+            locationEnable = true
             lat = location.latitude
             lon = location.longitude
         }

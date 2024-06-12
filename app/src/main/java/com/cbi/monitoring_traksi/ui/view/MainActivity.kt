@@ -74,6 +74,8 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         prefManager = PrefManager(this)
         if (prefManager!!.isFirstTimeLaunch) {
             handleSynchronizeData()
+        }else{
+            AppUtils.closeLoadingLayout(loadingMain)
         }
         name_user_login.text = prefManager!!.name
         dateToday.text =  AppUtils.getCurrentDate()
@@ -201,7 +203,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
     private fun setupRecyclerList(){
         val currentDate = getCurrentDate(true)
         historyP2HViewModel.loadLaporanP2HByDate(currentDate)
-        AppUtils.closeLoadingLayout(loadingMain)
     }
 
     private fun clickAny(){
@@ -231,7 +232,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                 prefManager!!.isFirstTimeLaunch = true
                 prefManager!!.lastUpdate = ""
                 prefManager!!.session = false
-                prefManager!!.email = ""
+                prefManager!!.username = ""
                 prefManager!!.password = ""
                 prefManager!!.remember = false
 

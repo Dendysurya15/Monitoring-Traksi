@@ -162,10 +162,10 @@ class PrefManager(_context: Context) {
             editor.commit()
         }
 
-    var email: String?
-        get() = pref.getString(EMAIL, "")
+    var username: String?
+        get() = pref.getString(USERNAME, "")
         set(mail) {
-            editor.putString(EMAIL, mail)
+            editor.putString(USERNAME, mail)
             editor.commit()
         }
 
@@ -237,7 +237,7 @@ class PrefManager(_context: Context) {
         const val DEPARTEMEN = "departemen"
         const val JABATAN = "jabatan"
         const val NOHP = "no_hp"
-        const val EMAIL = "email"
+        const val USERNAME = "username"
         const val LOKASI = "lokasi_kerja"
         const val AKSES = "akses_level"
         const val PASSWORD = "password"

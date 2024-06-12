@@ -26,20 +26,20 @@
             android:orientation="horizontal" android:weightSum="3">
 
 
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/mbPrevForm1"
                 android:layout_weight="0.7"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
-                app:iconSize="30dp"
+                app:iconSize="35dp"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_marginStart="5dp"
                 android:layout_marginRight="15dp"
                 android:layout_gravity="center_vertical"
                 android:backgroundTint="@color/white"
                 app:iconTint="@color/bluedark"
                 app:icon="@drawable/baseline_arrow_back_24"
-                 />
+                />
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:orientation="vertical"
@@ -64,9 +64,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:fontFamily="@font/poppins_lightitalic"
-                    android:textSize="12dp"
-
+                    android:fontFamily="@font/poppins_italic"
+                    android:textSize="13dp"
+                    android:textColor="@color/black"
                     android:text="Page Informasi Unit (1 / 1)"
                     android:layout_weight="1"/>
 
@@ -131,15 +131,14 @@
                 android:text="Tanggal Periksa"
 
                 android:fontFamily="@font/poppins_medium"
-
-                android:textSize="11dp"/>
+android:textColor="@color/black"
+                android:textSize="14dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/sdaf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-
+                style="@style/CustomTextInputLayout"
                 app:boxStrokeColor="@color/bluedark"
                 app:cursorColor="@color/bluedark"
                 app:hintTextColor="@color/bluedark"
@@ -152,6 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
+                    android:background="@color/graylight"
                     android:textColor="@color/black"
                     android:textSize="10dp" />
 
@@ -169,8 +169,8 @@
                 android:layout_height="match_parent"
                 android:text="Jenis Unit"
                 android:fontFamily="@font/poppins_medium"
-
-                android:textSize="11dp"/>
+                android:textColor="@color/black"
+                android:textSize="14dp"/>
 
 
             <com.google.android.material.textfield.TextInputLayout
@@ -230,10 +230,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Unit Kerja"
-
+android:textColor="@color/black"
                 android:fontFamily="@font/poppins_medium"
-
-                android:textSize="11dp"/>
+                android:textSize="14dp"
+                />
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -283,8 +283,8 @@
                 android:layout_height="match_parent"
                 android:text="Kode Unit"
                 android:fontFamily="@font/poppins_medium"
-
-                android:textSize="11dp"/>
+android:textColor="@color/black"
+                android:textSize="14dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
 
@@ -345,17 +345,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Type Unit"
-
+android:textColor="@color/black"
                 android:fontFamily="@font/poppins_medium"
-
-                android:textSize="11dp"/>
+                android:textSize="14dp"
+                />
 
             <com.google.android.material.textfield.TextInputLayout
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:hint="Edit Type Unit"
+                style="@style/CustomTextInputLayout"
                 app:boxStrokeColor="@color/bluedark"
                 app:cursorColor="@color/bluedark"
                 app:hintTextColor="@color/bluedark"
@@ -368,11 +367,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:inputType="textPersonName"
+                    android:textColor="@color/black"
                     android:textSize="10dp" />
 
             </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+
+    </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -436,6 +436,7 @@
 
 
 
+
     <com.google.android.material.button.MaterialButton
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -444,7 +445,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.6"
         android:text="Mulai"
-        android:textSize="15sp"
+        android:textSize="16dp"
         android:layout_gravity="end"
         android:fontFamily="@font/poppins_semibold"
         app:backgroundTint="@color/bluedark"
@@ -452,5 +453,8 @@
         app:cornerRadius="10dp"
         app:elevation="10dp"
         tools:ignore="MissingConstraints" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
