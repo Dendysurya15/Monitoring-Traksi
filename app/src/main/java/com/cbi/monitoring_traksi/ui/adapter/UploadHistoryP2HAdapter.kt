@@ -29,18 +29,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.ui.view.MainActivity
-import com.cbi.monitoring_traksi.ui.viewModel.CameraViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.detail_foto_unit
-import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.listKerusakanContainer
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.mbStatusBeroperasi
-import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.testing
-//import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.mbStatusBeroperasi
+import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.scListKerusakan
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvCaptionDenganKerusakan
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvCaptionTanpaKerusakan
-
-
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvLokasiUnit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvNamaUnit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.tvTglCreated
@@ -206,7 +201,7 @@ class UploadHistoryP2HAdapter(
                                 val listItemView = layoutInflater.inflate(R.layout.list_item_kerusakan_per_unit, it, false)
                                 layoutBuilder.tvTitleDenganKerusakan.visibility = View.VISIBLE
                                 layoutBuilder.tvCaptionDenganKerusakan.visibility = View.VISIBLE
-                                layoutBuilder.testing.visibility = View.VISIBLE
+                                layoutBuilder.scListKerusakan.visibility = View.VISIBLE
 
                                 val namaKerusakanUnit = listItemView.findViewById<TextView>(R.id.namaKerusakanUnit)
                                 val komentarKerusakanUnit = listItemView.findViewById<TextView>(R.id.komentarKerusakanUnit)

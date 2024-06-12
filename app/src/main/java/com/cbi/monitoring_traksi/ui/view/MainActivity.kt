@@ -173,7 +173,19 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         setupRecyclerList()
     }
 
-
+    @Deprecated("Deprecated in Java")
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        AlertDialogUtility.withTwoActions(
+            this,
+            "Ya",
+            "Peringatan",
+            "Apakah anda yakin menutup aplikasi?",
+            "warning.json"
+        ) {
+            finishAffinity()
+        }
+    }
     fun setLayoutVisibility(isZooming: Boolean) {
         val informationUnitLayout: View = findViewById(R.id.parentMainHalamanUtama)
         val editablePhotoLayout: View = findViewById(R.id.id_preview_foto)

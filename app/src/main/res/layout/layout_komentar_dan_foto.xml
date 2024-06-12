@@ -27,6 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:id="@+id/tvInstruksiUpload"
                 android:textStyle="italic"
                 android:paddingLeft="5dp"
                 android:text="Upload Foto (*)"
@@ -37,10 +38,10 @@
                 android:gravity="center"
                 android:textStyle="italic"
                 android:visibility="gone"
-                android:id="@+id/idStatusSuccessTeruploadPerPertanyaan"
+                android:id="@+id/tvSuccessUpload"
                 android:textColor="@color/greendarkerbutton"
                 android:paddingLeft="5dp"
-                android:text="Terupload (*)"
+                android:text="Tersimpan (*)"
                 />
             <TextView
                 android:layout_width="wrap_content"

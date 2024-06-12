@@ -910,20 +910,26 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     override fun onBackPressed() {
         if (cameraViewModel.statusCamera() || zoomOpen) {
 
-            if (currentFormIndex >= 0 && currentFormIndex < formLayoutsPertanyaan.size) {
+            Log.d("testing", "lagi buka camera gan")
+
+
+            Log.d("testing", currentFormIndex.toString())
+
+            Log.d("testing", isFormInformasiUnit.toString())
+            if (isFormInformasiUnit == false && currentFormIndex >= 0 && currentFormIndex < formLayoutsPertanyaan.size) {
                 id_take_foto_layout.visibility = View.VISIBLE
                 AppUtils.showLoadingLayout(this, window, loadingFetchingData)
 
                 cameraViewModel.closeCamera()
                 formLayoutsPertanyaan[currentFormIndex].visibility = View.VISIBLE
-                AppUtils.closeLoadingLayout(loadingFetchingData)
+                closeLoadingLayout(loadingFetchingData)
             }else{
                 id_take_foto_layout.visibility = View.VISIBLE
                 AppUtils.showLoadingLayout(this, window, loadingFetchingData)
 
                 cameraViewModel.closeCamera()
                 id_layout_activity_informasi_unit.visibility = View.VISIBLE
-                AppUtils.closeLoadingLayout(loadingFetchingData)
+                closeLoadingLayout(loadingFetchingData)
             }
 
         }else{
@@ -978,7 +984,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         listNamaFoto[resultCode] = fname
 
 
-        Log.d("testing", listNamaFoto.toString())
     }
 
 }
