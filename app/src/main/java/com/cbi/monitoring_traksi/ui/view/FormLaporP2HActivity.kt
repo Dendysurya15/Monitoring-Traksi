@@ -550,6 +550,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     }
                 }.toMap().toMutableMap()
 
+
+                globalListPilJenisUnit = globalListPilJenisUnit.toList().sortedBy { (_, value) -> value }.toMap().toMutableMap()
+
                 val listPertanyaanJenisUnitArray = listPertanyaanJenisUnit.toTypedArray()
 
                 GlobalScope.launch(Dispatchers.IO) {
@@ -576,6 +579,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         null
                     }
                 }.toMap().toMutableMap()
+
             }
 
             dataMapKodeUnitArray?.let {data->
@@ -791,6 +795,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
         val listPilJenisUnitValues = globalListPilJenisUnit.values.toList()
 
+        Log.d("tesitng", listPilJenisUnitValues.toString())
+
         val adapterJenisUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listPilJenisUnitValues)
         etJenisUnit.setAdapter(adapterJenisUnitItems)
 
@@ -810,7 +816,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
             val unitKerjaArray = filteredUnitKerjaList?.map { it["nama_unit_kerja"] as? String }?.filterNotNull()
             val idUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
-            val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArray ?: emptyList())
+
+            val unitKerjaArraySorted = unitKerjaArray?.sorted()
+            val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArraySorted ?: emptyList())
             etUnitKerja.setAdapter(adapterUnitKerjaItems)
 
             etUnitKerja.setText("")
@@ -828,7 +836,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["nama_kode"] as? String }?.toTypedArray() ?: emptyArray()
                 val typeUnitArray = filteredKodeUnitList?.mapNotNull { it["type_unit"] as? String }?.toTypedArray()
 
-                val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, namaKodeUnitArray)
+                val namaKodeUnitArraySorted = namaKodeUnitArray?.sorted()
+                val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, namaKodeUnitArraySorted ?: emptyList())
                 etKodeUnit.setAdapter(adapterKodeUnitItems)
 
                 etKodeUnit.setText("")
