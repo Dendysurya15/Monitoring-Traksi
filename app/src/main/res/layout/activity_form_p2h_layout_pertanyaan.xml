@@ -170,6 +170,24 @@
         tools:ignore="ContentDescription,MissingConstraints"
         />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/mbSaveFormP2H"
+        android:id="@+id/mbButtonPrevLastPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="10dp"
+        android:clickable="true"
+        android:visibility="gone"
+        android:focusable="true"
+        app:fabCustomSize="65dp"
+        app:maxImageSize="45dp"
+        app:srcCompat="@drawable/baseline_arrow_back_24"
+        app:tint="@color/white"
+        android:backgroundTint="@color/graytextdark"
+        tools:ignore="ContentDescription,MissingConstraints"
+        />
 <!--    <com.google.android.material.button.MaterialButton-->
 <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 <!--        app:layout_constraintEnd_toEndOf="parent"-->

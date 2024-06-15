@@ -1,15 +1,18 @@
 package com.cbi.monitoring_traksi.ui.viewModel
 
+import android.view.View
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.cbi.monitoring_traksi.data.repository.CameraRepository
+import com.google.android.material.button.MaterialButton
 import java.io.File
 
 class CameraViewModel(private val cameraRepository: CameraRepository) : ViewModel() {
 
-    fun takeCameraPhotos(resultCode : String, imageView: ImageView, pageForm : Int, kodeFoto:String) {
-        cameraRepository.takeCameraPhotos(resultCode, imageView, pageForm, kodeFoto)
+    fun takeCameraPhotos(resultCode : String, imageView: ImageView, pageForm : Int, deletePhoto : View?, kodeFoto:String) {
+        cameraRepository.takeCameraPhotos(resultCode, imageView, pageForm, deletePhoto, kodeFoto)
     }
 
     fun statusCamera(): Boolean = cameraRepository.statusCamera()
@@ -24,6 +27,11 @@ class CameraViewModel(private val cameraRepository: CameraRepository) : ViewMode
 
     fun closeZoomPhotos() {
         cameraRepository.closeZoomPhotos()
+    }
+
+
+    fun deletePhotoSelected(fname :String){
+        cameraRepository.deletePhotoSelected(fname)
     }
 
     @Suppress("UNCHECKED_CAST")

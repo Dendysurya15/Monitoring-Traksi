@@ -33,6 +33,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.Glide
@@ -41,6 +42,7 @@ import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.utils.AppUtils
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
+import com.google.android.material.button.MaterialButton
 import es.dmoral.toasty.Toasty
 
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
@@ -64,7 +66,7 @@ import java.util.Locale
 class CameraRepository(private val context: Context, private val window: Window, private val view: View, private val zoomView: View) {
 
     interface PhotoCallback {
-        fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, pageForm: Int)
+        fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, deletePhoto: View?, pageForm: Int)
     }
     private var photoCallback: PhotoCallback? = null
 
@@ -184,7 +186,7 @@ class CameraRepository(private val context: Context, private val window: Window,
         return resultBitmap
     }
 
-    fun takeCameraPhotos(resultCode: String, imageView: ImageView, pageForm : Int, kodeFoto:String) {
+    fun takeCameraPhotos(resultCode: String, imageView: ImageView, pageForm : Int, deletePhoto : View?, kodeFoto:String) {
         // Initialize Camera View
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
@@ -286,7 +288,7 @@ class CameraRepository(private val context: Context, private val window: Window,
                                                 0
                                             }
 
-                                            takeCameraPhotos(resultCode, imageView, pageForm, kodeFoto)
+                                            takeCameraPhotos(resultCode, imageView, pageForm,deletePhoto,  kodeFoto)
                                         }
                                     }
 
@@ -445,7 +447,7 @@ class CameraRepository(private val context: Context, private val window: Window,
                                                 .into(imageView)
 
 
-                                            photoCallback?.onPhotoTaken(file, fileName, resultCode, pageForm)
+                                            photoCallback?.onPhotoTaken(file, fileName, resultCode,deletePhoto, pageForm)
                                         }
                                     }, handler)
 
@@ -563,6 +565,49 @@ class CameraRepository(private val context: Context, private val window: Window,
             .playOn(zoomView)
     }
 
+
+    fun deletePhotoSelected(fileName: String) {
+        val rootDCIM = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+            "Monitoring-Traksi"
+        ).toString()
+
+        val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
+
+        val dirApp = File(rootApp, "LaporP2H")
+        val dirDCIM = File(rootDCIM, "LaporP2H")
+
+        val fileApp = File(dirApp, fileName)
+        val fileDCIM = File(dirDCIM, fileName)
+
+        var deleted = false
+
+        if (fileApp.exists()) {
+            if (fileApp.delete()) {
+                deleted = true
+                Toasty.success(context, "Photo deleted successfully from internal storage.", Toast.LENGTH_LONG).show()
+            } else {
+                Toasty.error(context, "Failed to delete the photo from internal storage. Please try again.", Toast.LENGTH_LONG).show()
+            }
+        } else {
+            Toasty.error(context, "Photo not found in internal storage.", Toast.LENGTH_LONG).show()
+        }
+
+        if (fileDCIM.exists()) {
+            if (fileDCIM.delete()) {
+                deleted = true
+                Toasty.success(context, "Photo deleted successfully from DCIM.", Toast.LENGTH_LONG).show()
+            } else {
+                Toasty.error(context, "Failed to delete the photo from DCIM. Please try again.", Toast.LENGTH_LONG).show()
+            }
+        } else {
+            Toasty.error(context, "Photo not found in DCIM.", Toast.LENGTH_LONG).show()
+        }
+
+        if (!deleted) {
+            Toasty.error(context, "Photo not found in either location.", Toast.LENGTH_LONG).show()
+        }
+    }
     private fun setDefaultIcon(view: View) {
         view.torchButton.setBackgroundResource(R.drawable.ic_lightning_off)
         view.torchButton.backgroundTintList =

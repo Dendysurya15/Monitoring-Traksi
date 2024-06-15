@@ -65,6 +65,7 @@ import kotlinx.android.synthetic.main.edit_foto_layout.view.closeZoom
 import kotlinx.android.synthetic.main.edit_foto_layout.view.deletePhoto
 import kotlinx.android.synthetic.main.edit_foto_layout.view.retakePhoto
 import kotlinx.android.synthetic.main.layout_foto_unit.view.ivAddFotoUnit
+import kotlinx.android.synthetic.main.layout_komentar_dan_foto.view.deletePhotoKerusakan
 import kotlinx.android.synthetic.main.layout_komentar_dan_foto.view.etKomentar
 import kotlinx.android.synthetic.main.layout_komentar_dan_foto.view.ivAddFotoPerPertanyaan
 
@@ -266,11 +267,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     }
 
-    private fun retakeCamera(id_foto: String, imageView: ImageView, pageForm: Int, kode_foto :String ){
+    private fun retakeCamera(id_foto: String, imageView: ImageView, pageForm: Int, deletePhoto: View?, kode_foto :String ){
         cameraViewModel.takeCameraPhotos(
             id_foto,
             imageView,
             pageForm,
+            deletePhoto,
             kode_foto
         )
     }
@@ -290,7 +292,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
     }
 
-    private fun takeCameraNow(id_foto: String, pageForm: Int,  imageView: ImageView,kode_foto: String){
+    private fun takeCameraNow(id_foto: String, pageForm: Int,  imageView: ImageView, deletePhoto : View?, kode_foto: String){
         val kodeFotoNoWhitespace = removeWhitespaces(kode_foto)
         if (listNamaFoto.containsKey(id_foto)){
             zoomOpen = true
@@ -312,6 +314,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         id_foto,
                         imageView,
                         pageForm,
+                        null,
                         kodeFotoNoWhitespace
                     )
                 }
@@ -323,6 +326,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     id_foto,
                     imageView,
                     pageForm,
+                    deletePhoto,
                     kodeFotoNoWhitespace
                 )
             }
@@ -387,6 +391,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         formLayoutsPertanyaan.forEachIndexed { index, layout ->
             val materialButtonNext = layout.findViewById<FloatingActionButton>(R.id.mbButtonNext)
             val materialButtonPrev = layout.findViewById<FloatingActionButton>(R.id.mbButtonPrev)
+            val materialButtonPrevLastPage = layout.findViewById<FloatingActionButton>(R.id.mbButtonPrevLastPage)
             val materialButtonPrevTop = layout.findViewById<MaterialButton>(R.id.mbButtonPrevTop)
             val mbSaveFormP2H = layout.findViewById<FloatingActionButton>(R.id.mbSaveFormP2H)
 
@@ -396,6 +401,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
 
             materialButtonPrev.setOnClickListener {
+                toggleFormVisibility(index - 1)
+            }
+
+            materialButtonPrevLastPage.setOnClickListener {
                 toggleFormVisibility(index - 1)
             }
 
@@ -662,6 +671,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 if (i == (batchCount - 1)) {
                     val mbSaveFormP2H = includedLayout.findViewById<FloatingActionButton>(R.id.mbSaveFormP2H)
                     mbSaveFormP2H.visibility = View.VISIBLE
+                    val mbButtonPrevLastPage = includedLayout.findViewById<FloatingActionButton>(R.id.mbButtonPrevLastPage)
+                    mbButtonPrevLastPage.visibility = View.VISIBLE
+                    mbButtonPrevLastPage.backgroundTintList = ContextCompat.getColorStateList(this@FormLaporP2HActivity, R.color.graytextdark)
                 } else {
                     val mbButtonForNext = includedLayout.findViewById<FloatingActionButton>(R.id.mbButtonNext)
                     mbButtonForNext.visibility = View.VISIBLE
@@ -713,7 +725,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     includedLayout.visibility = View.GONE
                                     id_take_foto_layout.visibility = View.VISIBLE
                                     val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
-                                    takeCameraNow(id_foto, i,  layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, kode_foto)
+                                    takeCameraNow(id_foto,
+                                        i,
+                                        layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan,
+                                        layoutPertanyaan.layout_komentar_foto,
+                                        kode_foto
+                                    )
                                 }
 
                                 id_editable_foto_layout.retakePhoto.setOnClickListener {
@@ -724,9 +741,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     // in case ini adalah foto di layout informasi unit foto utama dengan id 0
                                     val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
                                     if (listNamaFoto.containsKey("0")){
-                                        retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1, kode_foto)
+                                        retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1,null, kode_foto)
                                     }else{
-                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, i ,kode_foto)
+                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, i ,null,kode_foto)
                                     }
 
                                 }
@@ -852,7 +869,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 if(prefManager!!.isCameraAllowed == false){
                     checkPermissionsCamera(this)
                 }else{
-                    takeCameraNow("0", -1,  id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, kode_foto)
+                    takeCameraNow("0", -1,  id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, null, kode_foto)
                 }
         }
 
@@ -865,7 +882,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             id_editable_foto_layout.visibility = View.GONE
             id_take_foto_layout.visibility = View.VISIBLE
 
-            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1, kode_foto)
+            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1, null,kode_foto)
         }
 
         id_editable_foto_layout.closeZoom.setOnClickListener{
@@ -950,6 +967,26 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
     }
 
+    private fun removeEntryByFileName(fname: String) {
+        // Find the key for the given filename
+        val key = listNamaFoto.entries.find { it.value == fname }?.key
+        if (key != null) {
+            // Remove the entries from both maps
+            listFileFoto.remove(key)
+            listNamaFoto.remove(key)
+        }
+    }
+
+    private fun removeEntryByPhotoFile(photoFile: File) {
+        // Find the key for the given photo file
+        val key = listFileFoto.entries.find { it.value == photoFile }?.key
+        if (key != null) {
+            // Remove the entries from both maps
+            listFileFoto.remove(key)
+            listNamaFoto.remove(key)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         locationViewModel.locationPermissions.observe(this) { isLocationEnabled ->
@@ -981,13 +1018,29 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     }
 
-    override fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, pageForm: Int) {
+    override fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, deletePhoto: View?, pageForm: Int) {
         toggleFormVisibility(pageForm)
+
+        Log.d("testing", fname.toString())
+        deletePhoto?.deletePhotoKerusakan?.visibility = View.VISIBLE
+        deletePhoto?.deletePhotoKerusakan?.setOnClickListener{
+
+            Log.d("testing", resultCode.toString())
+            cameraViewModel.deletePhotoSelected(fname)
+            val ivAddFotoPertanyaan = deletePhoto.findViewById<ImageView>(R.id.ivAddFotoPerPertanyaan)
+            val originalImageResId = R.drawable.ic_add_image
+            ivAddFotoPertanyaan.setImageResource(originalImageResId)
+
+            removeEntryByFileName(fname)
+            removeEntryByPhotoFile(photoFile)
+        }
 
         listFileFoto[resultCode] = photoFile
         listNamaFoto[resultCode] = fname
 
 
+        Log.d("testing", listFileFoto.toString())
+        Log.d("testing", listNamaFoto.toString())
     }
 
 }
