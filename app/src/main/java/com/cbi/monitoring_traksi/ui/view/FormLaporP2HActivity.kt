@@ -1030,12 +1030,14 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     override fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, deletePhoto: View?, pageForm: Int) {
         toggleFormVisibility(pageForm)
 
-        Log.d("testing", fname.toString())
         deletePhoto?.deletePhotoKerusakan?.visibility = View.VISIBLE
         deletePhoto?.deletePhotoKerusakan?.setOnClickListener{
 
-            Log.d("testing", resultCode.toString())
-            cameraViewModel.deletePhotoSelected(fname)
+            val isDeleted = cameraViewModel.deletePhotoSelected(fname)
+
+            if(isDeleted){
+                deletePhoto?.deletePhotoKerusakan?.visibility = View.GONE
+            }
             val ivAddFotoPertanyaan = deletePhoto.findViewById<ImageView>(R.id.ivAddFotoPerPertanyaan)
             val originalImageResId = R.drawable.ic_add_image
             ivAddFotoPertanyaan.setImageResource(originalImageResId)
@@ -1048,8 +1050,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         listNamaFoto[resultCode] = fname
 
 
-        Log.d("testing", listFileFoto.toString())
-        Log.d("testing", listNamaFoto.toString())
     }
 
 }

@@ -30,8 +30,8 @@ class CameraViewModel(private val cameraRepository: CameraRepository) : ViewMode
     }
 
 
-    fun deletePhotoSelected(fname :String){
-        cameraRepository.deletePhotoSelected(fname)
+    fun deletePhotoSelected(fname :String): Boolean{
+        return cameraRepository.deletePhotoSelected(fname)
     }
 
     @Suppress("UNCHECKED_CAST")

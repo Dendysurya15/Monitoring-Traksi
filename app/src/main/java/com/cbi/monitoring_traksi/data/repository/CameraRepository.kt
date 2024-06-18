@@ -566,7 +566,7 @@ class CameraRepository(private val context: Context, private val window: Window,
     }
 
 
-    fun deletePhotoSelected(fileName: String) {
+    fun deletePhotoSelected(fileName: String): Boolean {
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
             "Monitoring-Traksi"
@@ -607,6 +607,8 @@ class CameraRepository(private val context: Context, private val window: Window,
         if (!deleted) {
             Toasty.error(context, "Photo not found in either location.", Toast.LENGTH_LONG).show()
         }
+
+        return deleted
     }
     private fun setDefaultIcon(view: View) {
         view.torchButton.setBackgroundResource(R.drawable.ic_lightning_off)

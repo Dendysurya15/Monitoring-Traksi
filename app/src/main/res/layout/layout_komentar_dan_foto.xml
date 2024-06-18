@@ -41,6 +41,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:id="@+id/tvSuccessUploadFoto"
+                android:textStyle="italic"
+                android:visibility="gone"
+                android:paddingStart="10dp"
+                android:layout_weight="1.8"
+                android:textColor="@color/greenbutton"
+                android:text="Foto Tersimpan" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
 
                 android:visibility="gone"
