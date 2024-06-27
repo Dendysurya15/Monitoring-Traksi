@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_fileName="loading_new.json"/>
+        app:lottie_fileName="test_bro.json"/>
 
     <View
         android:id="@+id/overlayLoadView"
