@@ -137,7 +137,7 @@
         android:textSize="20dp"
         android:fontFamily="@font/poppins_medium"
     android:textColor="@color/black"
-        android:paddingStart="25dp"
+        android:paddingStart="15dp"
         android:paddingTop="15dp"
         tools:ignore="MissingConstraints" />
 
@@ -179,7 +179,7 @@
 
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/mtIconSortBy"
+                android:id="@+id/mbIconSortBy"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="3dp"

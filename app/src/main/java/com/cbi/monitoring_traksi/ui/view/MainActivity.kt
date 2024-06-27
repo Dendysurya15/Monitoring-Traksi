@@ -52,6 +52,7 @@ import kotlinx.android.synthetic.main.activity_main.iblogout
 import kotlinx.android.synthetic.main.activity_main.id_preview_foto
 import kotlinx.android.synthetic.main.activity_main.loadingFetchingData
 import kotlinx.android.synthetic.main.activity_main.loadingMain
+import kotlinx.android.synthetic.main.activity_main.mbIconSortBy
 
 import kotlinx.android.synthetic.main.activity_main.mbTambahMonitoring
 import kotlinx.android.synthetic.main.activity_main.name_user_login
@@ -192,6 +193,15 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
 
         handleClickSpinner()
+
+        mbIconSortBy.setOnClickListener {
+            if (sizeListAdapeter != 0) {
+                Log.d("testing","triggered")
+                sortedBool = !sortedBool
+                mbIconSortBy.scaleY = if (sortedBool) -1f else 1f
+                uploadHistoryP2HAdapter!!.toggleSortingOrder()
+            }
+        }
         clickAny()
         setupRecyclerList()
     }

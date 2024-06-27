@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -30,6 +31,7 @@ import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 import com.cbi.monitoring_traksi.ui.view.MainActivity
 import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.detail_foto_unit
 import kotlinx.android.synthetic.main.layout_detail_p2h_adapter.view.listKerusakanContainer
@@ -54,7 +56,7 @@ class UploadHistoryP2HAdapter(
     private val onClickDataListener: OnClickDataListener,
 ) : ListAdapter<LaporP2HModel, UploadHistoryP2HAdapter.ViewHolder>(ItemDiffCallback()) {
 
-    private var isDescendingOrder = true
+    private var isDescendingOrder = false
 
     class ViewHolder(itemView: View, onDeleteClickListener: OnDeleteClickListener, onClickDataListener:OnClickDataListener, context: Context,historyModel : HistoryP2HViewModel) :
         RecyclerView.ViewHolder(itemView) {
@@ -83,9 +85,9 @@ class UploadHistoryP2HAdapter(
                 }
             }
 
+
             idContainerList.setOnClickListener{
                 val position = adapterPosition
-
 
                 if(position != RecyclerView.NO_POSITION){
                     onClickDataListener.onClickList(position, currentItem)
@@ -323,6 +325,27 @@ class UploadHistoryP2HAdapter(
                 textItemKerusakan = ": $joinedText"
             }
         }
+//        val sortedList = currentList.sortedWith(
+//            if (isDescendingOrder) compareByDescending<LaporP2HModel> {
+//                it.id
+//            } else compareBy<LaporP2HModel> {
+//                it.id
+//            }
+//        )
+//        val isLastItemInSorted = sortedList.indexOf(item) == sortedList.size - 1
+
+//        val marginBottom = if (isLastItemInSorted) {
+//            50
+//        } else {
+//            0
+//        }
+
+//        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+//        layoutParams.bottomMargin = marginBottom
+//        holder.itemView.layoutParams = layoutParams
+
+//        val animation = AnimationUtils.loadAnimation(holder.itemView.context, android.R.anim.linear_interpolator)
+//        holder.itemView.startAnimation(animation)
 
         var textStatusArchive = "Tersimpan - "
         var textLastUpdate = "${item.tanggal_upload}"
@@ -338,21 +361,23 @@ class UploadHistoryP2HAdapter(
         holder.itemfotoKerusakan.text = textjumlahKerusakan
         holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
 
-        val isLastItem = position == currentList.lastIndex
 
-        val marginBottom = if (isLastItem) {
-            val marginBottomDp = 25
-            val density = context.resources.displayMetrics.density
-            (marginBottomDp * density).toInt()
-        } else {
-            0
-        }
+    }
 
-        // Set the layout params with bottom margin
-        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.bottomMargin = marginBottom
-        holder.itemView.layoutParams = layoutParams
+    fun toggleSortingOrder() {
+        isDescendingOrder = !isDescendingOrder
 
+        Log.d("testing", "triggeredDDD")
+        submitList(
+            currentList.sortedWith(
+                if (isDescendingOrder) compareByDescending<LaporP2HModel> {
+                    it.id
+                } else compareBy<LaporP2HModel> {
+                    it.id
+                }
+            )
+        )
+        notifyDataSetChanged()
     }
 
     class ItemDiffCallback : DiffUtil.ItemCallback<LaporP2HModel>() {
@@ -378,4 +403,5 @@ class UploadHistoryP2HAdapter(
     interface OnClickDataListener {
         fun onClickList(position: Int, item: LaporP2HModel)
     }
+
 }
