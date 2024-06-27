@@ -3,6 +3,7 @@ package com.cbi.monitoring_traksi.data.repository
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.util.Log
 import com.cbi.monitoring_traksi.data.database.DatabaseHelper
 import com.cbi.monitoring_traksi.data.model.LaporP2HModel
 
@@ -59,18 +60,35 @@ class HistoryP2HRepository(context: Context) {
         }
 
     @SuppressLint("Range")
-    fun fetchByDateLaporanP2H(dateRequest: String): List<LaporP2HModel> {
+    fun fetchByDateLaporanP2H(dateRequest: String, kerusakanFiltered : Boolean = false, tanpaKerusakan : Boolean = false): List<LaporP2HModel> {
         val dataLaporanP2H = mutableListOf<LaporP2HModel>()
+
         val db = databaseHelper.readableDatabase
         // Extract date part from the dateRequest parameter
         val dateOnly = dateRequest.substring(0, 10)
 
-        // Construct the SQL query to filter records for the specified date
-        val query = "SELECT * FROM ${DatabaseHelper.DB_TAB_LAPORAN_P2H} " +
+        val args = mutableListOf<String>()
+        args.add(dateOnly)
+
+
+        var query = "SELECT * FROM ${DatabaseHelper.DB_TAB_LAPORAN_P2H} " +
                 "WHERE DATE(tanggal_upload) = ?"
 
+        if (kerusakanFiltered) {
+
+            query += " AND (kerusakan_unit != ?)"
+            args.add("")
+        }
+
+        if (tanpaKerusakan) {
+            query += " AND (kerusakan_unit = ?)"
+            args.add("")
+        }
+
+        val argsArray = args.toTypedArray()
+
         // Execute the query with the date parameter
-        val cursor = db.rawQuery(query, arrayOf(dateOnly))
+        val cursor = db.rawQuery(query, argsArray)
 
         cursor.use {
             while (it.moveToNext()) {
@@ -110,7 +128,6 @@ class HistoryP2HRepository(context: Context) {
                 dataLaporanP2H.add(dataQuery)
             }
         }
-
 
         return dataLaporanP2H
     }

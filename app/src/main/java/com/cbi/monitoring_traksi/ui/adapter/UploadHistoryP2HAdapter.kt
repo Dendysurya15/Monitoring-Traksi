@@ -298,7 +298,7 @@ class UploadHistoryP2HAdapter(
 
         val item = getItem(position)
         holder.bind(item)
-        holder.itemTitlePeriksaUnit.text = "${position + 1}. ${item.jenis_unit} ${item.unit_kerja} ${item.type_unit}"
+        holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.unit_kerja} ${item.type_unit}"
         holder.itemLokasiPeriksaUnit.text = ": ${item.unit_kerja}"
         var textjumlahKerusakan = ": Tidak ada"
         var textItemKerusakan = ": Tidak ada"

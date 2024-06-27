@@ -71,10 +71,11 @@ class HistoryP2HViewModel(
 
 
     val resultQueryDateLaporanP2H: LiveData<List<LaporP2HModel>> get() = _queryGetLaporanP2H
-    fun loadLaporanP2HByDate(dateRequest : String) {
+    fun loadLaporanP2HByDate(dateRequest : String,  KerusakanFiltered: Boolean = false, TanpaKerusakanFiltered : Boolean = false) {
+
         viewModelScope.launch {
             try {
-                _queryGetLaporanP2H.value = historyRepo.fetchByDateLaporanP2H(dateRequest)
+                _queryGetLaporanP2H.value = historyRepo.fetchByDateLaporanP2H(dateRequest, KerusakanFiltered, TanpaKerusakanFiltered)
             }catch (e:Exception){
                 e.printStackTrace()
                 _queryGetLaporanP2H.value = emptyList()

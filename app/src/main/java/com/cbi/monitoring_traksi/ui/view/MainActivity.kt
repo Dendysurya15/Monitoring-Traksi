@@ -1,6 +1,8 @@
 package com.cbi.monitoring_traksi.ui.view
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,11 +12,17 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.DatePicker
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,8 +37,11 @@ import com.cbi.monitoring_traksi.ui.viewModel.HistoryP2HViewModel
 import com.cbi.monitoring_traksi.ui.viewModel.UnitViewModel
 import com.cbi.monitoring_traksi.utils.AlertDialogUtility
 import com.cbi.monitoring_traksi.utils.AppUtils
+import com.cbi.monitoring_traksi.utils.AppUtils.closeLoadingLayout
 import com.cbi.monitoring_traksi.utils.AppUtils.getCurrentDate
+import com.cbi.monitoring_traksi.utils.AppUtils.showLoadingLayout
 import com.cbi.monitoring_traksi.utils.PrefManager
+import com.google.android.material.datepicker.MaterialDatePicker
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_take_foto_layout
@@ -46,6 +57,9 @@ import kotlinx.android.synthetic.main.activity_main.mbTambahMonitoring
 import kotlinx.android.synthetic.main.activity_main.name_user_login
 import kotlinx.android.synthetic.main.activity_main.rvListData
 import kotlinx.android.synthetic.main.alert_dialog_view.view.lottieDialog
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickListener , UploadHistoryP2HAdapter.OnClickDataListener {
@@ -54,6 +68,13 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
     private lateinit var historyP2HViewModel: HistoryP2HViewModel
     private var uploadHistoryP2HAdapter: UploadHistoryP2HAdapter? = null
 
+    private lateinit var datePickerDialog: DatePickerDialog
+    private lateinit var dateButton : Button
+    private lateinit var globalFormattedDate: String
+    private var globalSpinnerFilterChoice : Int = 0
+    private lateinit var sortOptionsFilterHistoryP2H: Array<String>
+
+    private lateinit var filter: Spinner
     var sizeListAdapeter = 0
     var allListUploaded: Boolean = false
     private var totalList = 0
@@ -70,6 +91,17 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         initViewModel()
         loadingMain.visibility = View.VISIBLE
         AppUtils.showLoadingLayout(this, window, loadingMain)
+        initializeSortOptionsFilterHistoryP2H(this)
+        setupSpinnerSortBy()
+
+        dateButton = findViewById(R.id.dateToday)
+        dateButton.text = getTodaysDate()
+
+        val currentDate = LocalDate.now()
+        val formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val todaysDate = currentDate.format(formatterDate)
+        filter = findViewById<Spinner>(R.id.spinner_unit)
+        globalFormattedDate = todaysDate
 
         prefManager = PrefManager(this)
         if (prefManager!!.isFirstTimeLaunch) {
@@ -78,7 +110,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
             AppUtils.closeLoadingLayout(loadingMain)
         }
         name_user_login.text = prefManager!!.name
-        dateToday.text =  AppUtils.getCurrentDate()
 
         rvListData.layoutManager = LinearLayoutManager(this)
         rvListData.adapter = uploadHistoryP2HAdapter
@@ -104,24 +135,12 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
             }
         })
 
-        historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) { list->
-            if (list.size == 0) {
-                findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
-//                animationView.visibility = View.VISIBLE
-//                animationView.playAnimation()
-                findViewById<TextView>(R.id.tvNoData).visibility = View.VISIBLE
-            } else{
-                uploadHistoryP2HAdapter!!.submitList(list)
-            }
-            sizeListAdapeter = list.size
-
-            allListUploaded = list.all { it.archive == 1 }
-        }
+        loadListAdapter()
 
         fbUploadData.setOnClickListener{
             if (AppUtils.checkConnectionDevice(this)) {
 
-                Log.d("testing", allListUploaded.toString())
+
                 if (sizeListAdapeter != 0) {
                     if (allListUploaded == true){
                         AlertDialogUtility.alertDialog(
@@ -171,9 +190,12 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
             uploadHistoryP2HAdapter!!.notifyDataSetChanged()
         }
 
+
+        handleClickSpinner()
         clickAny()
         setupRecyclerList()
     }
+
 
     @Deprecated("Deprecated in Java")
     @SuppressLint("MissingSuperCall")
@@ -200,9 +222,50 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
             editablePhotoLayout.visibility = View.GONE
         }
     }
+
+    private fun initializeSortOptionsFilterHistoryP2H(context: Context) {
+        sortOptionsFilterHistoryP2H = arrayOf(
+            context.getString(R.string.filter_history1),
+            context.getString(R.string.filter_history2),
+            context.getString(R.string.filter_history3)
+        )
+    }
+
+
+    private fun handleClickSpinner(){
+        filter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                AppUtils.showLoadingLayout(this@MainActivity, window, loadingMain)
+                globalSpinnerFilterChoice = position
+                handleSpinnerResultData(position)
+                loadListAdapter()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Do something when nothing is selected
+            }
+        }
+    }
+
+    private fun handleSpinnerResultData(position: Int){
+        when (position) {
+            0 -> historyP2HViewModel.loadLaporanP2HByDate(globalFormattedDate, false)
+            1 -> historyP2HViewModel.loadLaporanP2HByDate(globalFormattedDate, true)
+            2 -> historyP2HViewModel.loadLaporanP2HByDate(globalFormattedDate, false, true)
+        }
+    }
     private fun setupRecyclerList(){
         val currentDate = getCurrentDate(true)
         historyP2HViewModel.loadLaporanP2HByDate(currentDate)
+    }
+    @SuppressLint("WrongViewCast")
+    private fun setupSpinnerSortBy(){
+        val spinner: Spinner = findViewById(R.id.spinner_unit)
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, sortOptionsFilterHistoryP2H)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
     }
 
     private fun clickAny(){
@@ -314,6 +377,28 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         )
     }
 
+    private  fun loadListAdapter(){
+        historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) { list->
+
+            findViewById<TextView>(R.id.countItemLaporan).setText("Total (${list.size}) Laporan")
+            if (list.size == 0) {
+                findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
+//                animationView.visibility = View.VISIBLE
+//                animationView.playAnimation()
+                findViewById<TextView>(R.id.tvNoData).visibility = View.VISIBLE
+            } else{
+
+                findViewById<ImageView>(R.id.ivNoData).visibility = View.GONE
+                findViewById<TextView>(R.id.tvNoData).visibility = View.GONE
+            }
+            uploadHistoryP2HAdapter!!.submitList(list)
+            closeLoadingLayout(loadingMain)
+            sizeListAdapeter = list.size
+
+            allListUploaded = list.all { it.archive == 1 }
+        }
+    }
+
     private fun showAlertDialog(title: String, message: String) {
         AlertDialog.Builder(this)
             .setTitle(title)
@@ -417,5 +502,73 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
 
             }
+    }
+    private fun getTodaysDate(): String {
+        val cal = Calendar.getInstance()
+        val year = cal.get(Calendar.YEAR)
+        val month = cal.get(Calendar.MONTH) + 1
+        val day = cal.get(Calendar.DAY_OF_MONTH)
+        return makeDateString(day, month, year)
+    }
+
+
+    fun openDatePicker(view: View) {
+        initMaterialDatePicker()
+    }
+
+    private fun initMaterialDatePicker() {
+        val builder = MaterialDatePicker.Builder.datePicker()
+        builder.setTitleText("Pilih Tanggal")
+//        builder.setTheme(R.style.DatePickerTheme)
+        builder.setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+
+        val datePicker = builder.build()
+
+        datePicker.addOnPositiveButtonClickListener { selection ->
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = selection
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH) + 1
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val displayDate = makeDateString(day, month, year)
+            dateButton.text = displayDate
+            loadingMain.visibility = View.VISIBLE
+
+            val formattedDate = formatDateForBackend(day, month, year)
+
+            globalFormattedDate = formattedDate
+
+            AppUtils.showLoadingLayout(this, window, loadingMain)
+
+            handleSpinnerResultData(globalSpinnerFilterChoice)
+        }
+        datePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
+    }
+
+    private fun formatDateForBackend(day: Int, month: Int, year: Int): String {
+        return String.format("%04d-%02d-%02d", year, month, day)
+    }
+
+    private fun makeDateString(day: Int, month: Int, year: Int): String {
+        return "${getMonthFormat(month)} $day $year"
+    }
+
+    private fun getMonthFormat(month: Int): String {
+        return when (month) {
+            1 -> "JAN"
+            2 -> "FEB"
+            3 -> "MAR"
+            4 -> "APR"
+            5 -> "MAY"
+            6 -> "JUN"
+            7 -> "JUL"
+            8 -> "AUG"
+            9 -> "SEP"
+            10 -> "OCT"
+            11 -> "NOV"
+            12 -> "DEC"
+            else -> "JAN" // Default should never happen
+        }
     }
 }
