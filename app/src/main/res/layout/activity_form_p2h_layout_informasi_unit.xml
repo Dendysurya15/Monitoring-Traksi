@@ -90,12 +90,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:layout_constraintTop_toBottomOf="@id/navbar"
         android:background="@color/bluedark"
         android:elevation="5dp"
-        android:id="@+id/formTitle"
-        >
+        android:id="@+id/formTitle">
 
         <TextView
             android:layout_width="match_parent"
@@ -110,331 +108,267 @@
 
 
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:id="@+id/row_first_form"
+        android:layout_height="0dp"
+        android:id="@+id/scrollViewForm"
         app:layout_constraintTop_toBottomOf="@id/formTitle"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
+            android:background="@color/white"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="50dp"
             android:orientation="vertical"
-            android:paddingHorizontal="15dp"
-            android:layout_weight="1"
+            android:id="@+id/container_form"
             >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Tanggal Periksa"
 
-                android:fontFamily="@font/poppins_medium"
-android:textColor="@color/black"
-                android:textSize="14dp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/sdaf"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/CustomTextInputLayout"
-                app:boxStrokeColor="@color/bluedark"
-                app:cursorColor="@color/bluedark"
-                app:hintTextColor="@color/bluedark"
-                android:layout_weight="0.5"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Tanggal Periksa"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:textSize="14dp"/>
 
-                tools:ignore="HardcodedText">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTanggalPeriksa"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/sdaf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_regular"
-                    android:background="@color/graylight"
-                    android:textColor="@color/black"
-                    android:textSize="10dp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="15dp"
-            android:layout_weight="1"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Jenis Unit"
-                android:fontFamily="@font/poppins_medium"
-                android:textColor="@color/black"
-                android:textSize="14dp"/>
+                    style="@style/CustomTextInputLayout"
+                    app:boxStrokeColor="@color/bluedark"
+                    app:cursorColor="@color/bluedark"
+                    app:hintTextColor="@color/bluedark"
+                    android:layout_weight="0.5"
+                    tools:ignore="HardcodedText">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTanggalPeriksa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:background="@color/graylight"
+                        android:textColor="@color/black"
+                        android:textSize="10dp" />
 
 
-            <com.google.android.material.textfield.TextInputLayout
 
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-
-                android:ems="10"
-                android:textSize="10dp"
-                android:hint="Pilih Jenis Unit"
-                app:boxStrokeColor="@color/bluedark"
-                app:cursorColor="@color/bluedark"
-                app:endIconMode="dropdown_menu"
-                app:hintTextColor="@color/bluedark"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-
-                tools:ignore="HardcodedText">
-
-                <AutoCompleteTextView
-                    android:id="@+id/etJenisUnit"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
                     android:layout_width="match_parent"
-                    android:inputType="none"
+                    android:layout_height="match_parent"
+                    android:text="Jenis Unit"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:textSize="14dp"/>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+                    android:ems="10"
                     android:textSize="10dp"
-                    android:layout_height="wrap_content"/>
-<!--                <com.google.android.material.textfield.TextInputEditText-->
+                    android:hint="Pilih Jenis Unit"
+                    app:boxStrokeColor="@color/bluedark"
+                    app:cursorColor="@color/bluedark"
+                    app:endIconMode="dropdown_menu"
+                    app:hintTextColor="@color/bluedark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+
+                    tools:ignore="HardcodedText">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/etJenisUnit"
+                        android:layout_width="match_parent"
+                        android:inputType="none"
+                        android:textSize="10dp"
+                        android:layout_height="wrap_content"/>
+                    <!--                <com.google.android.material.textfield.TextInputEditText-->
+
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:fontFamily="@font/poppins_regular"-->
+                    <!--                    android:inputType="textPersonName"-->
+                    <!--                    android:textSize="10dp" />-->
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Unit Kerja"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="14dp"
+                    />
+
+                <com.google.android.material.textfield.TextInputLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+                    android:ems="10"
+                    android:hint="Pilih Unit Kerja"
+                    app:boxStrokeColor="@color/bluedark"
+                    app:cursorColor="@color/bluedark"
+                    app:endIconMode="dropdown_menu"
+                    app:hintTextColor="@color/bluedark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+
+                    tools:ignore="HardcodedText">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/etUnitKerja"
+                        android:textSize="10dp"
+                        android:layout_width="match_parent"
+                        android:inputType="none"
+
+                        android:layout_height="wrap_content"/>
+                    <!--                <com.google.android.material.textfield.TextInputEditText-->
+
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:fontFamily="@font/poppins_regular"-->
+                    <!--                    android:inputType="textPersonName"-->
+                    <!--                    android:textSize="10dp" />-->
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Kode dan Type Unit"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:textSize="14dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:ems="10"
+                    android:hint="Pilih Asal Aset"
+                    app:boxStrokeColor="@color/bluedark"
+                    app:cursorColor="@color/bluedark"
+                    app:endIconMode="dropdown_menu"
+                    app:hintTextColor="@color/bluedark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+
+                    tools:ignore="HardcodedText">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/etKodeUnit"
+                        android:textSize="10dp"
+                        android:layout_width="match_parent"
+                        android:inputType="none"
+
+                        android:layout_height="wrap_content"/>
+                    <!--                <com.google.android.material.textfield.TextInputEditText-->
+
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:fontFamily="@font/poppins_regular"-->
+                    <!--                    android:inputType="textPersonName"-->
+                    <!--                    android:textSize="10dp" />-->
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                >
+
+<!--                <com.google.android.material.textfield.TextInputLayout-->
 
 <!--                    android:layout_width="match_parent"-->
 <!--                    android:layout_height="wrap_content"-->
-<!--                    android:fontFamily="@font/poppins_regular"-->
-<!--                    android:inputType="textPersonName"-->
-<!--                    android:textSize="10dp" />-->
+<!--                    style="@style/CustomTextInputLayout"-->
+<!--                    app:boxStrokeColor="@color/bluedark"-->
+<!--                    app:cursorColor="@color/bluedark"-->
+<!--                    app:hintTextColor="@color/bluedark"-->
+<!--                    android:layout_weight="0.5"-->
+<!--                    tools:ignore="HardcodedText">-->
 
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-    </LinearLayout>
+<!--                    <com.google.android.material.textfield.TextInputEditText-->
+<!--                        android:id="@+id/etTypeUnit"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:fontFamily="@font/poppins_regular"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="10dp" />-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/row_first_form"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:id="@+id/row_second_form"
-        tools:ignore="MissingConstraints">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="15dp"
-            android:layout_weight="1"
-            >
-            <TextView
+<!--                </com.google.android.material.textfield.TextInputLayout>-->
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Unit Kerja"
-android:textColor="@color/black"
-                android:fontFamily="@font/poppins_medium"
-                android:textSize="14dp"
-                />
-
-            <com.google.android.material.textfield.TextInputLayout
-
-                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
                 android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_marginBottom="100dp"
+                android:id="@+id/fotoUnitContainer"
+                tools:ignore="MissingConstraints">
 
-                android:ems="10"
-                android:hint="Pilih Unit Kerja"
-                app:boxStrokeColor="@color/bluedark"
-                app:cursorColor="@color/bluedark"
-                app:endIconMode="dropdown_menu"
-                app:hintTextColor="@color/bluedark"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-
-                tools:ignore="HardcodedText">
-
-                <AutoCompleteTextView
-                    android:id="@+id/etUnitKerja"
-                    android:textSize="10dp"
+                <include
+                    android:id="@+id/id_layout_foto_unit"
+                    layout="@layout/layout_foto_unit"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
-                    android:inputType="none"
 
-                    android:layout_height="wrap_content"/>
-                <!--                <com.google.android.material.textfield.TextInputEditText-->
-
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:fontFamily="@font/poppins_regular"-->
-                <!--                    android:inputType="textPersonName"-->
-                <!--                    android:textSize="10dp" />-->
-
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="match_parent" />
+            </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="15dp"
-            android:layout_weight="1"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Kode Unit"
-                android:fontFamily="@font/poppins_medium"
-android:textColor="@color/black"
-                android:textSize="14dp"/>
 
-            <com.google.android.material.textfield.TextInputLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-
-                android:ems="10"
-                android:hint="Pilih Asal Aset"
-                app:boxStrokeColor="@color/bluedark"
-                app:cursorColor="@color/bluedark"
-                app:endIconMode="dropdown_menu"
-                app:hintTextColor="@color/bluedark"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-
-                tools:ignore="HardcodedText">
-
-                <AutoCompleteTextView
-                    android:id="@+id/etKodeUnit"
-                    android:textSize="10dp"
-                    android:layout_width="match_parent"
-                    android:inputType="none"
-
-                    android:layout_height="wrap_content"/>
-                <!--                <com.google.android.material.textfield.TextInputEditText-->
-
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:fontFamily="@font/poppins_regular"-->
-                <!--                    android:inputType="textPersonName"-->
-                <!--                    android:textSize="10dp" />-->
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/row_second_form"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:id="@+id/row_third_form"
-        tools:ignore="MissingConstraints">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="15dp"
-            android:layout_weight="1"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Type Unit"
-android:textColor="@color/black"
-                android:fontFamily="@font/poppins_medium"
-                android:textSize="14dp"
-                />
-
-            <com.google.android.material.textfield.TextInputLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/CustomTextInputLayout"
-                app:boxStrokeColor="@color/bluedark"
-                app:cursorColor="@color/bluedark"
-                app:hintTextColor="@color/bluedark"
-                android:layout_weight="0.5"
-
-                tools:ignore="HardcodedText">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTypeUnit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_regular"
-                    android:textColor="@color/black"
-                    android:textSize="10dp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-    </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="invisible"
-            android:paddingHorizontal="15dp"
-            android:layout_weight="1"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Nama Operator"
-                android:fontFamily="@font/poppins_medium"
-                app:layout_constraintTop_toBottomOf="@id/row_second_form"
-                android:textSize="11dp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:hint="Masukkan Nama Operator"
-                app:boxStrokeColor="@color/bluedark"
-                app:cursorColor="@color/bluedark"
-                app:hintTextColor="@color/bluedark"
-                android:layout_weight="0.5"
-
-                tools:ignore="HardcodedText">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNamaOperator"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_regular"
-                    android:inputType="textPersonName"
-                    android:textSize="10dp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/row_third_form"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:id="@+id/fotoUnitContainer"
-        tools:ignore="MissingConstraints">
-
-        <include
-            android:id="@+id/id_layout_foto_unit"
-            layout="@layout/layout_foto_unit"
-            android:visibility="visible"
-            android:layout_width="match_parent"
-
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
-
+    </ScrollView>
 
 
 

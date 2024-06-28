@@ -49,7 +49,7 @@ import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etJenisUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etKodeUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTanggalPeriksa
-import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTypeUnit
+
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etUnitKerja
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.ivSignLocation
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.view.id_layout_foto_unit
@@ -239,10 +239,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             val jenis_unit = etJenisUnit.text.toString()
             val unit_kerja = etUnitKerja.text.toString()
             val kode_unit =  etKodeUnit.text.toString()
-            val type_unit =  etKodeUnit.text.toString()
+
 
             if (locationEnable == true){
-                if (jenis_unit != "" && unit_kerja != "" && kode_unit != "" && type_unit != "" && !listNamaFoto["0"].isNullOrEmpty()){
+                if (jenis_unit != "" && unit_kerja != "" && kode_unit != ""  && !listNamaFoto["0"].isNullOrEmpty()){
                     isFormInformasiUnit = false
                     toggleFormVisibility(currentFormIndex)
                 }else{
@@ -427,7 +427,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     val jenis_unit = etJenisUnit.text.toString()
                     val unit_kerja = etUnitKerja.text.toString()
                     val kode_unit =  etKodeUnit.text.toString()
-                    val type_unit =  etTypeUnit.text.toString()
 
 
 
@@ -481,7 +480,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 jenis_unit = jenis_unit,
                                 unit_kerja = unit_kerja,
                                 kode_unit =  kode_unit,
-                                type_unit =  type_unit,
                                 lat = lat.toString(),
                                 lon = lon.toString(),
                                 user = prefManager!!.name!!,
@@ -818,33 +816,45 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             val idUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
 
             val unitKerjaArraySorted = unitKerjaArray?.sorted()
+
+            Log.d("testing", unitKerjaArraySorted!!.toTypedArray().contentToString())
             val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArraySorted ?: emptyList())
             etUnitKerja.setAdapter(adapterUnitKerjaItems)
 
             etUnitKerja.setText("")
             etKodeUnit.setText("")
-            etTypeUnit.setText("")
+//            etTypeUnit.setText("")
 
 
             etUnitKerja.setOnItemClickListener { _, _, position, _ ->
                 val idPilUnitKerja = idUnitKerjaArray?.get(position)
 
+
+                Log.d("testing", dataMapKodeUnitArray.contentToString())
                 val filteredKodeUnitList = dataMapKodeUnitArray?.filter {
                     it["id_unit_kerja"] == idPilUnitKerja
                 }
 
-                val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull { it["nama_kode"] as? String }?.toTypedArray() ?: emptyArray()
-                val typeUnitArray = filteredKodeUnitList?.mapNotNull { it["type_unit"] as? String }?.toTypedArray()
+                val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull {
+                    val namaKode = it["nama_kode"] as? String
+                    val typeUnit = it["type_unit"] as? String
+                    if (namaKode != null && typeUnit != null) {
+                        "$namaKode $typeUnit"
+                    } else {
+                        null
+                    }
+                }?.toTypedArray() ?: emptyArray()
 
                 val namaKodeUnitArraySorted = namaKodeUnitArray?.sorted()
+                Log.d("testing", namaKodeUnitArraySorted!!.toTypedArray().contentToString())
                 val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, namaKodeUnitArraySorted ?: emptyList())
                 etKodeUnit.setAdapter(adapterKodeUnitItems)
 
                 etKodeUnit.setText("")
-                etTypeUnit.setText("")
                 etKodeUnit.setOnItemClickListener { _, _, position, _ ->
                         val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
-                        etTypeUnit.setText(typeUnitArray?.get(position))
+
+//                        etTypeUnit.setText('skldjfkds')
                 }
             }
         }

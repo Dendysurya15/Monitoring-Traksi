@@ -196,7 +196,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
         mbIconSortBy.setOnClickListener {
             if (sizeListAdapeter != 0) {
-                Log.d("testing","triggered")
+
                 sortedBool = !sortedBool
                 mbIconSortBy.scaleY = if (sortedBool) -1f else 1f
                 uploadHistoryP2HAdapter!!.toggleSortingOrder()

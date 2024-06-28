@@ -101,7 +101,6 @@ class DatabaseHelper(context: Context):
             "$DB_JENIS_UNIT VARCHAR, " +
             "$DB_UNIT_KERJA VARCHAR, " +
             "$DB_KODE_UNIT VARCHAR, " +
-            "$DB_TYPE_UNIT VARCHAR, " +
             "$DB_TANGGAL_UPLOAD VARCHAR, " +
             "$DB_LAT VARCHAR, " +
             "$DB_LON VARCHAR, " +

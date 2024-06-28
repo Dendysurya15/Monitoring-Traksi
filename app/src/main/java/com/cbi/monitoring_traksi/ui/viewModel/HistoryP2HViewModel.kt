@@ -262,7 +262,7 @@ class HistoryP2HViewModel(
                                         DatabaseHelper.DB_JENIS_UNIT to data.jenis_unit,
                                         DatabaseHelper.DB_UNIT_KERJA to data.unit_kerja,
                                         DatabaseHelper.DB_KODE_UNIT to data.kode_unit,
-                                        DatabaseHelper.DB_TYPE_UNIT to data.type_unit,
+
                                         DatabaseHelper.DB_TANGGAL_UPLOAD to data.tanggal_upload,
                                         DatabaseHelper.DB_LAT to data.lat,
                                         DatabaseHelper.DB_LON to data.lon,
@@ -394,7 +394,6 @@ class HistoryP2HViewModel(
                 "jenis_unit" to laporan.jenis_unit,
                 "unit_kerja" to laporan.unit_kerja,
                 "kode_unit" to laporan.kode_unit,
-                "type_unit" to laporan.type_unit,
                 "user" to laporan.user,
             )
         }

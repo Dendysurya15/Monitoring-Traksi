@@ -31,8 +31,6 @@ class LoginRepository(private val context: Context, private val window: Window, 
             onlineAuth(email, password, callback)
         }
         else {
-            Log.d("testing", "asdfsdf")
-//            callback(LoginModel(success = false, statusCode = 0, message = "asdkljfklajsdfkljk"))
             offlineAuth(email, password, callback)
         }
     }

@@ -7,7 +7,6 @@ data class LaporP2HModel(
     val jenis_unit: String,
     val unit_kerja: String,
     val kode_unit: String,
-    val type_unit: String,
     val tanggal_upload: String,
     val lat: String,
     val lon: String,

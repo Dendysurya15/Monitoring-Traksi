@@ -122,7 +122,7 @@ class UploadHistoryP2HAdapter(
                         layoutBuilder.tvTglCreated.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
                     }
                     layoutBuilder.tvTglCreated.text = "$textStatusArchive$textLastUpdate"
-                    layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja} ${currentItem.type_unit}"
+                    layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja}"
                     layoutBuilder.tvLokasiUnit.text = "Unit ${currentItem.unit_kerja}"
 
 //                    val status = currentItem.status_unit_beroperasi
@@ -300,7 +300,7 @@ class UploadHistoryP2HAdapter(
 
         val item = getItem(position)
         holder.bind(item)
-        holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.unit_kerja} ${item.type_unit}"
+        holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.unit_kerja} "
         holder.itemLokasiPeriksaUnit.text = ": ${item.unit_kerja}"
         var textjumlahKerusakan = ": Tidak ada"
         var textItemKerusakan = ": Tidak ada"
@@ -367,7 +367,7 @@ class UploadHistoryP2HAdapter(
     fun toggleSortingOrder() {
         isDescendingOrder = !isDescendingOrder
 
-        Log.d("testing", "triggeredDDD")
+
         submitList(
             currentList.sortedWith(
                 if (isDescendingOrder) compareByDescending<LaporP2HModel> {

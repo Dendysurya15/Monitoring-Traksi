@@ -70,7 +70,6 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
                 finishAffinity()
             }
-
             else -> {
                 showAlertDialog("Error", "Gagal login gan.")
             }

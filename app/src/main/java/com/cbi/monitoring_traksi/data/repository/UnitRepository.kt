@@ -91,7 +91,6 @@ class UnitRepository(context: Context)  {
             put(DatabaseHelper.DB_JENIS_UNIT, data.jenis_unit)
             put(DatabaseHelper.DB_UNIT_KERJA, data.unit_kerja)
             put(DatabaseHelper.DB_KODE_UNIT, data.kode_unit)
-            put(DatabaseHelper.DB_TYPE_UNIT, data.type_unit)
             put(DatabaseHelper.DB_TANGGAL_UPLOAD, data.tanggal_upload)
             put(DatabaseHelper.DB_LAT, data.lat)
             put(DatabaseHelper.DB_LON, data.lon)
