@@ -122,6 +122,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_regular"
                 android:textColor="@color/black"
+
                 android:hint="Penjelasan kerusakan tulis disini (Wajib di isi)"
                 android:textSize="13dp"  />
 

@@ -52,9 +52,6 @@ class AlertDialogUtility {
                 alertDialog.show()
                 Handler(Looper.getMainLooper()).postDelayed({
                     alertDialog.dismiss()
-//                    AppUtils.checkCameraPermissions(context as MainActivity)
-//                    AppUtils.checkReadAndWriteExternalCameraPermissions(context as MainActivity)
-                    AppUtils.checkGeneralPermissions(context, context as Activity)
                 }, 2000)
             }
         }

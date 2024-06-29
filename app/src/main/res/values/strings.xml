@@ -70,6 +70,9 @@
     <string name="filter_history3">Unit Tanpa Kerusakan</string>
 
 
-
+    <string-array name="dropdown_options_form_laporan_p2h">
+        <item>Sudah dicek</item>
+        <item>Sudah dicek, tetapi perlu perbaikan</item>
+    </string-array>
 
 </resources>

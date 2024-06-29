@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-
+        android:id="@+id/hintDropdownPertanyaan"
         android:ems="10"
         android:hint="Hasil Periksa"
         app:boxStrokeColor="@color/bluedark"

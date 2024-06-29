@@ -553,7 +553,29 @@ object AppUtils {
         Volley.newRequestQueue(context).add(strReq)
     }
 
-
+    fun checkSoftKeyboard(context: Context, view: View, function: () -> Unit) {
+        var isKeyboardVisible = false
+        val keyboardLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+            val newHeight = view.height
+            if (newHeight != 0) {
+                if (isKeyboardVisible) {
+                    isKeyboardVisible = false
+                    function()
+                } else {
+                    val imm =
+                        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val isAcceptingText = imm.isAcceptingText
+                    val activity = context as Activity
+                    val focusedView = activity.currentFocus
+                    val isKeyboardOpenAndActive = focusedView != null && isAcceptingText
+                    if (isKeyboardOpenAndActive) {
+                        isKeyboardVisible = true
+                    }
+                }
+            }
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(keyboardLayoutListener)
+    }
     fun hideKeyboard(activity: Activity) {
         val inputMethodManager =
             activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

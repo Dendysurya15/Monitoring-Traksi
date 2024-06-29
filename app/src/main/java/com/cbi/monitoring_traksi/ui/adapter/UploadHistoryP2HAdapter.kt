@@ -378,9 +378,9 @@ class UploadHistoryP2HAdapter(
 
         // Set bottom margin for the last item
         if (position == itemCount - 1) {
-            holder.itemView.setBottomMargin(50) // 50dp margin
+            holder.itemView.setBottomMargin(80)
         } else {
-            holder.itemView.setBottomMargin(0) // Reset margin for other items
+            holder.itemView.setBottomMargin(0)
         }
 
     }

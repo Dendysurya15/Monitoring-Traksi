@@ -7,12 +7,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.text.InputType
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -45,6 +47,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerKodeTypeUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerUnitKerja
@@ -56,6 +59,8 @@ import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.et
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fotoUnitContainer
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.ivSignLocation
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.view.id_layout_foto_unit
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_pertanyaan.ScrollViewContainer
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_pertanyaan.id_activity_form_base_layout_pertanyaan
 
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
@@ -249,7 +254,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     isFormInformasiUnit = false
                     toggleFormVisibility(currentFormIndex)
                 }else{
-                    displayToasty(this,"Mohon untuk mengisi semua kolom dan upload foto unit terlebih dahulu")
+                    displayToasty(this,"Mohon untuk mengisi semua kolom terlebih dahulu")
                 }
             }else{
                 displayToasty(this, "Harap aktifkan GPS agar kami dapat mengakses koordinat Anda")
@@ -265,7 +270,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
 
 
-
+//        AppUtils.checkSoftKeyboard(this, id_activity_form_base_layout_pertanyaan) {
+//            ScrollViewContainer.smoothScrollTo(0, ScrollViewContainer.top)
+//        }
 
 
     }
@@ -389,6 +396,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         Toasty.success(context, message, Toast.LENGTH_SHORT).show()
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun handleClicksForm(){
         arrInsertedDataTable.clear()
         formLayoutsPertanyaan.forEachIndexed { index, layout ->
@@ -435,6 +443,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
                         var isKomentarFillAll = true
                         var isFotoTakenAll = true
+                        var isPertanyaanFilledAll = true
                         val kerusakanUnit = mutableMapOf<String, MutableMap<String, String>>()
                         formLayoutsPertanyaan.forEachIndexed { index, layout ->
                             val containerPertanyaan = layout.findViewById<LinearLayout>(R.id.listPertanyaanContainer)
@@ -443,6 +452,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 val layoutPertanyaan = containerPertanyaan.getChildAt(i) as ConstraintLayout
                                 val idPertanyaan = layoutPertanyaan.id.toString()
                                 val selectedValueDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown).text.toString()
+                                val textPertanyaan = layoutPertanyaan.findViewById<TextInputLayout>(R.id.hintDropdownPertanyaan)
                                 val etValueKomentar = layoutPertanyaan.findViewById<TextInputEditText>(R.id.etKomentar).text.toString()
                                 if (selectedValueDropdown == "Sudah dicek, tetapi perlu perbaikan"){
                                     val valueMap = mutableMapOf<String, String>()
@@ -457,13 +467,19 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     if (valueMap["foto"].isNullOrEmpty()) {
                                         isFotoTakenAll = false
                                     }
+                                }
 
+                                if(selectedValueDropdown.isNullOrEmpty()){
+                                    isPertanyaanFilledAll = false
+                                    textPertanyaan.error = "Mohon untuk mengisi pertanyaan ini"
+                                }else{
+                                    textPertanyaan.error = null
                                 }
                             }
-
                         }
 
-                        if(isFotoTakenAll == false || isKomentarFillAll == false){
+                        if(isFotoTakenAll == false || isKomentarFillAll == false || isPertanyaanFilledAll == false){
+
                             displayToasty(this, "Mohon untuk mengupload semua foto atau mengisi komentar perbaikan unit setiap pertanyaan!")
                         }else{
                             var kerusakanUnitJson  = ""
@@ -704,20 +720,17 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         test.visibility = View.VISIBLE
                         val etTemplateDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown)
 
-                        val dropdownOptions = arrayOf(
-                            "Sudah dicek",
-                            "Sudah dicek, tetapi perlu perbaikan"
-                        )
+                        val dropdownOptions = resources.getStringArray(R.array.dropdown_options_form_laporan_p2h)
                         val adapter = ArrayAdapter(
                             this@FormLaporP2HActivity,
                             android.R.layout.simple_spinner_dropdown_item,
                             dropdownOptions
                         )
                         etTemplateDropdown.setAdapter(adapter)
-                        etTemplateDropdown.setText("Sudah dicek", false)
+//                        etTemplateDropdown.setText("Sudah dicek", false)
 
-                        val defaultPosition = adapter.getPosition("Sudah dicek")
-                        etTemplateDropdown.setSelection(defaultPosition)
+//                        val defaultPosition = adapter.getPosition("Sudah dicek")
+//                        etTemplateDropdown.setSelection(defaultPosition)
 
                         etTemplateDropdown.setOnItemClickListener { _, _, position, _ ->
                             val selectedItem = dropdownOptions[position]
@@ -796,7 +809,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
         val listPilJenisUnitValues = globalListPilJenisUnit.values.toList()
 
-        Log.d("tesitng", listPilJenisUnitValues.toString())
 
         val adapterJenisUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listPilJenisUnitValues)
         etJenisUnit.setAdapter(adapterJenisUnitItems)

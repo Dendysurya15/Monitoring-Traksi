@@ -1,6 +1,7 @@
 package com.cbi.monitoring_traksi.ui.view
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -97,7 +98,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
         dateButton = findViewById(R.id.dateToday)
         dateButton.text = getTodaysDate()
-
+        AppUtils.checkGeneralPermissions(this, this)
         val currentDate = LocalDate.now()
         val formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val todaysDate = currentDate.format(formatterDate)
