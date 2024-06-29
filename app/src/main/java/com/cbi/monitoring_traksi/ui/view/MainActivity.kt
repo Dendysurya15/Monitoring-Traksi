@@ -115,26 +115,26 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         rvListData.layoutManager = LinearLayoutManager(this)
         rvListData.adapter = uploadHistoryP2HAdapter
 
-        rvListData.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                try {
-                    if (firstScroll && firstPage) {
-                        if (dy <= 0) {
-                            runOnUiThread {
-                                fbUploadData.visibility = View.VISIBLE
-                            }
-                        } else {
-                            runOnUiThread {
-                                fbUploadData.visibility = View.GONE
-                            }
-                        }
-                    }
-                } finally {
-                    firstScroll = true
-                }
-            }
-        })
+//        rvListData.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//                try {
+//                    if (firstScroll && firstPage) {
+//                        if (dy <= 0) {
+//                            runOnUiThread {
+//                                fbUploadData.visibility = View.VISIBLE
+//                            }
+//                        } else {
+//                            runOnUiThread {
+//                                fbUploadData.visibility = View.GONE
+//                            }
+//                        }
+//                    }
+//                } finally {
+//                    firstScroll = true
+//                }
+//            }
+//        })
 
         loadListAdapter()
 

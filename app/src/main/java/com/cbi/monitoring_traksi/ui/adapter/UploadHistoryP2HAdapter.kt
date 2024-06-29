@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
@@ -99,7 +100,7 @@ class UploadHistoryP2HAdapter(
                         LayoutInflater.from(context).inflate(R.layout.layout_detail_p2h_adapter, parentLayout)
 
                     val cardView = layoutBuilder.findViewById<CardView>(R.id.containerData)
-
+                    val scrollView = layoutBuilder.findViewById<ScrollView>(R.id.scListKerusakan)
                     val parentWidth = rootView.width
                     val parentHeight = rootView.height
 
@@ -122,7 +123,7 @@ class UploadHistoryP2HAdapter(
                         layoutBuilder.tvTglCreated.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
                     }
                     layoutBuilder.tvTglCreated.text = "$textStatusArchive$textLastUpdate"
-                    layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja}"
+                    layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja} ${currentItem.kode_unit}"
                     layoutBuilder.tvLokasiUnit.text = "Unit ${currentItem.unit_kerja}"
 
 //                    val status = currentItem.status_unit_beroperasi
@@ -162,12 +163,15 @@ class UploadHistoryP2HAdapter(
 
                     val idPertanyaan = mutableListOf<String>()
 
-                    val cardViewLayoutParams = cardView.layoutParams
-                    cardViewLayoutParams.width = (parentWidth * 0.9).toInt()
+//                    val cardViewLayoutParams = cardView.layoutParams
+//                    cardViewLayoutParams.width = (parentWidth * 0.9).toInt()
 
 
                     if (!currentItem.kerusakan_unit.isNullOrEmpty()) {
-                        cardViewLayoutParams.height = (parentHeight * 0.9).toInt()
+                        val layoutParams = scrollView.layoutParams
+                        layoutParams.height = dpToPx(200, context)
+                        scrollView.layoutParams = layoutParams
+//                        cardViewLayoutParams.height = (parentHeight * 0.9).toInt()
                         val jsonObject = JSONObject(currentItem.kerusakan_unit)
                         val keys = jsonObject.keys()
                         val listKerusakan = mutableListOf<Map<String, String>>()
@@ -229,12 +233,16 @@ class UploadHistoryP2HAdapter(
                             }
                         }
                     }else{
-                        cardViewLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+//                        cardViewLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                        val layoutParams = scrollView.layoutParams
+                        scrollView.layoutParams = layoutParams
+                        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                         layoutBuilder.tvTitleTanpaKerusakan.visibility = View.VISIBLE
                         layoutBuilder.tvCaptionTanpaKerusakan.visibility = View.VISIBLE
+
                     }
 
-                    cardView.layoutParams = cardViewLayoutParams
+//                    cardView.layoutParams = cardViewLayoutParams
 
                     if (alertDialog.window != null) {
                         alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
@@ -243,6 +251,12 @@ class UploadHistoryP2HAdapter(
 
                 }
             }
+        }
+
+
+        fun dpToPx(dp: Int, context: Context): Int {
+            val density = context.resources.displayMetrics.density
+            return (dp * density).toInt()
         }
 
        fun preview_image(file:File , context: Context){
@@ -300,7 +314,7 @@ class UploadHistoryP2HAdapter(
 
         val item = getItem(position)
         holder.bind(item)
-        holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.unit_kerja} "
+        holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.unit_kerja} ${item.kode_unit}"
         holder.itemLokasiPeriksaUnit.text = ": ${item.unit_kerja}"
         var textjumlahKerusakan = ": Tidak ada"
         var textItemKerusakan = ": Tidak ada"
@@ -362,8 +376,21 @@ class UploadHistoryP2HAdapter(
         holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
 
 
+        // Set bottom margin for the last item
+        if (position == itemCount - 1) {
+            holder.itemView.setBottomMargin(50) // 50dp margin
+        } else {
+            holder.itemView.setBottomMargin(0) // Reset margin for other items
+        }
+
     }
 
+
+    fun View.setBottomMargin(marginBottom: Int) {
+        val params = this.layoutParams as ViewGroup.MarginLayoutParams
+        params.bottomMargin = marginBottom
+        this.layoutParams = params
+    }
     fun toggleSortingOrder() {
         isDescendingOrder = !isDescendingOrder
 

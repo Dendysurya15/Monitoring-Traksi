@@ -46,11 +46,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerKodeTypeUnit
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerUnitKerja
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etJenisUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etKodeUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTanggalPeriksa
 
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etUnitKerja
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fotoUnitContainer
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.ivSignLocation
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.view.id_layout_foto_unit
 
@@ -800,6 +803,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
         etJenisUnit.setOnItemClickListener { parent, _, position, _ ->
 
+            containerUnitKerja.visibility = View.VISIBLE
+
             val selectedNamaUnit = listPilJenisUnitValues[position]
 
             val selectedIdJenisUnit = globalListPilJenisUnit.filterValues { it == selectedNamaUnit }.keys.firstOrNull()
@@ -817,19 +822,18 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
             val unitKerjaArraySorted = unitKerjaArray?.sorted()
 
-            Log.d("testing", unitKerjaArraySorted!!.toTypedArray().contentToString())
             val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArraySorted ?: emptyList())
             etUnitKerja.setAdapter(adapterUnitKerjaItems)
 
             etUnitKerja.setText("")
             etKodeUnit.setText("")
-//            etTypeUnit.setText("")
 
 
             etUnitKerja.setOnItemClickListener { _, _, position, _ ->
                 val idPilUnitKerja = idUnitKerjaArray?.get(position)
 
 
+                containerKodeTypeUnit.visibility = View.VISIBLE
                 Log.d("testing", dataMapKodeUnitArray.contentToString())
                 val filteredKodeUnitList = dataMapKodeUnitArray?.filter {
                     it["id_unit_kerja"] == idPilUnitKerja
@@ -853,6 +857,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 etKodeUnit.setText("")
                 etKodeUnit.setOnItemClickListener { _, _, position, _ ->
                         val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
+
+                        fotoUnitContainer.visibility = View.VISIBLE
 
 //                        etTypeUnit.setText('skldjfkds')
                 }

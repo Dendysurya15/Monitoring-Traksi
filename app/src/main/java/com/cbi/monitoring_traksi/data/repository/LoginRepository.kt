@@ -23,8 +23,6 @@ class LoginRepository(private val context: Context, private val window: Window, 
         val pmu = prefManager.username
         val pmp = prefManager.password
 
-
-
         if (email == pmu && password == pmp) {
             callback(LoginModel(success = true, statusCode = 1, message = "Login berhasil."))
         } else if (AppUtils.checkConnectionDevice(context)) {

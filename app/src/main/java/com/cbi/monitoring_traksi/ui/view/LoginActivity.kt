@@ -3,6 +3,7 @@ package com.cbi.monitoring_traksi.ui.view
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +22,7 @@ import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.data.model.LoginModel
 import com.cbi.monitoring_traksi.data.repository.LoginRepository
 import com.cbi.monitoring_traksi.ui.viewModel.LoginViewModel
+import com.cbi.monitoring_traksi.utils.AlertDialogUtility
 import com.cbi.monitoring_traksi.utils.AppUtils
 import com.cbi.monitoring_traksi.utils.PrefManager
 import es.dmoral.toasty.Toasty
@@ -60,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun handleLoginResult(result: LoginModel) {
         when (result.statusCode) {
             1 -> {
@@ -71,7 +75,13 @@ class LoginActivity : AppCompatActivity() {
                 finishAffinity()
             }
             else -> {
-                showAlertDialog("Error", "Gagal login gan.")
+                AppUtils.closeLoadingLayout(loadingLogin)
+                AlertDialogUtility.alertDialog(
+                    this,
+                    "Caution",
+                    result.message ?: "Login failed",
+                    "warning.json"
+                )
             }
         }
     }

@@ -168,6 +168,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:id="@+id/containerJenisUnit"
                 android:layout_marginTop="10dp"
                 >
                 <TextView
@@ -220,6 +221,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/containerUnitKerja"
                 android:layout_marginTop="10dp"
                 >
                 <TextView
@@ -272,6 +275,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/containerKodeTypeUnit"
                 android:layout_marginTop="10dp"
                 >
                 <TextView
@@ -356,6 +361,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="100dp"
                 android:id="@+id/fotoUnitContainer"
+                android:visibility="gone"
                 tools:ignore="MissingConstraints">
 
                 <include
