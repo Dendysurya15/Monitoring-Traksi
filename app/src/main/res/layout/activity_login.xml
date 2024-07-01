@@ -79,7 +79,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_italic"
+                android:fontFamily="@font/poppins_mediumitalic"
                 android:textColor="@color/graytextdark"
                 android:textSize="11dp"
                 android:layout_marginBottom="30dp"

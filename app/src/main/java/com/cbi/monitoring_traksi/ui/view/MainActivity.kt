@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
         initViewModel()
         loadingMain.visibility = View.VISIBLE
-        AppUtils.showLoadingLayout(this, window, loadingMain)
+        showLoadingLayout(this, window, loadingMain)
         initializeSortOptionsFilterHistoryP2H(this)
         setupSpinnerSortBy()
 
@@ -109,40 +109,17 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         if (prefManager!!.isFirstTimeLaunch) {
             handleSynchronizeData()
         }else{
-            AppUtils.closeLoadingLayout(loadingMain)
+            loadListAdapter()
         }
         name_user_login.text = prefManager!!.name
 
         rvListData.layoutManager = LinearLayoutManager(this)
         rvListData.adapter = uploadHistoryP2HAdapter
 
-//        rvListData.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                try {
-//                    if (firstScroll && firstPage) {
-//                        if (dy <= 0) {
-//                            runOnUiThread {
-//                                fbUploadData.visibility = View.VISIBLE
-//                            }
-//                        } else {
-//                            runOnUiThread {
-//                                fbUploadData.visibility = View.GONE
-//                            }
-//                        }
-//                    }
-//                } finally {
-//                    firstScroll = true
-//                }
-//            }
-//        })
 
-        loadListAdapter()
 
         fbUploadData.setOnClickListener{
             if (AppUtils.checkConnectionDevice(this)) {
-
-
                 if (sizeListAdapeter != 0) {
                     if (allListUploaded == true){
                         AlertDialogUtility.alertDialog(
@@ -168,7 +145,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                         }
 
                     }
-
                 } else {
                     AlertDialogUtility.alertDialog(
                         this,
@@ -190,6 +166,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         historyP2HViewModel.uploadResult.observe(this) { updatedList ->
             uploadHistoryP2HAdapter!!.submitList(updatedList)
             uploadHistoryP2HAdapter!!.notifyDataSetChanged()
+            allListUploaded = updatedList.all { it.archive == 1 }
         }
 
 
@@ -345,6 +322,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         uploadHistoryP2HAdapter = UploadHistoryP2HAdapter(this, historyP2HViewModel, this, this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun handleSynchronizeData(arg: String? = "") {
         if (AppUtils.checkConnectionDevice(this)) {
 
@@ -361,6 +339,8 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                     synchronizeData(arg)
                 }
             } else {
+
+                Log.d("testing", "llagi download data bang")
              synchronizeData()
             }
 
@@ -378,6 +358,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun synchronizeData(arg: String? = "") {
         AppUtils.synchronizeDBSqlite(
             this,

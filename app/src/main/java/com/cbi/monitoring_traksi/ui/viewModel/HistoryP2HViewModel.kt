@@ -192,6 +192,9 @@ class HistoryP2HViewModel(
 
         val currentDate = AppUtils.getCurrentDate(true)
         val laporanP2HList = historyRepo.fetchByDateLaporanP2H(currentDate)
+
+
+        Log.d("uploadLog",laporanP2HList.toString())
         val arrayCheckFoto = ArrayList<String>()
         for (i in idUpload.indices) {
             laporanP2HList.map { data ->
@@ -221,7 +224,6 @@ class HistoryP2HViewModel(
             }
         }
 
-        Log.d("uploadLog", arrayCheckFoto.toString())
         val postRequest: StringRequest = object : StringRequest(
             Method.POST, urlCheckPhotos,
             Response.Listener { response ->
@@ -255,6 +257,10 @@ class HistoryP2HViewModel(
                             }
                         }
                     } else if (successResponse == 2) {
+
+                        Log.d("uploadLog", "masuk sini gan ")
+                        Log.d("uploadLog", idUpload.toString())
+                        Log.d("uploadLog", laporanP2HList.toString())
                         for (i in idUpload.indices) {
                             laporanP2HList.map { data ->
                                 if (idUpload[i] == data.id) {
@@ -262,7 +268,6 @@ class HistoryP2HViewModel(
                                         DatabaseHelper.DB_JENIS_UNIT to data.jenis_unit,
                                         DatabaseHelper.DB_UNIT_KERJA to data.unit_kerja,
                                         DatabaseHelper.DB_KODE_UNIT to data.kode_unit,
-
                                         DatabaseHelper.DB_TANGGAL_UPLOAD to data.tanggal_upload,
                                         DatabaseHelper.DB_LAT to data.lat,
                                         DatabaseHelper.DB_LON to data.lon,
@@ -408,7 +413,6 @@ class HistoryP2HViewModel(
             val jenisUnit = laporan["jenis_unit"].toString()
             val unitKerja = laporan["unit_kerja"].toString()
             val kodeUnit = laporan["kode_unit"].toString()
-            val typeUnit = laporan["type_unit"].toString()
             val tanggalUpload = laporan["tanggal_upload"].toString()
 
             val postRequest: StringRequest = object : StringRequest(
@@ -463,7 +467,6 @@ class HistoryP2HViewModel(
                     params[DatabaseHelper.DB_JENIS_UNIT] = jenisUnit
                     params[DatabaseHelper.DB_UNIT_KERJA] = unitKerja
                     params[DatabaseHelper.DB_KODE_UNIT] = kodeUnit
-                    params[DatabaseHelper.DB_TYPE_UNIT] = typeUnit
                     params[DatabaseHelper.DB_TANGGAL_UPLOAD] = tanggalUpload
                     return params
                 }

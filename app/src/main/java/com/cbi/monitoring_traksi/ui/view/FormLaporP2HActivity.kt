@@ -727,10 +727,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                             dropdownOptions
                         )
                         etTemplateDropdown.setAdapter(adapter)
-//                        etTemplateDropdown.setText("Sudah dicek", false)
+                        etTemplateDropdown.setText("Sudah dicek", false)
 
-//                        val defaultPosition = adapter.getPosition("Sudah dicek")
-//                        etTemplateDropdown.setSelection(defaultPosition)
+                        val defaultPosition = adapter.getPosition("Sudah dicek")
+                        etTemplateDropdown.setSelection(defaultPosition)
 
                         etTemplateDropdown.setOnItemClickListener { _, _, position, _ ->
                             val selectedItem = dropdownOptions[position]

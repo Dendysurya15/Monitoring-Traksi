@@ -126,27 +126,6 @@ class UploadHistoryP2HAdapter(
                     layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja} ${currentItem.kode_unit}"
                     layoutBuilder.tvLokasiUnit.text = "Unit ${currentItem.unit_kerja}"
 
-//                    val status = currentItem.status_unit_beroperasi
-//                    layoutBuilder.mbStatusBeroperasi.text = "$status!"
-//
-//                    // Set the background color based on the status
-//                    val statusBackgroundColor = when (status) {
-//                        "Segera Beroperasi" -> {
-//                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
-//                            ContextCompat.getColor(context, R.color.greendarkerbutton)
-//                        }
-//                        "Tidak Diizinkan Beroperasi" -> {
-//                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.white))
-//                            ContextCompat.getColor(context, R.color.colorRedDark)
-//                        }
-//                        else -> {
-//                            layoutBuilder.mbStatusBeroperasi.setTextColor(ContextCompat.getColor(context, R.color.black))
-//                            ContextCompat.getColor(context, R.color.graylight) // Define a default background color if needed
-//                        }
-//                    }
-//
-//                    layoutBuilder.mbStatusBeroperasi.setBackgroundColor(statusBackgroundColor)
-
                     val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
                     val dirApp = File(rootApp, "LaporP2H")
                     val fileFotoUnit = File(dirApp, currentItem.foto_unit)
@@ -163,15 +142,12 @@ class UploadHistoryP2HAdapter(
 
                     val idPertanyaan = mutableListOf<String>()
 
-//                    val cardViewLayoutParams = cardView.layoutParams
-//                    cardViewLayoutParams.width = (parentWidth * 0.9).toInt()
-
 
                     if (!currentItem.kerusakan_unit.isNullOrEmpty()) {
                         val layoutParams = scrollView.layoutParams
                         layoutParams.height = dpToPx(200, context)
                         scrollView.layoutParams = layoutParams
-//                        cardViewLayoutParams.height = (parentHeight * 0.9).toInt()
+
                         val jsonObject = JSONObject(currentItem.kerusakan_unit)
                         val keys = jsonObject.keys()
                         val listKerusakan = mutableListOf<Map<String, String>>()
@@ -233,7 +209,7 @@ class UploadHistoryP2HAdapter(
                             }
                         }
                     }else{
-//                        cardViewLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+
                         val layoutParams = scrollView.layoutParams
                         scrollView.layoutParams = layoutParams
                         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -241,8 +217,6 @@ class UploadHistoryP2HAdapter(
                         layoutBuilder.tvCaptionTanpaKerusakan.visibility = View.VISIBLE
 
                     }
-
-//                    cardView.layoutParams = cardViewLayoutParams
 
                     if (alertDialog.window != null) {
                         alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
@@ -339,27 +313,6 @@ class UploadHistoryP2HAdapter(
                 textItemKerusakan = ": $joinedText"
             }
         }
-//        val sortedList = currentList.sortedWith(
-//            if (isDescendingOrder) compareByDescending<LaporP2HModel> {
-//                it.id
-//            } else compareBy<LaporP2HModel> {
-//                it.id
-//            }
-//        )
-//        val isLastItemInSorted = sortedList.indexOf(item) == sortedList.size - 1
-
-//        val marginBottom = if (isLastItemInSorted) {
-//            50
-//        } else {
-//            0
-//        }
-
-//        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-//        layoutParams.bottomMargin = marginBottom
-//        holder.itemView.layoutParams = layoutParams
-
-//        val animation = AnimationUtils.loadAnimation(holder.itemView.context, android.R.anim.linear_interpolator)
-//        holder.itemView.startAnimation(animation)
 
         var textStatusArchive = "Tersimpan - "
         var textLastUpdate = "${item.tanggal_upload}"
@@ -369,6 +322,10 @@ class UploadHistoryP2HAdapter(
             holder.itemStatusArchive.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
             holder.itemLastUpdate.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
         }
+        else {
+            holder.itemStatusArchive.setTextColor(ContextCompat.getColor(context, R.color.yellowbutton))
+            holder.itemLastUpdate.setTextColor(ContextCompat.getColor(context, R.color.yellowbutton))
+            }
         holder.itemJenisKerusakan.text = textItemKerusakan
         holder.itemStatusArchive.text = textStatusArchive
         holder.itemLastUpdate.text = textLastUpdate
@@ -378,7 +335,7 @@ class UploadHistoryP2HAdapter(
 
         // Set bottom margin for the last item
         if (position == itemCount - 1) {
-            holder.itemView.setBottomMargin(80)
+            holder.itemView.setBottomMargin(130)
         } else {
             holder.itemView.setBottomMargin(0)
         }
@@ -394,17 +351,20 @@ class UploadHistoryP2HAdapter(
     fun toggleSortingOrder() {
         isDescendingOrder = !isDescendingOrder
 
-
-        submitList(
-            currentList.sortedWith(
-                if (isDescendingOrder) compareByDescending<LaporP2HModel> {
-                    it.id
-                } else compareBy<LaporP2HModel> {
-                    it.id
-                }
-            )
+        val sortedList = currentList.sortedWith(
+            if (isDescendingOrder) compareByDescending<LaporP2HModel> {
+                it.id
+            } else compareBy<LaporP2HModel> {
+                it.id
+            }
         )
-        notifyDataSetChanged()
+
+        submitList(sortedList) {
+            // After the new list is submitted, update the bottom margin for the last item
+            if (itemCount > 0) {
+                notifyItemChanged(itemCount - 1)
+            }
+        }
     }
 
     class ItemDiffCallback : DiffUtil.ItemCallback<LaporP2HModel>() {

@@ -234,7 +234,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/countItemLaporan"
             android:textSize="13dp"
-            android:textStyle="italic"
+            android:fontFamily="@font/poppins_mediumitalic"
             tools:ignore="MissingConstraints" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -352,12 +352,12 @@
             android:clickable="true"
             android:focusable="true"
             app:backgroundTint="@color/greenbutton"
-            app:fabCustomSize="60dp"
+            app:fabCustomSize="65dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:maxImageSize="30dp"
+            app:maxImageSize="40dp"
             app:srcCompat="@drawable/baseline_cloud_upload_24"
             app:tint="@color/white"
             tools:ignore="ContentDescription" />

@@ -313,6 +313,7 @@ object AppUtils {
             input
         }
     }
+    @RequiresApi(Build.VERSION_CODES.R)
     fun synchronizeDBSqlite(
         context: Context,
         prefManager: PrefManager,
@@ -328,7 +329,6 @@ object AppUtils {
                 context.getString(R.string.desc_info1),
                 "warning.json"
             )
-            Log.d("testing","sudah pernah update")
         }
 
         val strReq: StringRequest =

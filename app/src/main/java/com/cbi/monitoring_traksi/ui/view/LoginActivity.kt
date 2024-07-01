@@ -40,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
     private var pass = ""
 
     private lateinit var viewModel: LoginViewModel
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
