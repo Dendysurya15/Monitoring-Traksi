@@ -24,6 +24,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -369,7 +371,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
     private  fun loadListAdapter(){
         historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) { list->
-
             findViewById<TextView>(R.id.countItemLaporan).setText("Total (${list.size}) Laporan")
             if (list.size == 0) {
                 findViewById<ImageView>(R.id.ivNoData).visibility = View.VISIBLE
@@ -464,9 +465,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                     if (isSuccess ) {
                         Toasty.success(this, "Data berhasil dihapus!", Toast.LENGTH_SHORT).show()
                         val oldList = uploadHistoryP2HAdapter?.currentList?.toMutableList()
-                        Log.d("testing", oldList!!.size.toString())
 
-                        AppUtils.showLoadingLayout(this, window, loadingMain)
                         oldList?.removeAt(position)
                         uploadHistoryP2HAdapter?.submitList(oldList)
                         uploadHistoryP2HAdapter?.notifyItemRemoved(position)
@@ -481,6 +480,14 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                                 findViewById<TextView>(R.id.tvNoData).visibility = View.VISIBLE
                             }, 1500) // Delay of 2000 milliseconds (2 seconds)
                         }
+
+                        historyP2HViewModel.loadLaporanP2HByDate(globalFormattedDate, false , false)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            historyP2HViewModel.resultQueryDateLaporanP2H.observe(this) { list ->
+                                uploadHistoryP2HAdapter!!.submitList(list)
+                                uploadHistoryP2HAdapter!!.notifyDataSetChanged()
+                            }
+                        }, 1000)
                     } else {
                         Toasty.warning(
                             this,

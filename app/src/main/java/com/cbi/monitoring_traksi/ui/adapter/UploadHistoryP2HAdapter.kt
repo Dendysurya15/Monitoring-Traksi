@@ -23,6 +23,8 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -58,7 +60,6 @@ class UploadHistoryP2HAdapter(
 ) : ListAdapter<LaporP2HModel, UploadHistoryP2HAdapter.ViewHolder>(ItemDiffCallback()) {
 
     private var isDescendingOrder = false
-
     class ViewHolder(itemView: View, onDeleteClickListener: OnDeleteClickListener, onClickDataListener:OnClickDataListener, context: Context,historyModel : HistoryP2HViewModel) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -282,7 +283,6 @@ class UploadHistoryP2HAdapter(
 
     @SuppressLint("ResourceType", "SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         val item = getItem(position)
         holder.bind(item)
         holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.unit_kerja} ${item.kode_unit}"
@@ -330,9 +330,13 @@ class UploadHistoryP2HAdapter(
         holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
 
 
+//        Log.d("testing", itemCount.toString())
         // Set bottom margin for the last item
-        val marginBottom = if (position == itemCount - 1) 130 else 0
-        holder.itemView.setBottomMargin(marginBottom)
+        if (position == itemCount - 1) {
+            holder.itemView.setBottomMargin(130) // 50dp margin
+        } else {
+            holder.itemView.setBottomMargin(0) // Reset margin for other items
+        }
 
     }
 

@@ -258,9 +258,6 @@ class HistoryP2HViewModel(
                         }
                     } else if (successResponse == 2) {
 
-                        Log.d("uploadLog", "masuk sini gan ")
-                        Log.d("uploadLog", idUpload.toString())
-                        Log.d("uploadLog", laporanP2HList.toString())
                         for (i in idUpload.indices) {
                             laporanP2HList.map { data ->
                                 if (idUpload[i] == data.id) {
