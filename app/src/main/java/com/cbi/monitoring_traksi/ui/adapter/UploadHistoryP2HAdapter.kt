@@ -99,10 +99,7 @@ class UploadHistoryP2HAdapter(
                     val layoutBuilder =
                         LayoutInflater.from(context).inflate(R.layout.layout_detail_p2h_adapter, parentLayout)
 
-                    val cardView = layoutBuilder.findViewById<CardView>(R.id.containerData)
                     val scrollView = layoutBuilder.findViewById<ScrollView>(R.id.scListKerusakan)
-                    val parentWidth = rootView.width
-                    val parentHeight = rootView.height
 
 
                     val builder: AlertDialog.Builder =
@@ -334,11 +331,8 @@ class UploadHistoryP2HAdapter(
 
 
         // Set bottom margin for the last item
-        if (position == itemCount - 1) {
-            holder.itemView.setBottomMargin(130)
-        } else {
-            holder.itemView.setBottomMargin(0)
-        }
+        val marginBottom = if (position == itemCount - 1) 130 else 0
+        holder.itemView.setBottomMargin(marginBottom)
 
     }
 

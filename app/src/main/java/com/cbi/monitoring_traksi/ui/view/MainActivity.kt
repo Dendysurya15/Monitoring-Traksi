@@ -339,8 +339,6 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                     synchronizeData(arg)
                 }
             } else {
-
-                Log.d("testing", "llagi download data bang")
              synchronizeData()
             }
 
@@ -466,9 +464,9 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                     if (isSuccess ) {
                         Toasty.success(this, "Data berhasil dihapus!", Toast.LENGTH_SHORT).show()
                         val oldList = uploadHistoryP2HAdapter?.currentList?.toMutableList()
+                        Log.d("testing", oldList!!.size.toString())
 
-
-
+                        AppUtils.showLoadingLayout(this, window, loadingMain)
                         oldList?.removeAt(position)
                         uploadHistoryP2HAdapter?.submitList(oldList)
                         uploadHistoryP2HAdapter?.notifyItemRemoved(position)
