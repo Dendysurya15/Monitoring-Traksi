@@ -57,7 +57,7 @@
                     android:text="Lapor P2H Harian Unit"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="@color/bluedark"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
 
                     android:layout_weight="1"/>
 
@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/poppins_italic"
-                    android:textSize="13dp"
+                    android:textSize="13sp"
                     android:textColor="@color/black"
                     android:text="Page Informasi Unit (1 / 1)"
                     android:layout_weight="1"/>
@@ -103,7 +103,7 @@
             android:layout_marginHorizontal="20dp"
             android:textColor="@color/white"
             android:layout_marginVertical="10dp"
-            android:textSize="15dp"/>
+            android:textSize="15sp"/>
     </LinearLayout>
 
 
@@ -138,7 +138,7 @@
                     android:text="Tanggal Periksa"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black"
-                    android:textSize="14dp"/>
+                    android:textSize="14sp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/sdaf"
@@ -157,7 +157,7 @@
                         android:fontFamily="@font/poppins_regular"
                         android:background="@color/graylight"
                         android:textColor="@color/black"
-                        android:textSize="10dp" />
+                        android:textSize="10sp" />
 
 
 
@@ -177,7 +177,7 @@
                     android:text="Jenis Unit"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black"
-                    android:textSize="14dp"/>
+                    android:textSize="14sp"/>
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -233,7 +233,7 @@
                     android:text="Unit Kerja"
                     android:textColor="@color/black"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -287,7 +287,7 @@
                     android:text="Kode dan Type Unit"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black"
-                    android:textSize="14dp"/>
+                    android:textSize="14sp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -308,7 +308,7 @@
 
                     <AutoCompleteTextView
                         android:id="@+id/etKodeUnit"
-                        android:textSize="10dp"
+                        android:textSize="10sp"
                         android:layout_width="match_parent"
                         android:inputType="none"
 

@@ -130,4 +130,9 @@ class HistoryP2HRepository(context: Context) {
 
         return dataLaporanP2H
     }
+    fun deleteHistoryP2H() {
+        val db = databaseHelper.writableDatabase
+        db.delete(DatabaseHelper.DB_TAB_LAPORAN_P2H, null, null)
+        db.close()
+    }
 }

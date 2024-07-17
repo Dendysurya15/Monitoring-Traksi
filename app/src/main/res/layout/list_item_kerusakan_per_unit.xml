@@ -34,14 +34,13 @@ android:background="@color/graylight"
                     android:fontFamily="@font/poppins_semibold"
                     android:id="@+id/namaKerusakanUnit"
 
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:layout_weight="0.5"
                     />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="10dp"
-
+                    android:textSize="10sp"
                     android:fontFamily="@font/poppins_italic"
                     android:layout_weight="0.5"
                     android:id="@+id/komentarKerusakanUnit"

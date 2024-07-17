@@ -95,6 +95,18 @@ class HistoryP2HViewModel(
         }
     }
 
+    fun deleteHistoryP2h() {
+        viewModelScope.launch {
+            try {
+                historyRepo.deleteHistoryP2H()
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+            }
+        }
+    }
+
     fun deleteItemList(id: String) {
         viewModelScope.launch {
             try {

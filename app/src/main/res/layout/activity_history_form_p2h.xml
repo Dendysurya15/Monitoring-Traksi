@@ -46,7 +46,7 @@
                     android:text="Detail Informasi Monitoring Unit"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="@color/bluedark"
-                    android:textSize="13dp"
+                    android:textSize="13sp"
 
                     android:layout_weight="1"/>
 
@@ -54,7 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/poppins_lightitalic"
-                    android:textSize="9dp"
+                    android:textSize="9sp"
 
                     android:text="Tanggal periksa : 12:39, 24 Februari 2023"
                     android:layout_weight="1"/>

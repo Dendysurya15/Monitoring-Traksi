@@ -34,7 +34,7 @@
                 android:gravity="center_vertical"
                 android:id="@+id/tvInstruksiUpload"
                 android:textStyle="italic"
-                android:paddingStart="10dp"
+                android:paddingStart="10sp"
                 android:layout_weight="1.8"
                 android:text="Upload Foto (*)" />
 
@@ -124,7 +124,7 @@
                 android:textColor="@color/black"
 
                 android:hint="Penjelasan kerusakan tulis disini (Wajib di isi)"
-                android:textSize="13dp"  />
+                android:textSize="13sp"  />
 
         </com.google.android.material.textfield.TextInputLayout>
 

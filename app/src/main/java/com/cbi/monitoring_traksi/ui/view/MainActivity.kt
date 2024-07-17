@@ -295,6 +295,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                 unitViewModel.deleteDataUnitKerja()
                 unitViewModel.deleteDataPertanyaan()
 
+                historyP2HViewModel.deleteHistoryP2h()
 
                 val intent = Intent(this, SplashScreenActivity::class.java)
                 startActivity(intent)

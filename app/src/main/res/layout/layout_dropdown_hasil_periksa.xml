@@ -25,7 +25,7 @@
 
         <AutoCompleteTextView
             android:id="@+id/etTemplateDropdown"
-            android:textSize="9dp"
+            android:textSize="9sp"
             android:layout_width="match_parent"
             android:inputType="none"
             android:layout_height="wrap_content"/>
