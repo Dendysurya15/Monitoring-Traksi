@@ -110,6 +110,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:textColor="@color/black"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
                     android:textSize="13dp"  />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -166,6 +168,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:textColor="@color/black"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
                     android:textSize="13dp" />
 
             </com.google.android.material.textfield.TextInputLayout>

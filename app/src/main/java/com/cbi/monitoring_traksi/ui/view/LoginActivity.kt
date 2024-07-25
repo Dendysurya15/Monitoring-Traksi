@@ -108,9 +108,9 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-//        mbFinger.setOnClickListener {
-//            biometricPrompt()
-//        }
+        mbFinger.setOnClickListener {
+            biometricPrompt()
+        }
 
         mcbRemember.setOnCheckedChangeListener { _, isChecked ->
             prefManager!!.remember = isChecked
