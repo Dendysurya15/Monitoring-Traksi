@@ -1,6 +1,7 @@
 package com.cbi.monitoring_traksi.data.repository
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -40,6 +41,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cbi.monitoring_traksi.R
 import com.cbi.monitoring_traksi.utils.AppUtils
+import com.cbi.monitoring_traksi.utils.AppUtils.hideKeyboard
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.button.MaterialButton
@@ -186,12 +188,15 @@ class CameraRepository(private val context: Context, private val window: Window,
         return resultBitmap
     }
 
-    fun takeCameraPhotos(resultCode: String, imageView: ImageView, pageForm : Int, deletePhoto : View?, kodeFoto:String) {
+    fun takeCameraPhotos(resultCode: String, imageView: ImageView, pageForm : Int, deletePhoto : View?, komentar: String? = null, kodeFoto:String) {
+
+
         // Initialize Camera View
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
             "Monitoring-Traksi"
         ).toString()
+
 
         val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
 
@@ -288,7 +293,7 @@ class CameraRepository(private val context: Context, private val window: Window,
                                                 0
                                             }
 
-                                            takeCameraPhotos(resultCode, imageView, pageForm,deletePhoto,  kodeFoto)
+                                            takeCameraPhotos(resultCode, imageView, pageForm,deletePhoto, komentar,  kodeFoto)
                                         }
                                     }
 
@@ -352,9 +357,9 @@ class CameraRepository(private val context: Context, private val window: Window,
                                             Locale("id", "ID")
                                         ).format(Calendar.getInstance().time)
 
-                                        var commentWm = "comment"
-                                        commentWm = commentWm.replace("|", ",").replace("\n", "")
-                                        commentWm = AppUtils.splitStringWatermark(commentWm, 60)
+                                        var commentWm = komentar
+                                        commentWm = commentWm?.replace("|", ",")?.replace("\n", "")
+                                        commentWm = AppUtils.splitStringWatermark(commentWm!!, 60)
                                         val watermarkText = if (resultCode == "0") {
                                             "MONITORING TRAKSI\n${dateWM}"
                                         } else {

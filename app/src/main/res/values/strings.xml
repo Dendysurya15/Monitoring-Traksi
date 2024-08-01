@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Monitoring Traksi</string>
+    <string name="app_name">Fleet Management</string>
     <string name="welcome_back">Selamat Datang</string>
     <string name="sign_continue">Masuk untuk melanjutkan</string>
     <string name="forgot_password">Lupa kata sandi?</string>

@@ -11,8 +11,8 @@ import java.io.File
 
 class CameraViewModel(private val cameraRepository: CameraRepository) : ViewModel() {
 
-    fun takeCameraPhotos(resultCode : String, imageView: ImageView, pageForm : Int, deletePhoto : View?, kodeFoto:String) {
-        cameraRepository.takeCameraPhotos(resultCode, imageView, pageForm, deletePhoto, kodeFoto)
+    fun takeCameraPhotos(resultCode : String, imageView: ImageView, pageForm : Int, deletePhoto : View?,komentar :String, kodeFoto:String) {
+        cameraRepository.takeCameraPhotos(resultCode, imageView, pageForm, deletePhoto,komentar, kodeFoto)
     }
 
     fun statusCamera(): Boolean = cameraRepository.statusCamera()

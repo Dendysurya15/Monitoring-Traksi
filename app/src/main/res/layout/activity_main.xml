@@ -45,7 +45,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Monitoring Traksi"
+                    android:text="@string/app_name"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="@color/bluedark"
                     android:textSize="20sp"

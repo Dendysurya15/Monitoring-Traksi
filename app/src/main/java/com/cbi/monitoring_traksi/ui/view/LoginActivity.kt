@@ -144,6 +144,18 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        AlertDialogUtility.withTwoActions(
+            this,
+            "Ya",
+            "Peringatan",
+            "Apakah anda yakin menutup aplikasi?",
+            "warning.json"
+        ) {
+            finishAffinity()
+        }
+    }
+
     private fun showAlertDialog(title: String, message: String) {
         AlertDialog.Builder(this)
             .setTitle(title)

@@ -4,6 +4,7 @@ package com.cbi.monitoring_traksi.ui.view
 
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -277,12 +278,13 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     }
 
-    private fun retakeCamera(id_foto: String, imageView: ImageView, pageForm: Int, deletePhoto: View?, kode_foto :String ){
+    private fun retakeCamera(id_foto: String, imageView: ImageView, pageForm: Int, deletePhoto: View?,  komentar:String, kode_foto :String ){
         cameraViewModel.takeCameraPhotos(
             id_foto,
             imageView,
             pageForm,
             deletePhoto,
+            komentar ,
             kode_foto
         )
     }
@@ -302,7 +304,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
     }
 
-    private fun takeCameraNow(id_foto: String, pageForm: Int,  imageView: ImageView, deletePhoto : View?, kode_foto: String){
+    private fun takeCameraNow(id_foto: String, pageForm: Int,  imageView: ImageView, deletePhoto : View?, komentar:String, kode_foto: String){
         val kodeFotoNoWhitespace = removeWhitespaces(kode_foto)
         if (listNamaFoto.containsKey(id_foto)){
             zoomOpen = true
@@ -325,6 +327,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         imageView,
                         pageForm,
                         null,
+                        komentar,
                         kodeFotoNoWhitespace
                     )
                 }
@@ -337,6 +340,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     imageView,
                     pageForm,
                     deletePhoto,
+                    komentar,
                     kodeFotoNoWhitespace
                 )
             }
@@ -739,16 +743,26 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 layoutPertanyaan.layout_komentar_foto.etKomentar.setText("")
 
                                 val id_foto = key.toString()
+
                                 layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan.setOnClickListener {
-                                    includedLayout.visibility = View.GONE
-                                    id_take_foto_layout.visibility = View.VISIBLE
-                                    val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
-                                    takeCameraNow(id_foto,
-                                        i,
-                                        layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan,
-                                        layoutPertanyaan.layout_komentar_foto,
-                                        kode_foto
-                                    )
+                                    val komentar = layoutPertanyaan.layout_komentar_foto.etKomentar.text.toString().trim()
+
+                                    if (komentar.isEmpty()) {
+                                        displayToasty(this@FormLaporP2HActivity,"Mohon untuk mengisi komentar terlebih dahulu")
+                                    } else {
+
+                                        AppUtils.hideKeyboard(this@FormLaporP2HActivity)
+                                        includedLayout.visibility = View.GONE
+                                        id_take_foto_layout.visibility = View.VISIBLE
+                                        val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
+                                        takeCameraNow(id_foto,
+                                            i,
+                                            layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan,
+                                            layoutPertanyaan.layout_komentar_foto,
+                                            komentar,
+                                            kode_foto
+                                        )
+                                    }
                                 }
 
                                 id_editable_foto_layout.retakePhoto.setOnClickListener {
@@ -759,9 +773,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     // in case ini adalah foto di layout informasi unit foto utama dengan id 0
                                     val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
                                     if (listNamaFoto.containsKey("0")){
-                                        retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1,null, kode_foto)
+                                        retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1,null,"", kode_foto)
                                     }else{
-                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, i ,null,kode_foto)
+                                        retakeCamera(id_foto, layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan, i ,null,"", kode_foto)
                                     }
 
                                 }
@@ -906,7 +920,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 if(prefManager!!.isCameraAllowed == false){
                     checkPermissionsCamera(this)
                 }else{
-                    takeCameraNow("0", -1,  id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, null, kode_foto)
+                    takeCameraNow("0", -1,  id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, null, "" , kode_foto)
                 }
         }
 
@@ -919,7 +933,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             id_editable_foto_layout.visibility = View.GONE
             id_take_foto_layout.visibility = View.VISIBLE
 
-            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1, null,kode_foto)
+            retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1, null,"", kode_foto)
         }
 
         id_editable_foto_layout.closeZoom.setOnClickListener{
