@@ -31,9 +31,9 @@
         android:requestLegacyExternalStorage="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/logo_traksi"
+        android:icon="@mipmap/logo_fleet_management"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/logo_traksi"
+        android:roundIcon="@mipmap/logo_fleet_management"
         android:supportsRtl="true"
         android:theme="@style/material_whitebar"
         tools:targetApi="34">
