@@ -67,6 +67,7 @@ class UploadHistoryP2HAdapter(
         val mainActivity = context as MainActivity
         val itemTitlePeriksaUnit: TextView = itemView.findViewById(R.id.titlePeriksaUnit)
         val itemLokasiPeriksaUnit: TextView = itemView.findViewById(R.id.lokasiPeriksaUnit)
+        val itemAsetUnit: TextView = itemView.findViewById(R.id.asetUnit)
         val itemJenisKerusakan: TextView = itemView.findViewById(R.id.listJenisKerusakan)
         val itemfotoKerusakan: TextView = itemView.findViewById(R.id.listFotoKerusakan)
         val itemStatusArchive: TextView = itemView.findViewById(R.id.statusArchive)
@@ -121,8 +122,8 @@ class UploadHistoryP2HAdapter(
                         layoutBuilder.tvTglCreated.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
                     }
                     layoutBuilder.tvTglCreated.text = "$textStatusArchive$textLastUpdate"
-                    layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.unit_kerja} ${currentItem.kode_unit}"
-                    layoutBuilder.tvLokasiUnit.text = "Unit ${currentItem.unit_kerja}"
+                    layoutBuilder.tvNamaUnit.text = "${currentItem.kode_type_no_unit}"
+                    layoutBuilder.tvLokasiUnit.text = "Aset Unit ${currentItem.aset_unit}"
 
                     val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
                     val dirApp = File(rootApp, "LaporP2H")
@@ -285,8 +286,9 @@ class UploadHistoryP2HAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
-        holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.unit_kerja} ${item.kode_unit}"
-        holder.itemLokasiPeriksaUnit.text = ": ${item.unit_kerja}"
+        holder.itemTitlePeriksaUnit.text = "${item.kode_type_no_unit}"
+        holder.itemLokasiPeriksaUnit.text = ": ${item.lokasi_kerja}"
+        holder.itemAsetUnit.text = ": ${item.aset_unit}"
         var textjumlahKerusakan = ": Tidak ada"
         var textItemKerusakan = ": Tidak ada"
         val idPertanyaan = mutableListOf<String>()
@@ -329,8 +331,6 @@ class UploadHistoryP2HAdapter(
         holder.itemfotoKerusakan.text = textjumlahKerusakan
         holder.deleteButton.visibility = if (item.archive == 0) View.VISIBLE else View.GONE
 
-
-//        Log.d("testing", itemCount.toString())
         // Set bottom margin for the last item
         if (position == itemCount - 1) {
             holder.itemView.setBottomMargin(130) // 50dp margin

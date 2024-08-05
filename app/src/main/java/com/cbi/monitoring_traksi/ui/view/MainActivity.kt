@@ -292,7 +292,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
 
                 unitViewModel.deleteDataJenisUnit()
                 unitViewModel.deleteDataKodeUnit()
-                unitViewModel.deleteDataUnitKerja()
+                unitViewModel.deleteDataAsetUnit()
                 unitViewModel.deleteDataPertanyaan()
 
                 historyP2HViewModel.deleteHistoryP2h()

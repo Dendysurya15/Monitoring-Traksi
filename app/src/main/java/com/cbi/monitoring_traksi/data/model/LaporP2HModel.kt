@@ -5,8 +5,9 @@ import androidx.room.Ignore
 data class LaporP2HModel(
     @Ignore val id: Int,
     val jenis_unit: String,
-    val unit_kerja: String,
-    val kode_unit: String,
+    val aset_unit: String,
+    val kode_type_no_unit: String,
+    val lokasi_kerja: String,
     val tanggal_upload: String,
     val lat: String,
     val lon: String,

@@ -70,6 +70,12 @@
     <string name="filter_history3">Unit Tanpa Kerusakan</string>
 
 
+<!--    form informasi unit-->
+    <string name="tvFIUJenisUnit">Jenis Unit</string>
+    <string name="tvFIUAsetUnit">Aset Unit</string>
+    <string name="tvFIUTypeNoUnit">Type dan No Unit</string>
+    <string name="tvFIULokasiKerjaUnit">Lokasi Kerja Unit</string>
+
     <string-array name="dropdown_options_form_laporan_p2h">
         <item>Sudah dicek</item>
         <item>Sudah dicek, tetapi perlu perbaikan</item>

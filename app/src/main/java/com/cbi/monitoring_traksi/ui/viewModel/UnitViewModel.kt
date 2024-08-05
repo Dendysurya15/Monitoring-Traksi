@@ -8,7 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.cbi.monitoring_traksi.data.model.DataLaporanModel
+import com.cbi.monitoring_traksi.data.model.AsetUnitModel
+import com.cbi.monitoring_traksi.data.model.EstateModel
 import com.cbi.monitoring_traksi.data.model.JenisUnitModel
 import com.cbi.monitoring_traksi.data.model.KodeUnitModel
 import com.cbi.monitoring_traksi.data.model.ItemPertanyaanModel
@@ -27,8 +28,8 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
     private val _insertResultKodeUnit = MutableLiveData<Boolean>()
     val insertResultKodeUnit: LiveData<Boolean> get() = _insertResultKodeUnit
 
-    private val _insertResultUnitKerja = MutableLiveData<Boolean>()
-    val insertResultUnitKerja: LiveData<Boolean> get() = _insertResultUnitKerja
+    private val _insertResultAsetUnit = MutableLiveData<Boolean>()
+    val insertResultAsetUnit: LiveData<Boolean> get() = _insertResultAsetUnit
 
     private val _insertResultLaporP2H = MutableLiveData<Boolean>()
     val insertResultLaporP2H: LiveData<Boolean> get() = _insertResultLaporP2H
@@ -38,35 +39,46 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
 
     private val _insertResultPertanyaan = MutableLiveData<Boolean>()
 
+    private val _insertResultListEstate = MutableLiveData<Boolean>()
+
     private val _last_id_laporp2h = MutableLiveData<Int>()
 
     val last_id_laporp2h: LiveData<Int> get() = _last_id_laporp2h
     val insertResultPertanyaan: LiveData<Boolean> get() = _insertResultPertanyaan
 
+    val insertResultListEstate: LiveData<Boolean> get() = _insertResultListEstate
+
     private val _dataJenisUnit = MutableLiveData<List<JenisUnitModel>>()
+
+    private val _dataAsetUnit = MutableLiveData<List<AsetUnitModel>>()
 
     private val _dataKodeUnit = MutableLiveData<List<KodeUnitModel>>()
 
+    private val _dataEstate = MutableLiveData<List<EstateModel>>()
+
     private val _dataUnitKerja = MutableLiveData<List<UnitKerjaModel>>()
 
-    private val _dataPertanyaan = MutableLiveData<Map<Int, List<ItemPertanyaanModel>>>()
-
-
-    private val _dataLaporan = MutableLiveData<List<DataLaporanModel>>()
+    private val _dataPertanyaan = MutableLiveData<Map<String, List<ItemPertanyaanModel>>>()
+    
 
     val dataJenisUnitList: LiveData<List<JenisUnitModel>> get() = _dataJenisUnit
 
+    val dataAsetUnitList: LiveData<List<AsetUnitModel>> get() = _dataAsetUnit
+
     val dataKodeUnitList: LiveData<List<KodeUnitModel>> get() = _dataKodeUnit
+
+    val dataEstateList: LiveData<List<EstateModel>> get() = _dataEstate
 
     val dataUnitkerjaList: LiveData<List<UnitKerjaModel>> get() = _dataUnitKerja
 
-    val pertanyaanBasedOnJenisUnitList: LiveData<Map<Int, List<ItemPertanyaanModel>>> get() = _dataPertanyaan
+    val pertanyaanBasedOnJenisUnitList: LiveData<Map<String, List<ItemPertanyaanModel>>> get() = _dataPertanyaan
 
 
     fun insertDataJenisUnit(
         id: Int,
         nama_unit: String,
-        jenis: String,
+        kode: String,
+        jenis_form_p2h: String,
         list_pertanyaan: String,
     ) {
         viewModelScope.launch {
@@ -74,8 +86,9 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
                 val dataJenisUnit = JenisUnitModel(
                     id,
                     nama_unit,
-                    jenis,
-                    list_pertanyaan ,
+                    kode,
+                    jenis_form_p2h,
+                    list_pertanyaan,
                 )
                 val isInserted = traksiUnitRepository.insertDataJenisUnit(dataJenisUnit)
 
@@ -111,19 +124,43 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         }
     }
 
+
+    fun insertListEstate(
+        id: Int,
+        est: String,
+        ) {
+        viewModelScope.launch {
+            try {
+                val dataEst = EstateModel(
+                    id,
+                    est,
+                )
+                val isInserted = traksiUnitRepository.insertListEstate(dataEst)
+
+                _insertResultListEstate.value = isInserted
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _insertResultListEstate.value = false
+            }
+        }
+    }
     fun insertDataKodeUnit(
          id: Int,
-         nama_kode: String,
-         type_unit: String,
-         id_unit_kerja: Int
+         kode: String,
+         est : String,
+         type: String,
+         no_unit: String,
+         tahun : Int,
         ) {
         viewModelScope.launch {
             try {
                 val dataKodeUnit = KodeUnitModel(
                     id,
-                    nama_kode,
-                    type_unit,
-                    id_unit_kerja
+                    kode,
+                    est,
+                    type,
+                    no_unit,
+                    tahun,
                 )
                 val isInserted = traksiUnitRepository.insertDataKodeUnit(dataKodeUnit)
 
@@ -135,24 +172,22 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         }
     }
 
-    fun insertDataUnitKerja(
+    fun insertDataAsetUnit(
         id: Int,
-        nama_unit_kerja: String,
-        id_jenis_unit: Int
+        nama_aset: String,
     ) {
         viewModelScope.launch {
             try {
-                val dataUnitKerja = UnitKerjaModel(
+                val dataAsetUnit = AsetUnitModel(
                     id,
-                    nama_unit_kerja,
-                    id_jenis_unit
+                    nama_aset
                 )
-                val isInserted = traksiUnitRepository.insertDataUnitKerja(dataUnitKerja)
+                val isInserted = traksiUnitRepository.insertDataAsetUnit(dataAsetUnit)
 
-                _insertResultUnitKerja.value = isInserted
+                _insertResultAsetUnit.value = isInserted
             } catch (e: Exception) {
                 e.printStackTrace()
-                _insertResultUnitKerja.value = false
+                _insertResultAsetUnit.value = false
             }
         }
     }
@@ -178,9 +213,9 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         }
     }
 
-    fun deleteDataUnitKerja() {
+    fun deleteDataAsetUnit() {
         viewModelScope.launch {
-            traksiUnitRepository.deleteDataUnitKerja()
+            traksiUnitRepository.deleteDataAsetUnit()
         }
     }
 
@@ -193,11 +228,21 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         }
     }
 
-    fun loadDataListPertanyaanBasedOnJenisUnit(arrayHere: Array<String>, id: Int) {
+    fun loadDataAsetUnit() {
+        viewModelScope.launch {
+            val dataAsetUnit = withContext(Dispatchers.IO) {
+                traksiUnitRepository.fetchAllAsetUnit()
+            }
+            _dataAsetUnit.value = dataAsetUnit
+        }
+    }
+
+    fun loadDataListPertanyaanBasedOnJenisUnit(arrayHere: Array<String>, id: String) {
         viewModelScope.launch {
             val dataUnit = withContext(Dispatchers.IO) {
                 traksiUnitRepository.fetchAllListPertanyaanBasedOnJenisUnit(arrayHere)
             }
+
 
             if (dataUnit.isNotEmpty()) {
                 val dataWithCustomId = mapOf(id to dataUnit)
@@ -219,8 +264,9 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
         fun pushDataToLaporanP2hSQL(
             id: Int? = 0,
             jenis_unit: String,
-            unit_kerja: String,
-            kode_unit: String,
+            aset_unit: String,
+            kode_type_no_unit: String,
+            lokasi_kerja: String,
             tanggal_upload: String,
             lat: String,
             lon: String,
@@ -237,8 +283,9 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
                     val dataSubmitLaporan = LaporP2HModel(
                         id!!,
                         jenis_unit,
-                        unit_kerja,
-                        kode_unit,
+                        aset_unit ,
+                        kode_type_no_unit ,
+                        lokasi_kerja ,
                         tanggal_upload,
                         lat,
                         lon,
@@ -260,47 +307,6 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
             }
         }
 
-    fun     pushToTableData(
-        id: Int? = 0,
-        created_at : String,
-        id_laporan : Int,
-        id_pertanyaan : Int,
-        kondisi : String,
-        komentar : String,
-        foto : String,
-    ) {
-        viewModelScope.launch {
-            try {
-                val dataSubmit = DataLaporanModel(
-                    id!!,
-                    created_at,
-                    id_laporan,
-                    id_pertanyaan,
-                    kondisi,
-                    komentar,
-                    foto
-                )
-
-                val isInserted = traksiUnitRepository.insertToTableData(dataSubmit)
-
-                _insertQueryKeTableDataResult.value = isInserted
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _insertQueryKeTableDataResult.value = false
-            }
-        }
-    }
-
-    fun loadDataUnitKerja() {
-        viewModelScope.launch {
-            val dataUnit = withContext(Dispatchers.IO) {
-                traksiUnitRepository.fetchAllUnitKerja()
-            }
-            _dataUnitKerja.value = dataUnit
-        }
-    }
-
-
 
 
     fun loadDataKodeUnit() {
@@ -309,6 +315,15 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
                 traksiUnitRepository.fetchAllKodeUnit()
             }
             _dataKodeUnit.value = dataUnit
+        }
+    }
+
+    fun loadDataListEstate() {
+        viewModelScope.launch {
+            val dataEstate = withContext(Dispatchers.IO) {
+                traksiUnitRepository.fetchAllEstateList()
+            }
+            _dataEstate.value = dataEstate
         }
     }
     fun loadDataTypeUnit() {

@@ -4,18 +4,15 @@ package com.cbi.monitoring_traksi.ui.view
 
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.text.InputType
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -50,18 +47,19 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerAsetUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerKodeTypeUnit
-import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerUnitKerja
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.containerLokasiKerja
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etAsetUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etJenisUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etKodeUnit
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etLokasiKerja
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTanggalPeriksa
 
-import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etUnitKerja
+
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fotoUnitContainer
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.ivSignLocation
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.view.id_layout_foto_unit
-import kotlinx.android.synthetic.main.activity_form_p2h_layout_pertanyaan.ScrollViewContainer
-import kotlinx.android.synthetic.main.activity_form_p2h_layout_pertanyaan.id_activity_form_base_layout_pertanyaan
 
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_editable_foto_layout
 import kotlinx.android.synthetic.main.activity_layout_form_p2h.id_layout_activity_informasi_unit
@@ -97,14 +95,16 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     private lateinit var unitViewModel: UnitViewModel
     private var currentFormIndex: Int = 0
     val dataJenisUnitList = mutableListOf<Map<String, Any>>()
-    val dataUnitKerjaList = mutableListOf<Map<String, Any>>()
+    val dataAsetUnitList = mutableListOf<Map<String, Any>>()
+    val dataEstateList = mutableListOf<Map<String, Any>>()
     val dataKodeUnitList = mutableListOf<Map<String, Any>>()
 
     val pertanyaanPerPage = mutableMapOf<Int, MutableMap<Int, String>>()
+    private var dataMapEstateArray: Array<Map<String, Any>>? = null
     private var dataMapJenisUnitArray: Array<Map<String, Any>>? = null
-    private var dataMapUnitKerjaArray: Array<Map<String, Any>>? = null
+    private var dataMapAsetUnitArray: Array<Map<String, Any>>? = null
     private var dataMapKodeUnitArray: Array<Map<String, Any>>? = null
-
+    private lateinit var globalPopulasiAset: Map<String, Map<String, List<String>>>
     private lateinit var cameraViewModel: CameraViewModel
     private lateinit var locationViewModel: LocationViewModel
     private var lat: Double? = null
@@ -116,13 +116,17 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     }
 
     val arrInsertedDataTable =  mutableMapOf<Int, Map<String, Any>>()
-    val globalPertanyaanAllJenisUnitMapping = mutableMapOf<Int, MutableList<MutableMap<String, Any>>>()
+    val globalPertanyaanAllJenisUnitMapping = mutableMapOf<String, MutableList<MutableMap<String, Any>>>()
     val formLayoutsPertanyaan = mutableListOf<View>()
     private var pertanyaanListGlobal: MutableList<MutableMap<String, Any>> = mutableListOf()
     private var locationEnable:Boolean = false
-    private var globalListPilJenisUnit: MutableMap<Int, String> = mutableMapOf()
+    private var globalListPilJenisUnit: MutableMap<String, String> = mutableMapOf()
     private var globalListPilUnitKerja: MutableMap<Int, String> = mutableMapOf()
     private var globalListPilKodeUnit: MutableMap<Int, String> = mutableMapOf()
+
+    private lateinit var globalListJenisUnitKode: List<String>
+    private lateinit var globalListAsetUnit: List<String>
+    private lateinit var globalListEstate: List<String>
     val listNamaFoto = mutableMapOf<String, String>()
     val listFileFoto = mutableMapOf<String, File>()
 
@@ -134,8 +138,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     //for photos
     private var zoomOpen = false
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 locationViewModel.startLocationUpdates()
             } else {
@@ -161,7 +164,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     val recordMap = mutableMapOf<String, Any>()
                     recordMap["id"] = record.id
                     recordMap["nama_unit"] = record.nama_unit
-                    recordMap["jenis"] = record.jenis
+                    recordMap["kode"] = record.kode
+                    recordMap["jenis_form_p2h"] = record.jenis_form_p2h
                     recordMap["list_pertanyaan"] = record.list_pertanyaan
 
                     dataJenisUnitList.add(recordMap)
@@ -173,25 +177,20 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
         }
 
-        unitViewModel.loadDataUnitKerja()
-        unitViewModel.dataUnitkerjaList.observe(this) { data ->
+        unitViewModel.loadDataAsetUnit()
+        unitViewModel.dataAsetUnitList.observe(this){data->
             if (data != null) {
                 data.forEach { record ->
                     val recordMap = mutableMapOf<String, Any>()
-
                     recordMap["id"] = record.id
-                    recordMap["nama_unit_kerja"] = record.nama_unit_kerja
-                    recordMap["id_jenis_unit"] = record.id_jenis_unit
-
-                    dataUnitKerjaList.add(recordMap)
+                    recordMap["nama_aset"] = record.nama_aset
+                    dataAsetUnitList.add(recordMap)
                 }
 
-                dataMapUnitKerjaArray = dataUnitKerjaList.toTypedArray()
+                dataMapAsetUnitArray = dataAsetUnitList.toTypedArray()
 
-            checkDataAvailability()
-
+                checkDataAvailability()
             }
-
         }
 
         unitViewModel.loadDataKodeUnit()
@@ -203,16 +202,39 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
                     // Populate the map with keys and values
                     recordMap["id"] = record.id
-                    recordMap["nama_kode"] = record.nama_kode
-                    recordMap["type_unit"] = record.type_unit
-                    recordMap["id_unit_kerja"] = record.id_unit_kerja
+                    recordMap["kode"] = record.kode
+                    recordMap["est"] = record.est
+                    recordMap["type_unit"] = record.type
+                    recordMap["no_unit"] = record.no_unit
+                    recordMap["tahun"] = record.tahun
 
                     dataKodeUnitList.add(recordMap)
                 }
 
+
                 dataMapKodeUnitArray = dataKodeUnitList.toTypedArray()
 
             checkDataAvailability()
+            }
+        }
+
+        unitViewModel.loadDataListEstate()
+        unitViewModel.dataEstateList.observe(this) { data ->
+
+            if (data != null) {
+                data.forEach { record ->
+                    val recordMap = mutableMapOf<String, Any>()
+
+                    // Populate the map with keys and values
+                    recordMap["id"] = record.id
+                    recordMap["est"] = record.est
+                    dataEstateList.add(recordMap)
+                }
+
+
+                dataMapEstateArray = dataEstateList.toTypedArray()
+
+                checkDataAvailability()
             }
         }
 
@@ -231,6 +253,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
 
                 }
+
+
                  globalPertanyaanAllJenisUnitMapping[id] = pertanyaanList
             }
 
@@ -246,12 +270,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         val nextButton = findViewById<Button>(resources.getIdentifier("mbNextForm0", "id", packageName))
         nextButton.setOnClickListener {
             val jenis_unit = etJenisUnit.text.toString()
-            val unit_kerja = etUnitKerja.text.toString()
+            val aset_unit = etAsetUnit.text.toString()
             val kode_unit =  etKodeUnit.text.toString()
-
+            val lokasi_kerja =  etLokasiKerja.text.toString()
 
             if (locationEnable == true){
-                if (jenis_unit != "" && unit_kerja != "" && kode_unit != ""  && !listNamaFoto["0"].isNullOrEmpty()){
+                if (jenis_unit != "" && aset_unit != "" && kode_unit != ""  && lokasi_kerja != "" && !listNamaFoto["0"].isNullOrEmpty()){
                     isFormInformasiUnit = false
                     toggleFormVisibility(currentFormIndex)
                 }else{
@@ -315,9 +339,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }else{
             if (isFormInformasiUnit == true){
                 val jenis_unit = etJenisUnit.text.toString()
-                val unit_kerja = etUnitKerja.text.toString()
+                val unit_kerja = etAsetUnit.text.toString()
                 if (id_foto == "0" && jenis_unit != "" && unit_kerja != ""){
-                    val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
+                    val kode_foto = "${etJenisUnit.text}_${etAsetUnit.text}"
                     val kodeFotoNoWhitespace = removeWhitespaces(kode_foto)
                     id_layout_activity_informasi_unit.visibility = View.GONE
                     id_take_foto_layout.visibility = View.VISIBLE
@@ -440,10 +464,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 ) {
 
                     val jenis_unit = etJenisUnit.text.toString()
-                    val unit_kerja = etUnitKerja.text.toString()
+                    val aset_unit =  etAsetUnit.text.toString()
                     val kode_unit =  etKodeUnit.text.toString()
-
-
+                    val lokasi_kerja =  etLokasiKerja.text.toString()
 
                         var isKomentarFillAll = true
                         var isFotoTakenAll = true
@@ -501,8 +524,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                             unitViewModel.pushDataToLaporanP2hSQL(
                                 tanggal_upload = getCurrentDate(true),
                                 jenis_unit = jenis_unit,
-                                unit_kerja = unit_kerja,
-                                kode_unit =  kode_unit,
+                                aset_unit = aset_unit,
+                                kode_type_no_unit = kode_unit,
+                                lokasi_kerja =  lokasi_kerja,
                                 lat = lat.toString(),
                                 lon = lon.toString(),
                                 user = prefManager!!.name!!,
@@ -540,9 +564,9 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     }
 
-    private fun getIdFromJenisUnit(idJenisUnit: String): Int? {
-        return globalListPilJenisUnit .entries.find { it.value == idJenisUnit }?.key
-    }
+//    private fun getIdFromJenisUnit(idJenisUnit: String): Int? {
+//        return globalListPilJenisUnit .entries.find { it.value == idJenisUnit }?.key
+//    }
 
     private fun getIdFromUnitKerja(idUnitKerja: String): Int? {
         return globalListPilUnitKerja .entries.find { it.value == idUnitKerja }?.key
@@ -553,16 +577,27 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
     }
     private fun checkDataAvailability(){
 
-        if (dataMapUnitKerjaArray != null && dataMapJenisUnitArray != null && dataMapKodeUnitArray != null) {
+        if (dataMapAsetUnitArray != null && dataMapJenisUnitArray != null && dataMapKodeUnitArray != null && dataMapEstateArray != null) {
 
             var isDoneRetrieveData = false
 
+            dataMapAsetUnitArray?.let{data->
+                globalListAsetUnit = data.mapNotNull { it["nama_aset"] as?String }
+            }
+
+            dataMapEstateArray?.let{data->
+                globalListEstate = data.mapNotNull { it["est"] as?String }
+
+
+            }
+
             dataMapJenisUnitArray?.let { data ->
                 val idUnitList = data.map { it["id"] as? Int }.filterNotNull()
+                val idKodeList = data.map { it["kode"] as? String }.filterNotNull()
                 val listPertanyaanJenisUnit = data.map { it["list_pertanyaan"] as? String }.filterNotNull()
 
                 globalListPilJenisUnit = data.mapNotNull {
-                    val id = it["id"] as? Int
+                    val id = it["kode"] as? String
                     val namaUnit = it["nama_unit"] as? String
                     if (id != null && namaUnit != null) {
                         id to namaUnit
@@ -571,6 +606,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     }
                 }.toMap().toMutableMap()
 
+                globalListJenisUnitKode = data.mapNotNull { it["kode"] as?String }
 
                 globalListPilJenisUnit = globalListPilJenisUnit.toList().sortedBy { (_, value) -> value }.toMap().toMutableMap()
 
@@ -579,8 +615,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 GlobalScope.launch(Dispatchers.IO) {
 
                     listPertanyaanJenisUnitArray.forEachIndexed { index, datas ->
-                        val id = idUnitList[index]
                         val values = handleStringtoJsonObjectPertanyaan(datas)
+                        val id = idKodeList[index]
                         unitViewModel.loadDataListPertanyaanBasedOnJenisUnit(values.toTypedArray(), id)
                     }
 
@@ -590,18 +626,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                 }
             }
 
-            dataUnitKerjaList?.let {data->
-                globalListPilUnitKerja = data.mapNotNull {
-                    val id = it["id"] as? Int
-                    val unitKerja = it["nama_unit_kerja"] as? String
-                    if (id != null && unitKerja != null) {
-                        id to unitKerja
-                    } else {
-                        null
-                    }
-                }.toMap().toMutableMap()
 
-            }
 
             dataMapKodeUnitArray?.let {data->
                 globalListPilKodeUnit = data.mapNotNull {
@@ -613,20 +638,52 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         null
                     }
                 }.toMap().toMutableMap()
+
+
             }
 
 
             GlobalScope.launch(Dispatchers.Main) {
                 while (!isDoneRetrieveData) {
                     delay(100)
+                    globalPopulasiAset = generateGlobalPopulasiAset(dataMapKodeUnitArray)
                 }
-                AppUtils.closeLoadingLayout(loadingFetchingData)
+                closeLoadingLayout(loadingFetchingData)
                 setupDropdown()
             }
         }
-
     }
 
+
+    private fun generateGlobalPopulasiAset(dataMapKodeUnitArray: Array<Map<String, Any>>?): Map<String, Map<String, List<String>>> {
+        return dataMapKodeUnitArray?.let { data ->
+            val result = mutableMapOf<String, MutableMap<String, MutableList<String>>>()
+
+            for (item in data) {
+
+                val kode = (item["kode"] as? String)?.trim() ?: continue
+                val est = (item["est"] as? String)?.trim() ?: continue
+                val typeUnit = (item["type_unit"] as? String)?.trim() ?: continue
+                val noUnit = (item["no_unit"] as? String)?.trim() ?: continue
+
+                if (kode.isEmpty() || est.isEmpty() || typeUnit.isEmpty()) {
+                    continue
+                }
+
+                if (kode !in result) {
+                    result[kode] = mutableMapOf()
+                }
+                val estMap = result[kode]!!
+
+                if (est !in estMap) {
+                    estMap[est] = mutableListOf()
+                }
+                estMap[est]!!.add("${typeUnit} ${noUnit}")
+            }
+
+            result
+        } ?: emptyMap()
+    }
     private fun setupLayoutPertanyaan(pertanyaanList: MutableList<MutableMap<String, Any>>) {
         // Clear previous data
         pertanyaanPerPage.clear()
@@ -754,7 +811,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                         AppUtils.hideKeyboard(this@FormLaporP2HActivity)
                                         includedLayout.visibility = View.GONE
                                         id_take_foto_layout.visibility = View.VISIBLE
-                                        val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
+                                        val kode_foto = "${etJenisUnit.text}_${etAsetUnit.text}"
                                         takeCameraNow(id_foto,
                                             i,
                                             layoutPertanyaan.layout_komentar_foto.ivAddFotoPerPertanyaan,
@@ -771,7 +828,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     id_editable_foto_layout.visibility = View.GONE
                                     id_take_foto_layout.visibility = View.VISIBLE
                                     // in case ini adalah foto di layout informasi unit foto utama dengan id 0
-                                    val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
+                                    val kode_foto = "${etJenisUnit.text}_${etAsetUnit.text}"
                                     if (listNamaFoto.containsKey("0")){
                                         retakeCamera("0", id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit, -1,null,"", kode_foto)
                                     }else{
@@ -821,76 +878,85 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     private fun setupDropdown(){
 
-        val listPilJenisUnitValues = globalListPilJenisUnit.values.toList()
 
+        val listPilJenisUnitValues = globalListPilJenisUnit
 
-        val adapterJenisUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listPilJenisUnitValues)
+        // Create a list of dropdown items in the format "Value (Key)"
+        val dropdownItems = listPilJenisUnitValues.entries
+            .sortedBy { it.key } // Optional: to sort items by code
+            .map { "${it.value} (${it.key})" }
+
+        // Create an adapter with the formatted strings
+        val adapterJenisUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, dropdownItems)
         etJenisUnit.setAdapter(adapterJenisUnitItems)
 
+        // Simplified map to retrieve the key based on the value
+        val valueToKeyMap = listPilJenisUnitValues.entries.associate { "${it.value} (${it.key})" to it.key }
+
+        // Set an item click listener
         etJenisUnit.setOnItemClickListener { parent, _, position, _ ->
+            // Get the selected item from the dropdown
+            val selectedItem = parent.getItemAtPosition(position) as String
 
-            containerUnitKerja.visibility = View.VISIBLE
-
-            val selectedNamaUnit = listPilJenisUnitValues[position]
-
-            val selectedIdJenisUnit = globalListPilJenisUnit.filterValues { it == selectedNamaUnit }.keys.firstOrNull()
+            // Retrieve the key from the map
+            val pilJenisUnit = valueToKeyMap[selectedItem]
 
 
+
+
+            containerAsetUnit.visibility = View.VISIBLE
 
             loadingFetchingData.visibility = View.VISIBLE
-            globalPertanyaanAllJenisUnitMapping[selectedIdJenisUnit]?.let { setupLayoutPertanyaan(it) }
+            globalPertanyaanAllJenisUnitMapping[pilJenisUnit]?.let { setupLayoutPertanyaan(it) }
 
-            val filteredUnitKerjaList = dataMapUnitKerjaArray?.filter {
-                it["id_jenis_unit"] == selectedIdJenisUnit
-            }
-            val unitKerjaArray = filteredUnitKerjaList?.map { it["nama_unit_kerja"] as? String }?.filterNotNull()
-            val idUnitKerjaArray = filteredUnitKerjaList?.mapNotNull { it["id"] as? Int }?.toTypedArray()
 
-            val unitKerjaArraySorted = unitKerjaArray?.sorted()
+            val asetUnitArray = dataMapAsetUnitArray!!.map { it["nama_aset"].toString() }
 
-            val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, unitKerjaArraySorted ?: emptyList())
-            etUnitKerja.setAdapter(adapterUnitKerjaItems)
-
-            etUnitKerja.setText("")
+            // Create an adapter with the extracted IDs
+            val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, asetUnitArray)
+            etAsetUnit.setAdapter(adapterUnitKerjaItems)
+            etAsetUnit.setText("")
             etKodeUnit.setText("")
 
-
-            etUnitKerja.setOnItemClickListener { _, _, position, _ ->
-                val idPilUnitKerja = idUnitKerjaArray?.get(position)
-
+            etAsetUnit.setOnItemClickListener { _, _, position, _ ->
 
                 containerKodeTypeUnit.visibility = View.VISIBLE
-                Log.d("testing", dataMapKodeUnitArray.contentToString())
-                val filteredKodeUnitList = dataMapKodeUnitArray?.filter {
-                    it["id_unit_kerja"] == idPilUnitKerja
-                }
+                val pilAsetUnit = asetUnitArray[position]
 
-                val namaKodeUnitArray = filteredKodeUnitList?.mapNotNull {
-                    val namaKode = it["nama_kode"] as? String
-                    val typeUnit = it["type_unit"] as? String
-                    if (namaKode != null && typeUnit != null) {
-                        "$namaKode $typeUnit"
-                    } else {
-                        null
-                    }
-                }?.toTypedArray() ?: emptyArray()
+                val matchedData = getMatchedDataAsetJenisUnit(pilJenisUnit!!, pilAsetUnit)
 
-                val namaKodeUnitArraySorted = namaKodeUnitArray?.sorted()
-                Log.d("testing", namaKodeUnitArraySorted!!.toTypedArray().contentToString())
-                val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, namaKodeUnitArraySorted ?: emptyList())
+                val adapterKodeUnitItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, matchedData)
+
+
                 etKodeUnit.setAdapter(adapterKodeUnitItems)
 
                 etKodeUnit.setText("")
+                etLokasiKerja.setText("")
                 etKodeUnit.setOnItemClickListener { _, _, position, _ ->
                         val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
 
-                        fotoUnitContainer.visibility = View.VISIBLE
+                    containerLokasiKerja.visibility = View.VISIBLE
 
-//                        etTypeUnit.setText('skldjfkds')
+                    val adapterLokasiKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, globalListEstate)
+
+                    etLokasiKerja.setText("")
+                    etLokasiKerja.setAdapter(adapterLokasiKerjaItems)
+
+
                 }
             }
         }
 
+
+        etLokasiKerja.setOnItemClickListener { _, _, position, _ ->
+
+            val pilLokasiKerja = globalListEstate[position]
+
+            Log.d("testing", pilLokasiKerja.toString())
+
+            fotoUnitContainer.visibility = View.VISIBLE
+
+        }
     }
 
 
@@ -915,7 +981,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
     private fun setupViewLayout() {
         toggleFormVisibility(currentFormIndex)
-        val kode_foto = "${etJenisUnit.text}_${etUnitKerja.text}"
+        val kode_foto = "${etJenisUnit.text}_${etAsetUnit.text}"
         parentFormP2H.id_layout_activity_informasi_unit.id_layout_foto_unit.ivAddFotoUnit.setOnClickListener{
                 if(prefManager!!.isCameraAllowed == false){
                     checkPermissionsCamera(this)
@@ -1016,6 +1082,16 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
 
         }
+    }
+
+    private fun getMatchedDataAsetJenisUnit(jenisUnit: String, asetUnit: String): List<String> {
+        // Retrieve the nested map for the selected jenisUnit
+
+
+
+        val jenisMap = globalPopulasiAset[jenisUnit] ?: emptyMap()
+
+        return jenisMap[asetUnit] ?: emptyList()
     }
 
     private fun removeEntryByFileName(fname: String) {

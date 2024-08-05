@@ -14,44 +14,39 @@ class DatabaseHelper(context: Context):
 
         const val DB_TAB_JENIS_UNIT = "jenis_unit"
         const val DB_TAB_KODE_UNIT = "kode_unit"
-        const val DB_TAB_UNIT_KERJA = "unit_kerja"
+        const val DB_TAB_ASET_UNIT = "aset_unit"
         const val DB_TAB_LIST_PERTANYAAN = "list_pertanyaan"
         const val DB_TAB_LAPORAN_P2H = "laporan_p2h"
-        const val DB_TAB_DATA = "data"
+        const val DB_TAB_ESTATE = "est"
+
 
         const val DB_ID = "id"
 
         //jenisUnit
         const val DB_NAMA_UNIT = "nama_unit"
-        const val DB_JENIS = "jenis"
+        const val DB_JENIS_FORM_P2H = "jenis_form_p2h"
         const val DB_LIST_PERTANYAAN = "list_pertanyaan"
 
         //kode_unit
-        const val DB_NAMA_KODE = "nama_kode"
-        const val DB_TYPE_UNIT = "type_unit"
-        const val DB_ID_UNIT_KERJA = "id_unit_kerja"
+        const val DB_KODE = "kode"
+        const val DB_EST = "est"
+        const val DB_TYPE = "type"
+        const val DB_NO_UNIT = "no_unit"
+        const val DB_TAHUN = "tahun"
 
-        //unit_kerja
-        const val DB_NAMA_UNIT_KERJA = "nama_unit_kerja"
-        const val DB_ID_JENIS_UNIT = "id_jenis_unit"
+        //aset_kerja
+        const val DB_NAMA_ASET = "nama_aset"
 
         //list pertanyaan
         const val DB_NAMA_PERTANYAAN = "nama_pertanyaan"
         const val DB_KONDISI_MESIN = "kondisi_mesin"
 
-        //data_laporan
-        const val DB_CREATED_AT = "created_at"
-        const val DB_ID_LAPORAN = "id_laporan"
-        const val DB_ID_PERTANYAAN = "id_pertanyaan"
-        const val DB_KONDISI = "kondisi"
-        const val DB_KOMENTAR = "komentar"
-        const val DB_FOTO = "foto"
-
 
         //laporan_p2h
         const val DB_JENIS_UNIT = "jenis_unit"
-        const val DB_UNIT_KERJA = "unit_kerja"
-        const val DB_KODE_UNIT = "kode_unit"
+        const val DB_ASET_UNIT = "aset_unit"
+        const val DB_LOKASI_KERJA = "lokasi_kerja"
+        const val DB_KODE_TYPE_NO_UNIT = "kode_type_no_unit"
         const val DB_TANGGAL_UPLOAD = "tanggal_upload"
         const val DB_LAT = "lat"
         const val DB_LON = "lon"
@@ -66,41 +61,39 @@ class DatabaseHelper(context: Context):
     private val createTableJenisUnit = "CREATE TABLE IF NOT EXISTS $DB_TAB_JENIS_UNIT (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "$DB_NAMA_UNIT VARCHAR, " +
-            "$DB_JENIS VARCHAR, " +
+            "$DB_KODE VARCHAR, " +
+            "$DB_JENIS_FORM_P2H VARCHAR, " +
             "$DB_LIST_PERTANYAAN VARCHAR)"
+
+    private val createTableEstate = "CREATE TABLE IF NOT EXISTS $DB_TAB_ESTATE (" +
+            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$DB_EST VARCHAR)"
+
+    private val createTableAsetUnit = "CREATE TABLE IF NOT EXISTS $DB_TAB_ASET_UNIT (" +
+            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$DB_NAMA_ASET VARCHAR)"
 
     private val createTableKodeUnit = "CREATE TABLE IF NOT EXISTS $DB_TAB_KODE_UNIT (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_NAMA_KODE VARCHAR, " +
-            "$DB_TYPE_UNIT VARCHAR, " +
-            "$DB_ID_UNIT_KERJA INTEGER)"
+            "$DB_KODE VARCHAR, " +
+            "$DB_EST VARCHAR, " +
+            "$DB_TYPE VARCHAR, " +
+            "$DB_NO_UNIT VARCHAR, " +
+            "$DB_TAHUN INTEGER) "
 
-    private val createTableUnitKerja = "CREATE TABLE IF NOT EXISTS $DB_TAB_UNIT_KERJA (" +
-            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_NAMA_UNIT_KERJA VARCHAR, " +
-            "$DB_ID_JENIS_UNIT INTEGER)"
 
     private val createTableItemPertanyaan = "CREATE TABLE IF NOT EXISTS $DB_TAB_LIST_PERTANYAAN (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "$DB_NAMA_PERTANYAAN VARCHAR, " +
             "$DB_KONDISI_MESIN VARCHAR)"
 
-//    private val createTableData = "CREATE TABLE IF NOT EXISTS $DB_TAB_DATA (" +
-//            "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//            "$DB_CREATED_AT VARCHAR, " +
-//            "$DB_ID_LAPORAN INTEGER, " +
-//            "$DB_ID_PERTANYAAN VARCHAR, " +
-//            "$DB_KONDISI VARCHAR, " +
-//            "$DB_KOMENTAR VARCHAR, " +
-//            "$DB_FOTO VARCHAR, " +
-//            "$DB_ARCHIVE INTEGER)"
-
 
     private val createTableLaporanP2H = "CREATE TABLE IF NOT EXISTS $DB_TAB_LAPORAN_P2H (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "$DB_JENIS_UNIT VARCHAR, " +
-            "$DB_UNIT_KERJA VARCHAR, " +
-            "$DB_KODE_UNIT VARCHAR, " +
+            "$DB_ASET_UNIT VARCHAR, " +
+            "$DB_KODE_TYPE_NO_UNIT VARCHAR, " +
+            "$DB_LOKASI_KERJA VARCHAR, " +
             "$DB_TANGGAL_UPLOAD VARCHAR, " +
             "$DB_LAT VARCHAR, " +
             "$DB_LON VARCHAR, " +
@@ -115,10 +108,10 @@ class DatabaseHelper(context: Context):
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(createTableJenisUnit)
         db.execSQL(createTableKodeUnit)
-        db.execSQL(createTableUnitKerja)
+        db.execSQL(createTableAsetUnit)
         db.execSQL(createTableItemPertanyaan)
-//        db.execSQL(createTableData)
         db.execSQL(createTableLaporanP2H)
+        db.execSQL(createTableEstate)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {

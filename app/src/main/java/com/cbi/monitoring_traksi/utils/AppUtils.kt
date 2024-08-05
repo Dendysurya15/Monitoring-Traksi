@@ -32,6 +32,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Request.Method
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -69,7 +70,7 @@ object AppUtils {
     const val mainServer = "https://srs-ssms.com/"
     const val serverMp = "https://mobilepro.srs-ssms.com/"
     const val serverPs = "https://palmsentry.srs-ssms.com/"
-    const val serverListDBServer = "https://srs-ssms.com/aplikasi_traksi/getListAllTraksi.php"
+    const val serverListDBServer = "https://srs-ssms.com/aplikasi_traksi/fetchAllDataFleetManagement.php"
     const val TAG_SUCCESS = "success"
     const val TAG_MESSAGE = "message"
 
@@ -346,59 +347,62 @@ object AppUtils {
 
                         val jenisUnitsArray = jObj.getJSONArray("jenis_unit")
                         val kodeUnitsArray = jObj.getJSONArray("kode_unit")
-                        val unitKerjasArray = jObj.getJSONArray("unit_kerja")
+                        val asetUnitsArray = jObj.getJSONArray("aset_unit")
                         val itemPertanyaansArray = jObj.getJSONArray("list_pertanyaan")
 
 
                         unitViewModel.deleteDataJenisUnit()
                         unitViewModel.deleteDataKodeUnit()
-                        unitViewModel.deleteDataUnitKerja()
+                        unitViewModel.deleteDataAsetUnit()
                         unitViewModel.deleteDataPertanyaan()
                         for (i in 0 until jenisUnitsArray.length()) {
                             val jenisUnitObject = jenisUnitsArray.getJSONObject(i)
                             val idJenisUnit = jenisUnitObject.getInt("id")
                             val namaJenisUnit = jenisUnitObject.getString("nama_unit")
-                            val jenisUnit = jenisUnitObject.getString("jenis")
+                            val kode = jenisUnitObject.getString("kode")
+                            val jenisFormP2H = jenisUnitObject.getString("jenis_form_p2h")
                             val listPertanyaan= jenisUnitObject.getString("list_pertanyaan")
 
                             unitViewModel.insertDataJenisUnit(
                                 id = idJenisUnit,
                                 nama_unit = namaJenisUnit,
-                                jenis = jenisUnit,
+                                kode = kode,
+                                jenis_form_p2h = jenisFormP2H,
                                 list_pertanyaan =  listPertanyaan
                             )
-                            Log.d("testing","sudah insert gan Jenis Unit")
                         }
 
                         for (i in 0 until kodeUnitsArray.length()) {
                             val kodeUnitObject = kodeUnitsArray.getJSONObject(i)
                             val idKodeUnit = kodeUnitObject.getInt("id")
-                            val nama_kode = kodeUnitObject.getString("nama_kode")
-                            val type_unit = kodeUnitObject.getString("type_unit")
-                            val id_unit_kerja = kodeUnitObject.getInt("id_unit_kerja")
-
+                            val kode = kodeUnitObject.getString("kode")
+                            val est = kodeUnitObject.getString("est")
+                            val type = kodeUnitObject.getString("type")
+                            val no_unit = kodeUnitObject.getString("no_unit")
+                            val tahun = kodeUnitObject.getInt("tahun")
 
                             unitViewModel.insertDataKodeUnit(
                                 id = idKodeUnit,
-                                nama_kode = nama_kode,
-                                type_unit = type_unit,
-                                id_unit_kerja = id_unit_kerja,
+                                kode = kode,
+                                est = est,
+                                type = type,
+                                no_unit = no_unit,
+                                tahun = tahun,
                             )
-                            Log.d("testing","sudah insert gan Kode Unit")
 
                         }
 
-                        for (i in 0 until unitKerjasArray.length()) {
-                            val unitKerjaObject = unitKerjasArray.getJSONObject(i)
-                            val idUnitKerja = unitKerjaObject.getInt("id")
-                            val nama_unit_kerja = unitKerjaObject.getString("nama_unit_kerja")
-                            val id_jenis_unit = unitKerjaObject.getInt("id_jenis_unit")
+                        for (i in 0 until asetUnitsArray.length()) {
+                            val asetUnitObject = asetUnitsArray.getJSONObject(i)
+                            val idAsetUnit = asetUnitObject.getInt("id")
+                            val nama_aset = asetUnitObject.getString("nama_aset")
 
-                            unitViewModel.insertDataUnitKerja(
-                                id = idUnitKerja,
-                                nama_unit_kerja = nama_unit_kerja,
-                                id_jenis_unit = id_jenis_unit,
+                            unitViewModel.insertDataAsetUnit(
+                                id = idAsetUnit,
+                                nama_aset = nama_aset,
                             )
+
+
                         }
 
                         for (i in 0 until itemPertanyaansArray.length()) {
@@ -436,7 +440,7 @@ object AppUtils {
                         unitViewModel.insertResultKodeUnit.observe(
                             context as LifecycleOwner
                         ) { isSuccess ->
-                            Log.d("testing", isSuccess.toString())
+
                             if (isSuccess) {
                                 successArrayInsert.add(true)
                                 Log.d("testing", "Sukses insert data kode Unit !")
@@ -446,17 +450,17 @@ object AppUtils {
                             }
                         }
 
-                        unitViewModel.insertResultUnitKerja.observe(
+                        unitViewModel.insertResultAsetUnit.observe(
                             context as LifecycleOwner
                         ) { isSuccess ->
 
                             if (isSuccess) {
-                                Log.d("testing", "Sukses insert data Unit Kerja !")
+                                Log.d("testing", "Sukses insert data Aset Unit !")
                                 closeLoadingLayout(loaderView)
                                 successArrayInsert.add(true)
                             } else {
                                 successArrayInsert.add(false)
-                                Log.d("testing", "Terjadi kesalahan, mengunduh data Unit Kerja")
+                                Log.d("testing", "Terjadi kesalahan, mengunduh data Aset Unit")
 
                             }
                         }
@@ -476,21 +480,47 @@ object AppUtils {
 
                             }
                         }
+                        fetchEstateData(context, unitViewModel) { estateSuccess ->
+                            val allSuccess = successArrayInsert.all { it } && estateSuccess
 
-                        val allSuccess = successArrayInsert.all { it }
-                        if (allSuccess) {
-                            prefManager.isFirstTimeLaunch = false
-                            AlertDialogUtility.alertDialog(
-                                context,
-                                "Sukses",
-                                "Berhasil Mengunduh Data",
-                                "success.json"
-                            )
-                        } else {
-                            closeLoadingLayout(loaderView)
+                            if (allSuccess) {
+                                prefManager.isFirstTimeLaunch = false
+                                Log.d("testing", "All operations succeeded!")
+                                AlertDialogUtility.alertDialog(
+                                    context,
+                                    "Sukses",
+                                    "Berhasil Mengunduh Data",
+                                    "success.json"
+                                )
+                            } else {
+                                Log.d("testing", "At least one operation failed.")
+                                closeLoadingLayout(loaderView)
+                                AlertDialogUtility.alertDialog(
+                                    context,
+                                    "Gagal",
+                                    "Gagal Mengunduh Data",
+                                    "error.json"
+                                )
+                            }
 
-                            Log.d("testing", "At least one operation insert is failed.")
                         }
+                        val allSuccess = successArrayInsert.all { it }
+
+
+
+//                        if (allSuccess) {
+//                            prefManager.isFirstTimeLaunch = false
+//                            AlertDialogUtility.alertDialog(
+//                                context,
+//                                "Sukses",
+//                                "Berhasil Mengunduh Data",
+//                                "success.json"
+//                            )
+//                        } else {
+//                            closeLoadingLayout(loaderView)
+//
+//                            Log.d("testing", "At least one operation insert is failed.")
+//                        }
 //
                     } catch (e: JSONException) {
                         Log.d(
@@ -551,6 +581,75 @@ object AppUtils {
         )
 
         Volley.newRequestQueue(context).add(strReq)
+    }
+
+
+    private fun fetchEstateData(
+        context: Context,
+        unitViewModel: UnitViewModel,
+        onComplete: (Boolean) -> Unit
+    ) {
+        val request = StringRequest(
+            Method.GET,
+            "https://srs-ssms.com/aplikasi_traksi/fetchAllEstateList.php",
+            { response ->
+                try {
+                    val jObj = JSONObject(response)
+                    val jenisUnitsArray = jObj.getJSONArray("list_est")
+
+
+                    for (i in 0 until jenisUnitsArray.length()) {
+                        val estateObject = jenisUnitsArray.getJSONObject(i)
+                        val idEstate = estateObject.getInt("id")
+                        val nameEstate = estateObject.getString("est")
+
+                        unitViewModel.insertListEstate(
+                            id = idEstate,
+                            est = nameEstate
+                        )
+                    }
+
+                    Log.d("testing", "Sukses Insert data List Estate")
+                    onComplete(true)
+                } catch (e: JSONException) {
+                    Log.d("testing", "${context.getString(R.string.error_volley1)}: $e")
+                    e.printStackTrace()
+
+                    AlertDialogUtility.withSingleAction(
+                        context,
+                        context.getString(R.string.try_again),
+                        context.getString(R.string.failed),
+                        context.getString(R.string.desc_failed_download),
+                        "error.json"
+                    ) {
+                        fetchEstateData(context, unitViewModel, onComplete)
+                    }
+                    onComplete(false)
+                }
+            },
+            { error ->
+                Log.d("testing", "${context.getString(R.string.error_volley2)}: $error")
+
+                AlertDialogUtility.withSingleAction(
+                    context,
+                    context.getString(R.string.try_again),
+                    context.getString(R.string.failed),
+                    context.getString(R.string.desc_failed_download),
+                    "error.json"
+                ) {
+                    fetchEstateData(context, unitViewModel, onComplete)
+                }
+                onComplete(false)
+            }
+        )
+
+        request.retryPolicy = DefaultRetryPolicy(
+            90000,  // Socket timeout in milliseconds (90 seconds)
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
+
+        Volley.newRequestQueue(context).add(request)
     }
 
     fun checkSoftKeyboard(context: Context, view: View, function: () -> Unit) {

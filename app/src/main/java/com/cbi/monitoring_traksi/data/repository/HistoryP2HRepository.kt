@@ -94,8 +94,9 @@ class HistoryP2HRepository(context: Context) {
             while (it.moveToNext()) {
                 val id = it.getInt(it.getColumnIndex("id"))
                 val jenis_unit = it.getString(it.getColumnIndex("jenis_unit"))
-                val unit_kerja = it.getString(it.getColumnIndex("unit_kerja"))
-                val kode_unit = it.getString(it.getColumnIndex("kode_unit"))
+                val aset_unit = it.getString(it.getColumnIndex("aset_unit"))
+                val kode_type_no_unit = it.getString(it.getColumnIndex("kode_type_no_unit"))
+                val lokasi_kerja = it.getString(it.getColumnIndex("lokasi_kerja"))
 
                 val tanggal_upload = it.getString(it.getColumnIndex("tanggal_upload"))
                 val lat = it.getString(it.getColumnIndex("lat"))
@@ -111,8 +112,9 @@ class HistoryP2HRepository(context: Context) {
                 val dataQuery = LaporP2HModel(
                     id,
                     jenis_unit,
-                    unit_kerja,
-                    kode_unit,
+                    aset_unit,
+                    kode_type_no_unit,
+                    lokasi_kerja,
                     tanggal_upload,
                     lat,
                     lon,
