@@ -47,6 +47,7 @@ class DatabaseHelper(context: Context):
         const val DB_ASET_UNIT = "aset_unit"
         const val DB_LOKASI_KERJA = "lokasi_kerja"
         const val DB_KODE_TYPE_NO_UNIT = "kode_type_no_unit"
+        const val DB_KODE_UNIT = "kode_unit"
         const val DB_TANGGAL_UPLOAD = "tanggal_upload"
         const val DB_LAT = "lat"
         const val DB_LON = "lon"

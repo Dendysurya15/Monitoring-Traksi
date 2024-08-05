@@ -271,51 +271,52 @@ class HistoryP2HViewModel(
                     } else if (successResponse == 2) {
 
                         for (i in idUpload.indices) {
-//                            laporanP2HList.map { data ->
-//                                if (idUpload[i] == data.id) {
-//                                    val params = mapOf(
-//                                        DatabaseHelper.DB_JENIS_UNIT to data.jenis_unit,
-//                                        DatabaseHelper.DB_UNIT_KERJA to data.unit_kerja,
-//                                        DatabaseHelper.DB_KODE_UNIT to data.kode_unit,
-//                                        DatabaseHelper.DB_TANGGAL_UPLOAD to data.tanggal_upload,
-//                                        DatabaseHelper.DB_LAT to data.lat,
-//                                        DatabaseHelper.DB_LON to data.lon,
-//                                        DatabaseHelper.DB_USER to data.user,
-//                                        DatabaseHelper.DB_FOTO_UNIT to data.foto_unit,
-//                                        DatabaseHelper.DB_STATUS_UNIT_BEROPERASI to data.status_unit_beroperasi,
-//                                        DatabaseHelper.DB_KERUSAKAN_UNIT to data.kerusakan_unit,
-//                                        DatabaseHelper.DB_APP_VERSION to data.app_version
-//                                    )
-//
-//                                    AppUtils.uploadDataRows(context, urlInsertData, params, object :
-//                                        AppUtils.UploadCallback {
-//                                        override fun onUploadComplete(
-//                                            message: String,
-//                                            success: Int
-//                                        ) {
-//                                            messageInsert = message
-//                                            successResponseInsert = success
-//                                        }
-//                                    })
-//
-//                                    if (successResponseInsert == 1) {
-//                                        val currentDate = AppUtils.getCurrentDate(true)
-//                                        if (data.archive == 0) {
-//                                            if (historyRepo.updateArchiveMtc(data.id.toString())) {
-//                                                historyRepo.updateUploadTimeP2HLocal(data.id.toString(),currentDate )
-//                                                Log.d(AppUtils.LOG_UPLOAD, "Success archive id ${data.id}!")
-//                                            } else {
-//                                                Log.e(AppUtils.LOG_UPLOAD, "Failed archive!")
-//                                            }
-//                                        }
-//
-//
-//                                        //live observer to update the recycle latest data
-//                                        val resultQueryLaporanP2H = historyRepo.fetchByDateLaporanP2H(currentDate)
-//                                        _uploadResult.value = resultQueryLaporanP2H
-//                                    }
-//                                }
-//                            }
+                            laporanP2HList.map { data ->
+                                if (idUpload[i] == data.id) {
+                                    val params = mapOf(
+                                        DatabaseHelper.DB_JENIS_UNIT to data.jenis_unit,
+                                        DatabaseHelper.DB_ASET_UNIT to data.aset_unit,
+                                        DatabaseHelper.DB_LOKASI_KERJA to data.lokasi_kerja,
+                                        DatabaseHelper.DB_KODE_UNIT to data.kode_type_no_unit,
+                                        DatabaseHelper.DB_TANGGAL_UPLOAD to data.tanggal_upload,
+                                        DatabaseHelper.DB_LAT to data.lat,
+                                        DatabaseHelper.DB_LON to data.lon,
+                                        DatabaseHelper.DB_USER to data.user,
+                                        DatabaseHelper.DB_FOTO_UNIT to data.foto_unit,
+                                        DatabaseHelper.DB_STATUS_UNIT_BEROPERASI to data.status_unit_beroperasi,
+                                        DatabaseHelper.DB_KERUSAKAN_UNIT to data.kerusakan_unit,
+                                        DatabaseHelper.DB_APP_VERSION to data.app_version
+                                    )
+
+                                    AppUtils.uploadDataRows(context, urlInsertData, params, object :
+                                        AppUtils.UploadCallback {
+                                        override fun onUploadComplete(
+                                            message: String,
+                                            success: Int
+                                        ) {
+                                            messageInsert = message
+                                            successResponseInsert = success
+                                        }
+                                    })
+
+                                    if (successResponseInsert == 1) {
+                                        val currentDate = AppUtils.getCurrentDate(true)
+                                        if (data.archive == 0) {
+                                            if (historyRepo.updateArchiveMtc(data.id.toString())) {
+                                                historyRepo.updateUploadTimeP2HLocal(data.id.toString(),currentDate )
+                                                Log.d(AppUtils.LOG_UPLOAD, "Success archive id ${data.id}!")
+                                            } else {
+                                                Log.e(AppUtils.LOG_UPLOAD, "Failed archive!")
+                                            }
+                                        }
+
+
+                                        //live observer to update the recycle latest data
+                                        val resultQueryLaporanP2H = historyRepo.fetchByDateLaporanP2H(currentDate)
+                                        _uploadResult.value = resultQueryLaporanP2H
+                                    }
+                                }
+                            }
                         }
                     }
                 } catch (e: JSONException) {
@@ -401,89 +402,92 @@ class HistoryP2HViewModel(
         val resultQueryLaporanP2H = historyRepo.fetchByDateLaporanP2H(dataRequest)
 
 
-//        val arrFieldMappingLaporanP2H = resultQueryLaporanP2H.map { laporan ->
-//            mapOf(
-//                "id" to laporan.id,
-//                "tanggal_upload" to laporan.tanggal_upload,
-//                "jenis_unit" to laporan.jenis_unit,
-//                "unit_kerja" to laporan.unit_kerja,
-//                "kode_unit" to laporan.kode_unit,
-//                "user" to laporan.user,
-//            )
-//        }
+        val arrFieldMappingLaporanP2H = resultQueryLaporanP2H.map { laporan ->
+            mapOf(
+                "id" to laporan.id,
+                "tanggal_upload" to laporan.tanggal_upload,
+                "jenis_unit" to laporan.jenis_unit,
+                "aset_unit" to laporan.aset_unit,
+                "kode_unit" to laporan.kode_type_no_unit,
+                "lokasi_kerja" to laporan.lokasi_kerja,
+                "user" to laporan.user,
+            )
+        }
 
         var completedRequests = 0
 
-//        for (i in arrFieldMappingLaporanP2H.indices) {
-//
-//            val laporan = arrFieldMappingLaporanP2H[i]
-//            val id = laporan["id"].toString()
-//            val user = laporan["user"].toString()
-//            val jenisUnit = laporan["jenis_unit"].toString()
-//            val unitKerja = laporan["unit_kerja"].toString()
-//            val kodeUnit = laporan["kode_unit"].toString()
-//            val tanggalUpload = laporan["tanggal_upload"].toString()
-//
-//            val postRequest: StringRequest = object : StringRequest(
-//                Method.POST, urlCheckData,
-//                Response.Listener { response ->
-//                    try {
-//                        val jObj = JSONObject(response)
-//
-//                        messageCheckData = try {
-//                            jObj.getString("message")
-//                        } catch (e: Exception) {
-//                            e.toString()
-//                        }
-//                        successResponseCheckData = try {
-//                            jObj.getInt("success")
-//                        } catch (e: Exception) {
-//                            0
-//                        }
-//
-//                        if (successResponseCheckData == 2) {
-//                            idUpload.add(id.toInt())
-//                        }
-//
-//                        Log.d(AppUtils.LOG_UPLOAD, "messageCheckData: $messageCheckData")
-//                    } catch (e: JSONException) {
-//                        Log.e(AppUtils.LOG_UPLOAD, "Failed to parse server response: ${e.message}")
-//                    } finally {
-//                        completedRequests++
-//
-//                        if (completedRequests == arrFieldMappingLaporanP2H.size) {
-//                            uploading = true
-//                            handler.postDelayed(runnableCode, delay.toLong())
-//                            handler.postDelayed(stopRunnable, timeOut.toLong())
-//                        }
-//                    }
-//                },
-//                Response.ErrorListener {
-//                    Log.e(AppUtils.LOG_UPLOAD, "Terjadi kesalahan koneksi: $it")
-//
-//                    completedRequests++
-//
-//                    if (completedRequests == arrFieldMappingLaporanP2H.size) {
-//                        val currentDate = AppUtils.getCurrentDate(true)
-//                        uploadToServer(currentDate)
-//                    }
-//                }
-//            ) {
-//                override fun getParams(): Map<String, String> {
-//                    val params: MutableMap<String, String> =
-//                        HashMap()
-//                    params[DatabaseHelper.DB_USER] = user
-//                    params[DatabaseHelper.DB_JENIS_UNIT] = jenisUnit
-//                    params[DatabaseHelper.DB_UNIT_KERJA] = unitKerja
-//                    params[DatabaseHelper.DB_KODE_UNIT] = kodeUnit
-//                    params[DatabaseHelper.DB_TANGGAL_UPLOAD] = tanggalUpload
-//                    return params
-//                }
-//            }
-//            val queue = Volley.newRequestQueue(context)
-//            queue.cache.clear()
-//            queue.add(postRequest)
-//        }
+        for (i in arrFieldMappingLaporanP2H.indices) {
+
+            val laporan = arrFieldMappingLaporanP2H[i]
+            val id = laporan["id"].toString()
+            val user = laporan["user"].toString()
+            val jenisUnit = laporan["jenis_unit"].toString()
+            val aset_unit = laporan["aset_unit"].toString()
+            val kodeUnit = laporan["kode_unit"].toString()
+            val lokasiKerja = laporan["lokasi_kerja"].toString()
+            val tanggalUpload = laporan["tanggal_upload"].toString()
+
+            val postRequest: StringRequest = object : StringRequest(
+                Method.POST, urlCheckData,
+                Response.Listener { response ->
+                    try {
+                        val jObj = JSONObject(response)
+
+                        messageCheckData = try {
+                            jObj.getString("message")
+                        } catch (e: Exception) {
+                            e.toString()
+                        }
+                        successResponseCheckData = try {
+                            jObj.getInt("success")
+                        } catch (e: Exception) {
+                            0
+                        }
+
+                        if (successResponseCheckData == 2) {
+                            idUpload.add(id.toInt())
+                        }
+
+                        Log.d(AppUtils.LOG_UPLOAD, "messageCheckData: $messageCheckData")
+                    } catch (e: JSONException) {
+                        Log.e(AppUtils.LOG_UPLOAD, "Failed to parse server response: ${e.message}")
+                    } finally {
+                        completedRequests++
+
+                        if (completedRequests == arrFieldMappingLaporanP2H.size) {
+                            uploading = true
+                            handler.postDelayed(runnableCode, delay.toLong())
+                            handler.postDelayed(stopRunnable, timeOut.toLong())
+                        }
+                    }
+                },
+                Response.ErrorListener {
+                    Log.e(AppUtils.LOG_UPLOAD, "Terjadi kesalahan koneksi: $it")
+
+                    completedRequests++
+
+                    if (completedRequests == arrFieldMappingLaporanP2H.size) {
+                        val currentDate = AppUtils.getCurrentDate(true)
+                        uploadToServer(currentDate)
+                    }
+                }
+            ) {
+                override fun getParams(): Map<String, String> {
+                    val params: MutableMap<String, String> =
+                        HashMap()
+                    params[DatabaseHelper.DB_USER] = user
+                    params[DatabaseHelper.DB_JENIS_UNIT] = jenisUnit
+                    params[DatabaseHelper.DB_ASET_UNIT] = aset_unit
+                    params[DatabaseHelper.DB_KODE_UNIT] = kodeUnit
+                    params[DatabaseHelper.DB_LOKASI_KERJA] = lokasiKerja
+                    params[DatabaseHelper.DB_TANGGAL_UPLOAD] = tanggalUpload
+                    return params
+                }
+            }
+            val queue = Volley.newRequestQueue(context)
+            queue.cache.clear()
+            queue.add(postRequest)
+        }
 
     }
 

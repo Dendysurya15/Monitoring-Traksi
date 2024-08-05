@@ -710,7 +710,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     remainingQuestions -= minBatch
                     batchCount++
                 }
-
+                
                 // Create paginated data
                 val paginatedData = mutableMapOf<Int, MutableMap<Int, String>>()
                 var resetCount = 1
@@ -900,7 +900,6 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
             // Retrieve the key from the map
             val pilJenisUnit = valueToKeyMap[selectedItem]
-
 
             containerAsetUnit.visibility = View.VISIBLE
 
