@@ -122,7 +122,7 @@ class UploadHistoryP2HAdapter(
                         layoutBuilder.tvTglCreated.setTextColor(ContextCompat.getColor(context, R.color.greenbutton))
                     }
                     layoutBuilder.tvTglCreated.text = "$textStatusArchive$textLastUpdate"
-                    layoutBuilder.tvNamaUnit.text = "${currentItem.kode_type_no_unit}"
+                    layoutBuilder.tvNamaUnit.text = "${currentItem.jenis_unit} ${currentItem.kode_type_no_unit}"
                     layoutBuilder.tvLokasiUnit.text = "Aset Unit ${currentItem.aset_unit}"
 
                     val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
@@ -286,7 +286,7 @@ class UploadHistoryP2HAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
-        holder.itemTitlePeriksaUnit.text = "${item.kode_type_no_unit}"
+        holder.itemTitlePeriksaUnit.text = "${item.jenis_unit} ${item.kode_type_no_unit}"
         holder.itemLokasiPeriksaUnit.text = ": ${item.lokasi_kerja}"
         holder.itemAsetUnit.text = ": ${item.aset_unit}"
         var textjumlahKerusakan = ": Tidak ada"
