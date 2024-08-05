@@ -902,17 +902,13 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             val pilJenisUnit = valueToKeyMap[selectedItem]
 
 
-
-
             containerAsetUnit.visibility = View.VISIBLE
 
             loadingFetchingData.visibility = View.VISIBLE
             globalPertanyaanAllJenisUnitMapping[pilJenisUnit]?.let { setupLayoutPertanyaan(it) }
 
+            val asetUnitArray = getAsetFromJenisUnit(pilJenisUnit.toString())
 
-            val asetUnitArray = dataMapAsetUnitArray!!.map { it["nama_aset"].toString() }
-
-            // Create an adapter with the extracted IDs
             val adapterUnitKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, asetUnitArray)
             etAsetUnit.setAdapter(adapterUnitKerjaItems)
             etAsetUnit.setText("")
@@ -959,6 +955,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         }
     }
 
+
+    private fun getAsetFromJenisUnit(category: String): List<String> {
+        return globalPopulasiAset[category]?.keys?.toList() ?: emptyList()
+    }
 
     private fun toggleFormVisibility(nextFormIndex: Int) {
         formLayoutInfoUnit.forEach { it.visibility = View.GONE }
