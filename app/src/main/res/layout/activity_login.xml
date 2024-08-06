@@ -40,7 +40,7 @@
                          android:layout_height="30dp"
                         android:layout_marginVertical="5dp"
                          android:layout_marginStart="18dp"
-                         android:src="@drawable/fm_icon_transparent"
+                         android:src="@drawable/fm_icon_bg_white_new"
                          />
 
                      <TextView

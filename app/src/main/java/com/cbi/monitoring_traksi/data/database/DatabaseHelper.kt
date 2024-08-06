@@ -33,6 +33,7 @@ class DatabaseHelper(context: Context):
         const val DB_TYPE = "type"
         const val DB_NO_UNIT = "no_unit"
         const val DB_TAHUN = "tahun"
+        const val DB_ID_REG = "id_reg"
 
         //aset_kerja
         const val DB_NAMA_ASET = "nama_aset"
@@ -68,7 +69,8 @@ class DatabaseHelper(context: Context):
 
     private val createTableEstate = "CREATE TABLE IF NOT EXISTS $DB_TAB_ESTATE (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$DB_EST VARCHAR)"
+            "$DB_EST VARCHAR, " +
+            "$DB_ID_REG INTEGER)"
 
     private val createTableAsetUnit = "CREATE TABLE IF NOT EXISTS $DB_TAB_ASET_UNIT (" +
             "$DB_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +

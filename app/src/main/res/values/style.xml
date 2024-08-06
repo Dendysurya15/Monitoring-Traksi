@@ -7,4 +7,9 @@
     <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@android:color/white</item>
     </style>
+
+    <style name="CustomDropdownMenu" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="android:dropDownHeight">150dp</item> <!-- Adjust height as needed -->
+        <item name="android:dropDownVerticalOffset">8dp</item> <!-- Offset to ensure the dropdown is visible below the TextInputLayout -->
+    </style>
 </resources>

@@ -71,12 +71,17 @@ class LoginActivity : AppCompatActivity() {
             1 -> {
                 val intent: Intent
 
-                intent = Intent(this, MainActivity::class.java)
+                if(prefManager!!.isFirstTimeLaunch){
+                    intent = Intent(this, PilihRegionalActivity::class.java)
+                }else{
+                    intent = Intent(this, MainActivity::class.java)
+                }
 
                 startActivity(intent)
                 finishAffinity()
             }
             else -> {
+                Log.d("testing", "gagal gan")
                 AppUtils.closeLoadingLayout(loadingLogin)
                 AlertDialogUtility.alertDialog(
                     this,

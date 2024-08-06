@@ -71,7 +71,7 @@ class CameraRepository(private val context: Context, private val window: Window,
         fun onPhotoTaken(photoFile: File, fname: String, resultCode: String, deletePhoto: View?, pageForm: Int)
     }
     private var photoCallback: PhotoCallback? = null
-
+    private var appName = "Fleet Management"
     private var lastCameraId = 0
     private var rotatedCam = false
     private val aspectRatio = Rational(16, 9)
@@ -194,7 +194,7 @@ class CameraRepository(private val context: Context, private val window: Window,
         // Initialize Camera View
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-            "Monitoring-Traksi"
+            appName
         ).toString()
 
 
@@ -328,7 +328,7 @@ class CameraRepository(private val context: Context, private val window: Window,
 
                                             val dateFormat =
                                                 SimpleDateFormat("yyyyMdd_HHmmss").format(Calendar.getInstance().time)
-                                            fileName = "MT_${tipe_foto}_${kodeFoto}_${dateFormat}.jpg"
+                                            fileName = "FM_${tipe_foto}_${kodeFoto}_${dateFormat}.jpg"
                                             file = File(dirApp, fileName)
 
                                             fileDCIM = File(dirDCIM, fileName)
@@ -361,9 +361,9 @@ class CameraRepository(private val context: Context, private val window: Window,
                                         commentWm = commentWm?.replace("|", ",")?.replace("\n", "")
                                         commentWm = AppUtils.splitStringWatermark(commentWm!!, 60)
                                         val watermarkText = if (resultCode == "0") {
-                                            "MONITORING TRAKSI\n${dateWM}"
+                                            "${appName}\n${dateWM}"
                                         } else {
-                                            "MONITORING TRAKSI\n${commentWm}\n${dateWM}"
+                                            "${appName}\n${commentWm}\n${dateWM}"
                                         }
 
                                         val watermarkedBitmap = addWatermark(takenImage, watermarkText)
@@ -574,7 +574,7 @@ class CameraRepository(private val context: Context, private val window: Window,
     fun deletePhotoSelected(fileName: String): Boolean {
         val rootDCIM = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-            "Monitoring-Traksi"
+            appName
         ).toString()
 
         val rootApp = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()

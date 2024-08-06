@@ -32,7 +32,7 @@
                 android:layout_height="35dp"
                 android:layout_weight="0.5"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/fm_icon_transparent"
+                android:src="@drawable/fm_icon_bg_transparent_new"
                 />
             <LinearLayout
                 android:layout_width="wrap_content"

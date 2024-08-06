@@ -70,11 +70,16 @@
     <string name="filter_history3">Unit Tanpa Kerusakan</string>
 
 
-<!--    form informasi unit-->
+    <!--    form informasi unit-->
     <string name="tvFIUJenisUnit">Jenis Unit</string>
     <string name="tvFIUAsetUnit">Aset Unit</string>
     <string name="tvFIUTypeNoUnit">Type dan No Unit</string>
     <string name="tvFIULokasiKerjaUnit">Lokasi Kerja Unit</string>
+
+<!--    form p2h-->
+    <string name="alertFillAllColumn">Mohon untuk mengisi semua kolom dan foto terlebih dahulu</string>
+    <string name="alertGPS">Harap aktifkan GPS agar kami dapat mengakses koordinat Anda"</string>
+    <string name="alertPerColumnError">"Kolom harap diisi!"</string>
 
     <string-array name="dropdown_options_form_laporan_p2h">
         <item>Sudah dicek</item>

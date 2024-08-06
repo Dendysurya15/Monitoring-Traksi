@@ -602,10 +602,11 @@ object AppUtils {
                         val estateObject = jenisUnitsArray.getJSONObject(i)
                         val idEstate = estateObject.getInt("id")
                         val nameEstate = estateObject.getString("est")
-
+                        val idReg = estateObject.getInt("id_reg")
                         unitViewModel.insertListEstate(
                             id = idEstate,
-                            est = nameEstate
+                            est = nameEstate,
+                            id_reg = idReg,
                         )
                     }
 

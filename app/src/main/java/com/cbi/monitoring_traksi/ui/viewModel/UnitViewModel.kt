@@ -128,12 +128,14 @@ class UnitViewModel(application: Application, private val traksiUnitRepository: 
     fun insertListEstate(
         id: Int,
         est: String,
+        id_reg: Int,
         ) {
         viewModelScope.launch {
             try {
                 val dataEst = EstateModel(
                     id,
                     est,
+                    id_reg
                 )
                 val isInserted = traksiUnitRepository.insertListEstate(dataEst)
 

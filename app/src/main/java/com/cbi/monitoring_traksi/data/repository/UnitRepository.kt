@@ -49,7 +49,7 @@ class UnitRepository(context: Context)  {
         val values = ContentValues().apply {
             put(DatabaseHelper.DB_ID, dataEstate.id)
             put(DatabaseHelper.DB_EST, dataEstate.est)
-
+            put(DatabaseHelper.DB_ID_REG, dataEstate.id_reg)
         }
         val rowsAffected = db.insert(DatabaseHelper.DB_TAB_ESTATE, null, values)
         db.close()
@@ -253,9 +253,37 @@ class UnitRepository(context: Context)  {
             while (it.moveToNext()) {
                 val id = it.getInt(it.getColumnIndex("id"))
                 val est = it.getString(it.getColumnIndex("est"))
+
+                val id_reg = it.getInt(it.getColumnIndex("id_reg"))
                 val dataEstate = EstateModel(
                     id,
                     est ,
+                    id_reg
+                )
+                datasEstateList.add(dataEstate)
+            }
+        }
+
+//        db.close()
+
+        return datasEstateList.sortedBy { it.est }
+    }
+
+    @SuppressLint("Range")
+    fun fetchAllRegionalList(): List<EstateModel> {
+        val datasEstateList = mutableListOf<EstateModel>()
+        val db = databaseHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${DatabaseHelper.DB_TAB_ESTATE}", null)
+
+        cursor.use {
+            while (it.moveToNext()) {
+                val id = it.getInt(it.getColumnIndex("id"))
+                val est = it.getString(it.getColumnIndex("est"))
+                val id_reg = it.getInt(it.getColumnIndex("id_reg"))
+                val dataEstate = EstateModel(
+                    id,
+                    est ,
+                    id_reg
                 )
                 datasEstateList.add(dataEstate)
             }

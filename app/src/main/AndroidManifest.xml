@@ -13,12 +13,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MANA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-         />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.ACT"
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.ACT"
         tools:ignore="SystemPermissionTypo" />
     <uses-permission android:name="android.hardware.camera" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
@@ -28,19 +27,22 @@
 
     <application
         android:allowBackup="true"
-        android:requestLegacyExternalStorage="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/logo_fleet_management"
+        android:icon="@mipmap/logo_fleet_management_new"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/logo_fleet_management"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/logo_fleet_management_new"
         android:supportsRtl="true"
         android:theme="@style/material_whitebar"
         tools:targetApi="34">
         <activity
-            android:name=".ui.view.FormLaporP2HActivity"
-            android:windowSoftInputMode="adjustPan"
+            android:name=".ui.view.PilihRegionalActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.view.FormLaporP2HActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.view.DetailMonitoringUnitActivity"
             android:exported="false" />

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+
+        android:id="@+id/cardImage">
+
+
+        <LinearLayout
+            android:id="@+id/ivBgTopMain"
+            android:layout_width="match_parent"
+            android:layout_weight="0.6"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:alpha="0.7"
+            android:gravity="center|bottom"
+
+            android:background="@drawable/homepage_container"
+            tools:ignore="ContentDescription" >
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="15dp"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginVertical="5dp"
+                        android:layout_marginStart="18dp"
+                        android:src="@drawable/fm_icon_bg_white_new"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/bluedark"
+                        android:textSize="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="5dp"
+                        android:gravity="center"
+                        android:text="@string/app_name"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="0.3"
+            android:layout_marginHorizontal="35dp"
+            android:layout_marginVertical="20dp"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textSize="23sp"
+
+                android:layout_weight="0.3"
+                android:gravity="start|bottom"
+                android:text="Pilih Regional"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_mediumitalic"
+                android:textColor="@color/graytextdark"
+                android:textSize="11dp"
+                android:text="Harap memasukkan lokasi Regional penempatan unit saat ini."/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                android:ems="10"
+                android:hint="Masukkan Regional"
+                android:textSize="10dp"
+                app:boxStrokeColor="@color/bluedark"
+                app:cursorColor="@color/bluedark"
+                app:endIconMode="dropdown_menu"
+                app:errorTextColor="@color/colorRed"
+                app:hintTextColor="@color/bluedark">
+
+                <AutoCompleteTextView
+                    android:id="@+id/etPilihRegional"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textSize="10dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:gravity="end"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"> <!-- Set weight to push this layout to the top -->
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mbSaveRegional"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Simpan"
+                    android:textSize="15dp"
+                    android:layout_gravity="end"
+                    android:fontFamily="@font/poppins_semibold"
+                    app:backgroundTint="@color/bluedark"
+                    app:cornerRadius="10dp"
+                    app:elevation="50dp" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:text="@string/app_version"
+                android:layout_gravity="bottom"/> <!-- Align this TextView to the bottom -->
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/loadingReg"
+        layout="@layout/loading_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

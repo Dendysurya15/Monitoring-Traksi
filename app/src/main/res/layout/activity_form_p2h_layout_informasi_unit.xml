@@ -195,6 +195,7 @@
 
                     app:errorTextColor="@color/colorRed"
                     app:hintTextColor="@color/bluedark"
+                    android:id="@+id/fieldJenisUnit"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -247,6 +248,7 @@
                     app:boxStrokeColor="@color/bluedark"
                     app:cursorColor="@color/bluedark"
                     app:endIconMode="dropdown_menu"
+                    android:id="@+id/fieldAsetUnit"
                     app:hintTextColor="@color/bluedark"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -297,6 +299,7 @@
                     android:hint="Pilih Asal Aset"
                     app:boxStrokeColor="@color/bluedark"
                     app:cursorColor="@color/bluedark"
+                    android:id="@+id/fieldKodeUnit"
                     app:endIconMode="dropdown_menu"
                     app:hintTextColor="@color/bluedark"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -347,15 +350,12 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:ems="10"
                     android:hint="Pilih Lokasi Kerja"
+                    android:id="@+id/fieldLokasiKerja"
                     app:boxStrokeColor="@color/bluedark"
                     app:cursorColor="@color/bluedark"
                     app:endIconMode="dropdown_menu"
                     app:hintTextColor="@color/bluedark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-
+                    app:popupTheme="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog"
                     tools:ignore="HardcodedText">
 
                     <AutoCompleteTextView
@@ -363,16 +363,7 @@
                         android:textSize="10sp"
                         android:layout_width="match_parent"
                         android:inputType="none"
-
                         android:layout_height="wrap_content"/>
-                    <!--                <com.google.android.material.textfield.TextInputEditText-->
-
-                    <!--                    android:layout_width="match_parent"-->
-                    <!--                    android:layout_height="wrap_content"-->
-                    <!--                    android:fontFamily="@font/poppins_regular"-->
-                    <!--                    android:inputType="textPersonName"-->
-                    <!--                    android:textSize="10dp" />-->
-
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>

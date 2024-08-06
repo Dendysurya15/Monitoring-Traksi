@@ -18,6 +18,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,6 +56,10 @@ import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.et
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etKodeUnit
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etLokasiKerja
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.etTanggalPeriksa
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fieldAsetUnit
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fieldJenisUnit
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fieldKodeUnit
+import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fieldLokasiKerja
 
 
 import kotlinx.android.synthetic.main.activity_form_p2h_layout_informasi_unit.fotoUnitContainer
@@ -177,6 +182,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             }
         }
 
+
         unitViewModel.loadDataAsetUnit()
         unitViewModel.dataAsetUnitList.observe(this){data->
             if (data != null) {
@@ -228,7 +234,12 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     // Populate the map with keys and values
                     recordMap["id"] = record.id
                     recordMap["est"] = record.est
-                    dataEstateList.add(recordMap)
+                    recordMap["id_reg"] = record.id_reg
+
+                    if(record.id_reg == prefManager!!.idReg){
+                        dataEstateList.add(recordMap)
+                    }
+
                 }
 
 
@@ -269,20 +280,20 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
         val nextButton = findViewById<Button>(resources.getIdentifier("mbNextForm0", "id", packageName))
         nextButton.setOnClickListener {
-            val jenis_unit = etJenisUnit.text.toString()
-            val aset_unit = etAsetUnit.text.toString()
-            val kode_unit =  etKodeUnit.text.toString()
-            val lokasi_kerja =  etLokasiKerja.text.toString()
+            val jenisUnit = etJenisUnit.text.toString()
+            val asetUnit = etAsetUnit.text.toString()
+            val kodeUnit =  etKodeUnit.text.toString()
+            val lokasiKerja =  etLokasiKerja.text.toString()
 
             if (locationEnable == true){
-                if (jenis_unit != "" && aset_unit != "" && kode_unit != ""  && lokasi_kerja != "" && !listNamaFoto["0"].isNullOrEmpty()){
+                if (validateFormInformasiUnit(jenisUnit, asetUnit, kodeUnit, lokasiKerja, listNamaFoto, fieldJenisUnit, fieldAsetUnit, fieldKodeUnit, fieldLokasiKerja)) {
                     isFormInformasiUnit = false
                     toggleFormVisibility(currentFormIndex)
-                }else{
-                    displayToasty(this,"Mohon untuk mengisi semua kolom terlebih dahulu")
+                } else {
+                    displayToastyWarning(this,getString(R.string.alertFillAllColumn))
                 }
             }else{
-                displayToasty(this, "Harap aktifkan GPS agar kami dapat mengakses koordinat Anda")
+                displayToastyWarning(this, R.string.alertGPS.toString())
             }
         }
 
@@ -312,6 +323,57 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
             kode_foto
         )
     }
+
+
+    private fun validateFormInformasiUnit(
+        jenisUnit: String,
+        asetUnit: String,
+        kodeUnit: String,
+        lokasiKerja: String,
+        listNamaFoto: Map<String, String>,
+        fieldJenisUnit: TextInputLayout,
+        fieldAsetUnit: TextInputLayout,
+        fieldKodeUnit: TextInputLayout,
+        fieldLokasiKerja: TextInputLayout
+    ): Boolean {
+        // Reset all errors
+        fieldJenisUnit.error = null
+        fieldAsetUnit.error = null
+        fieldKodeUnit.error = null
+        fieldLokasiKerja.error = null
+
+        var isFormValid = true
+
+        if (jenisUnit.isEmpty()) {
+            fieldJenisUnit.error = getString(R.string.alertPerColumnError)
+            isFormValid = false
+        }
+
+        if (asetUnit.isEmpty()) {
+            fieldAsetUnit.error = getString(R.string.alertPerColumnError)
+            isFormValid = false
+        }
+
+        if (kodeUnit.isEmpty()) {
+            fieldKodeUnit.error = getString(R.string.alertPerColumnError)
+            isFormValid = false
+        }
+
+        if (lokasiKerja.isEmpty()) {
+            fieldLokasiKerja.error = getString(R.string.alertPerColumnError)
+            isFormValid = false
+        }
+
+        if (listNamaFoto["0"].isNullOrEmpty()) {
+            // Optionally set an error message for this field if you have a corresponding UI element
+            // For example, if you have a TextView or EditText for this:
+            // fieldNamaFoto.error = "Field must be filled"
+            isFormValid = false
+        }
+
+        return isFormValid
+    }
+
 
     private fun showSnackbar(message: String) {
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
@@ -424,6 +486,10 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         Toasty.success(context, message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun displayToastyWarning(context: Context, message: String){
+        Toasty.warning(context, message, Toast.LENGTH_SHORT).show()
+    }
+
     @SuppressLint("ResourceAsColor")
     private fun handleClicksForm(){
         arrInsertedDataTable.clear()
@@ -481,6 +547,8 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                 val selectedValueDropdown = layoutPertanyaan.findViewById<AutoCompleteTextView>(R.id.etTemplateDropdown).text.toString()
                                 val textPertanyaan = layoutPertanyaan.findViewById<TextInputLayout>(R.id.hintDropdownPertanyaan)
                                 val etValueKomentar = layoutPertanyaan.findViewById<TextInputEditText>(R.id.etKomentar).text.toString()
+                                val etFieldValueKomentar = layoutPertanyaan.findViewById<TextInputLayout>(R.id.fieldEtKomentar)
+
                                 if (selectedValueDropdown == "Sudah dicek, tetapi perlu perbaikan"){
                                     val valueMap = mutableMapOf<String, String>()
                                     valueMap["komentar"] = etValueKomentar
@@ -490,6 +558,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     // Check if komentar or foto is empty and update the flags
                                     if (etValueKomentar.isEmpty()) {
                                         isKomentarFillAll = false
+                                        etFieldValueKomentar.error = getString(R.string.alertPerColumnError)
                                     }
                                     if (valueMap["foto"].isNullOrEmpty()) {
                                         isFotoTakenAll = false
@@ -507,7 +576,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
 
                         if(isFotoTakenAll == false || isKomentarFillAll == false || isPertanyaanFilledAll == false){
 
-                            displayToasty(this, "Mohon untuk mengupload semua foto atau mengisi komentar perbaikan unit setiap pertanyaan!")
+                            displayToastyWarning(this, "Mohon untuk mengupload semua foto atau mengisi komentar perbaikan unit setiap pertanyaan!")
                         }else{
                             var kerusakanUnitJson  = ""
                             if (kerusakanUnit.isNotEmpty()) {
@@ -710,7 +779,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                     remainingQuestions -= minBatch
                     batchCount++
                 }
-                
+
                 // Create paginated data
                 val paginatedData = mutableMapOf<Int, MutableMap<Int, String>>()
                 var resetCount = 1
@@ -805,7 +874,7 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                                     val komentar = layoutPertanyaan.layout_komentar_foto.etKomentar.text.toString().trim()
 
                                     if (komentar.isEmpty()) {
-                                        displayToasty(this@FormLaporP2HActivity,"Mohon untuk mengisi komentar terlebih dahulu")
+                                        displayToastyWarning(this@FormLaporP2HActivity,"Mohon untuk mengisi komentar terlebih dahulu")
                                     } else {
 
                                         AppUtils.hideKeyboard(this@FormLaporP2HActivity)
@@ -931,6 +1000,21 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
                         val pilKodeUnit = adapterKodeUnitItems.getItem(position).toString()
 
                     containerLokasiKerja.visibility = View.VISIBLE
+                    fotoUnitContainer.visibility = View.INVISIBLE
+
+                    val scrollView: ScrollView = findViewById(R.id.scrollViewForm)
+                    val fotoUnitContainer: View = findViewById(R.id.fotoUnitContainer)
+
+                    // Calculate the scroll position to center the fotoUnitContainer
+                    scrollView.post {
+                        val scrollViewHeight = scrollView.height
+                        val containerHeight = fotoUnitContainer.height
+                        val containerTop = fotoUnitContainer.top
+                        val middleOffset = (scrollViewHeight / 2) - (containerHeight / 2)
+
+                        // Scroll to the position
+                        scrollView.smoothScrollTo(0, containerTop + middleOffset)
+                    }
 
                     val adapterLokasiKerjaItems = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, globalListEstate)
 
@@ -1150,17 +1234,25 @@ open class FormLaporP2HActivity : AppCompatActivity(), CameraRepository.PhotoCal
         deletePhoto?.deletePhotoKerusakan?.visibility = View.VISIBLE
         deletePhoto?.deletePhotoKerusakan?.setOnClickListener{
 
-            val isDeleted = cameraViewModel.deletePhotoSelected(fname)
+            AlertDialogUtility.withTwoActions(
+                this,
+                "Ya",
+                "Peringatan",
+                "Apakah anda yakin menghapus foto ini?",
+                "warning.json"
+            ) {
+                val isDeleted = cameraViewModel.deletePhotoSelected(fname)
 
-            if(isDeleted){
-                deletePhoto?.deletePhotoKerusakan?.visibility = View.GONE
+                if(isDeleted){
+                    deletePhoto?.deletePhotoKerusakan?.visibility = View.GONE
+                }
+                val ivAddFotoPertanyaan = deletePhoto.findViewById<ImageView>(R.id.ivAddFotoPerPertanyaan)
+                val originalImageResId = R.drawable.ic_add_image
+                ivAddFotoPertanyaan.setImageResource(originalImageResId)
+
+                removeEntryByFileName(fname)
+                removeEntryByPhotoFile(photoFile)
             }
-            val ivAddFotoPertanyaan = deletePhoto.findViewById<ImageView>(R.id.ivAddFotoPerPertanyaan)
-            val originalImageResId = R.drawable.ic_add_image
-            ivAddFotoPertanyaan.setImageResource(originalImageResId)
-
-            removeEntryByFileName(fname)
-            removeEntryByPhotoFile(photoFile)
         }
 
         listFileFoto[resultCode] = photoFile

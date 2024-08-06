@@ -288,6 +288,7 @@ class MainActivity : AppCompatActivity(), UploadHistoryP2HAdapter.OnDeleteClickL
                 prefManager!!.username = ""
                 prefManager!!.password = ""
                 prefManager!!.remember = false
+                prefManager!!.idReg = 1
 
 
                 unitViewModel.deleteDataJenisUnit()
